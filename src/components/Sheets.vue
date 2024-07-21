@@ -2,15 +2,28 @@
 import useSheets from "/src/composables/useSheets";
 import {onMounted} from "vue";
 
-const {sheets, currentPage, totalPages, fetchSheets, formatDate} = useSheets();
+const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
 
 onMounted(async () => {
   await fetchSheets();
 });
+
+const handleFileUpload = (event) => {
+  selectedSheet.value = event.target.files[0];
+};
+
+const submitFile = async () => {
+  await createSheet();
+};
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <div>
+    <input type="file" @change="handleFileUpload" class="file-input w-full max-w-xs"/>
+    <button @click="submitFile" class="btn" :disabled="!selectedSheet">ატვირთვა</button>
+  </div>
+
+  <div class="overflow-x-auto h-[80vh]">
     <table class="table">
       <thead>
       <tr>
