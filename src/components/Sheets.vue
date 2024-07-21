@@ -4,7 +4,7 @@ import {onMounted} from "vue";
 import useSheet from "../composables/useSheet.js";
 
 const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
-const {sheet, _currentPage, _totalPages, recordId, fetchSheetData} = useSheet()
+const {sheet, _currentPage, _totalPages, recordId, fetchSheetData, fetchSheetDataWarnings} = useSheet()
 
 onMounted(async () => {
   await fetchSheets();
@@ -17,6 +17,14 @@ const handleFileUpload = (event) => {
 const submitFile = async () => {
   await createSheet();
 };
+
+const handleCheckboxChange = async (event) => {
+  if (event.target.checked) {
+    await fetchSheetDataWarnings();
+  } else {
+    await fetchSheetData();
+  }
+}
 </script>
 
 <template>
@@ -100,7 +108,10 @@ const submitFile = async () => {
 
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto h-[70vh]">
+        <div class="flex items-center gap-x-2.5">
+          <input type="checkbox" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ ხარვეზიანები
+        </div>
         <table class="table">
           <thead>
           <tr>
@@ -111,7 +122,7 @@ const submitFile = async () => {
             <th>სტატუსი</th>
           </tr>
           </thead>
-          <tbody>
+          <tbody v-if="sheet && sheet.length > 0">
           <tr v-for="(extraction, index) in sheet" :key="index">
             <td v-text="extraction.date"/>
             <td v-text="extraction.totalAmount"/>
@@ -120,6 +131,22 @@ const submitFile = async () => {
             <td>
               <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status"/>
               <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
+            </td>
+          </tr>
+          </tbody>
+
+          <tbody v-else-if="sheet && sheet.length === 0">
+          <tr>
+            <td>
+              ჩანაწერები ვერ მოიძებნა!
+            </td>
+          </tr>
+          </tbody>
+
+          <tbody v-else>
+          <tr>
+            <td class="flex items-center gap-x-2.5">
+              იტვირთება <span class="loading loading-spinner loading-md"/>
             </td>
           </tr>
           </tbody>
