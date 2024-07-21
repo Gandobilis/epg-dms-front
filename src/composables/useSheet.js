@@ -10,6 +10,7 @@ export default function useSheet() {
     const ok = ref()
     const warning = ref()
     const total = ref()
+    const amount = ref()
 
     // Function to fetch sheet data from the server
     const fetchSheetData = async () => {
@@ -26,6 +27,7 @@ export default function useSheet() {
             ok.value = response.data.ok;
             warning.value = response.data.warn;
             total.value = response.data.countAll;
+            amount.value = response.data.grandTotal;
         } catch (error) {
             console.error("Error fetching sheet data:", error);
         }
@@ -56,6 +58,7 @@ export default function useSheet() {
         ok,
         warning,
         total,
+        amount,
         fetchSheetData,
         fetchSheetDataWarnings
     };

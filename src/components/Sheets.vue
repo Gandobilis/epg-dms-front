@@ -12,6 +12,7 @@ const {
   ok,
   warning,
   total,
+  amount,
   fetchSheetData,
   fetchSheetDataWarnings
 } = useSheet()
@@ -126,6 +127,7 @@ const warn = ref(null)
             <input type="checkbox" ref="warn" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ
             დახარვეზებული
           </div>
+          <p>{{ amount }} თანხა</p>
           <p>{{ total }} ჩანაწერი</p>
           <p>{{ ok }} უხარვეზო</p>
           <p>{{ warning }} დახარვეზებული</p>
