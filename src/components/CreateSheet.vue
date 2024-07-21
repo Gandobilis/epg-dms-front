@@ -4,4 +4,6 @@ const handleFileUpload = (event) => {
 };
 </script>
 
-<template></template>
+<template>
+
+</template>
