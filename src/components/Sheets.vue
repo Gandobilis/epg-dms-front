@@ -1,9 +1,8 @@
 <script setup>
 import useSheets from "/src/composables/useSheets";
 import {onMounted} from "vue";
-import CreateSheet from "./CreateSheet.vue";
 
-const {sheets, fetchSheets, createSheet} = useSheets();
+const {sheets, currentPage, totalPages, fetchSheets, formatDate} = useSheets();
 
 onMounted(async () => {
   await fetchSheets();
@@ -11,41 +10,75 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-2 m-5 w-full">
-    <div class="flex flex-col gap-y-5">
-      <create-sheet/>
-      <div class="overflow-x-auto">
-        <table class="table">
-          <thead>
-          <tr>
-            <th>სახელი</th>
-            <th>თარიღი</th>
-            <th>სტატუსი</th>
-            <th>ნახვა</th>
-            <th>წაშლა</th>
-          </tr>
-          </thead>
-          <tbody class="font-bold">
-          <tr v-for="(sheet, index) in sheets" :key="index">
-            <td class="flex items-center gap-x-2.5">
-              <img src="/src/assets/excel.svg.png" alt="xlsx icon" class="w-8"/>
-              {{ sheet.fileName }}
-            </td>
-            <td v-text="sheet.date"/>
-            <td>
-              <img src="/src/assets/check_circle.svg" alt="check mark" v-if="sheet.status"/>
-              <img src="/src/assets/warning.svg" alt="warning mark" v-else/>
-            </td>
-            <td>
-              <img src="/src/assets/visibility.svg" alt="view mark" class="cursor-pointer"/>
-            </td>
-            <td>
-              <img src="/src/assets/delete.svg" alt="delete mark" class="cursor-pointer"/>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <div class="overflow-x-auto">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ფაილის სახელი</th>
+        <th>ატვირთვის თარიღი</th>
+        <th>ფაილის სტატუსი</th>
+        <th>ფაილის ნახვა</th>
+        <th>ფაილის წაშლა</th>
+      </tr>
+      </thead>
+
+      <tbody v-if="sheets && sheets.length > 0">
+      <tr v-for="(sheet, index) in sheets" :key="index">
+        <td>
+          <div class="flex items-center gap-x-2.5">
+            <img src="/src/assets/excel.svg.png" alt="excel icon" class="w-8"/>
+            {{ sheet.fileName }}
+          </div>
+        </td>
+        <td v-text="formatDate(sheet.date)"/>
+        <td>
+          <img src="/src/assets/check_circle.svg" alt="check icon" v-if="sheet.status"/>
+          <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
+        </td>
+        <td>
+          <img src="/src/assets/visibility.svg" alt="view icon" class="cursor-pointer"/>
+        </td>
+        <td>
+          <img src="/src/assets/delete.svg" alt="delete icon" class="cursor-pointer"/>
+        </td>
+      </tr>
+      </tbody>
+
+      <tbody v-else-if="sheets && sheets.length === 0">
+      <tr>
+        <td>
+          გთხოვთ ატვირთოთ ფაილები!
+        </td>
+      </tr>
+      </tbody>
+
+      <tbody v-else>
+      <tr>
+        <td class="flex items-center gap-x-2.5">
+          იტვირთება <span class="loading loading-spinner loading-md"/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="join justify-center w-full mt-5">
+    <button class="join-item btn" @click="
+            currentPage = currentPage - 1;
+          fetchSheets();
+          " :disabled="currentPage === 1">
+      «
+    </button>
+
+    <button class="join-item btn focus:outline-0">
+      {{ currentPage }}
+    </button>
+
+    <button class="join-item btn" @click="
+            currentPage = currentPage + 1;
+          fetchSheets();
+          " :disabled="currentPage === totalPages">
+      »
+    </button>
   </div>
 </template>

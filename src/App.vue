@@ -1,10 +1,5 @@
-<script setup>
-import ThemeSwitcher from "./components/ThemeSwitcher.vue";
-</script>
-
 <template>
-  <main class="p-5">
-    <theme-switcher />
+  <main class="p-10">
     <router-view/>
   </main>
 </template>

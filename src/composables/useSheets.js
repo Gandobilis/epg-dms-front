@@ -2,11 +2,12 @@ import {ref} from "vue";
 import axios from "../interceptors/axios";
 
 export default function useSheets() {
-    const sheets = ref([]);
-    const currentPage = ref(0);
-    const pageSize = ref(100);
-    const selectedSheet = ref(null);
-    const lastResponse = ref(null);
+    const sheets = ref();
+    const currentPage = ref(1);
+    const pageSize = ref(10);
+    const selectedSheet = ref();
+    const lastResponse = ref();
+    const totalPages = ref(1);
 
     const fetchSheets = async () => {
         try {
@@ -17,6 +18,7 @@ export default function useSheets() {
                 },
             });
             sheets.value = lastResponse.value.data.data.content;
+            totalPages.value = lastResponse.value.data.data.page.totalPages;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }
@@ -38,13 +40,33 @@ export default function useSheets() {
         }
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+
+        const months = [
+            "იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი",
+            "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"
+        ];
+
+        const year = date.getFullYear();
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        return `${year} წლის ${day} ${month}, ${hours}:${minutes}:${seconds}`;
+    }
+
     return {
         sheets,
         currentPage,
         pageSize,
+        totalPages,
         selectedSheet,
         lastResponse,
         fetchSheets,
         createSheet,
+        formatDate
     };
 }
