@@ -1,6 +1,6 @@
 <script setup>
 import useSheets from "/src/composables/useSheets";
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import useSheet from "../composables/useSheet.js";
 
 const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
@@ -25,6 +25,8 @@ const handleCheckboxChange = async (event) => {
     await fetchSheetData();
   }
 }
+
+const warn = ref(null)
 </script>
 
 <template>
@@ -110,7 +112,7 @@ const handleCheckboxChange = async (event) => {
     <div class="modal-box w-11/12 max-w-5xl">
       <div class="overflow-x-auto h-[70vh]">
         <div class="flex items-center gap-x-2.5">
-          <input type="checkbox" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ ხარვეზიანები
+          <input type="checkbox" ref="warn" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ ხარვეზიანები
         </div>
         <table class="table">
           <thead>
@@ -170,12 +172,12 @@ const handleCheckboxChange = async (event) => {
             »
           </button>
         </div>
-        <form method="dialog" @submit="_currentPage=1; sheet = null">
+        <form method="dialog" @submit="_currentPage=1; sheet = null; warn.checked = false;">
           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>
-        <form method="dialog" @submit="_currentPage=1; sheet = null">
+        <form method="dialog" @submit="_currentPage=1; sheet = null; warn.checked = false;">
           <button class="btn">დახურვა</button>
         </form>
       </div>
