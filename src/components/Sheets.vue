@@ -4,7 +4,17 @@ import {onMounted, ref} from "vue";
 import useSheet from "../composables/useSheet.js";
 
 const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
-const {sheet, _currentPage, _totalPages, recordId, fetchSheetData, fetchSheetDataWarnings} = useSheet()
+const {
+  sheet,
+  _currentPage,
+  _totalPages,
+  recordId,
+  ok,
+  warning,
+  total,
+  fetchSheetData,
+  fetchSheetDataWarnings
+} = useSheet()
 
 onMounted(async () => {
   await fetchSheets();
@@ -111,8 +121,14 @@ const warn = ref(null)
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
       <div class="overflow-x-auto h-[70vh]">
-        <div class="flex items-center gap-x-2.5">
-          <input type="checkbox" ref="warn" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ ხარვეზიანები
+        <div class="flex items-center justify-between pr-5">
+          <div class="flex items-center gap-x-2.5">
+            <input type="checkbox" ref="warn" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ
+            დახარვეზებული
+          </div>
+          <p>{{ total }} ჩანაწერი</p>
+          <p>{{ ok }} უხარვეზო</p>
+          <p>{{ warning }} დახარვეზებული</p>
         </div>
         <table class="table">
           <thead>

@@ -7,6 +7,9 @@ export default function useSheet() {
     const pageSize = ref(10);
     const recordId = ref();
     const _totalPages = ref(1);
+    const ok = ref()
+    const warning = ref()
+    const total = ref()
 
     // Function to fetch sheet data from the server
     const fetchSheetData = async () => {
@@ -20,6 +23,9 @@ export default function useSheet() {
             });
             sheet.value = response.data.data.content;
             _totalPages.value = response.data.data.page.totalPages;
+            ok.value = response.data.ok;
+            warning.value = response.data.warn;
+            total.value = response.data.countAll;
         } catch (error) {
             console.error("Error fetching sheet data:", error);
         }
@@ -47,6 +53,9 @@ export default function useSheet() {
         _currentPage,
         recordId,
         _totalPages,
+        ok,
+        warning,
+        total,
         fetchSheetData,
         fetchSheetDataWarnings
     };
