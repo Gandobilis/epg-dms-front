@@ -1,4 +1,11 @@
-<script setup></script>
+<script setup>
+defineProps({
+  sheet: {
+    type: Number,
+    required: true
+  }
+})
+</script>
 
 <template>
   <dialog id="my_modal_1" class="modal">
@@ -7,27 +14,25 @@
       <div class="overflow-x-auto">
         <table class="table">
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>თარიღი</th>
-              <th>სრული თანხა</th>
-              <th>მიზანი</th>
-              <th>აღწერა</th>
-              <th>სტატუსი</th>
-            </tr>
+          <tr>
+            <th>თარიღი</th>
+            <th>სრული თანხა</th>
+            <th>მიზანი</th>
+            <th>აღწერა</th>
+            <th>სტატუსი</th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="(extraction, index) in extractions" :key="index">
-              <td v-text="extraction.id" />
-              <td v-text="formatDateString(extraction.date)" />
-              <td v-text="extraction.totalAmount" />
-              <td v-text="extraction.purpose" />
-              <td v-text="extraction.description" />
-              <td>
-                <i class="fa-solid fa-check fa-2xl" style="color: #00a96e" v-if="extraction.status" />
-                <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ffbe00" v-else />
-              </td>
-            </tr>
+          <tr v-for="(extraction, index) in extractions" :key="index">
+            <td v-text="extraction.date"/>
+            <td v-text="extraction.totalAmount"/>
+            <td v-text="extraction.purpose"/>
+            <td v-text="extraction.description"/>
+            <td>
+              <i class="fa-solid fa-check fa-2xl" style="color: #00a96e" v-if="extraction.status"/>
+              <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ffbe00" v-else/>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>

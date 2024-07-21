@@ -2,11 +2,7 @@ import {ref} from "vue";
 import axios from "../interceptors/axios";
 
 export default function useSheets() {
-    const sheets = ref([{ id: 1, fileName: "document1.pdf", date: "2023-05-10", status: 1 },
-        { id: 2, fileName: "image1.png", date: "2023-05-12",  status: 0 },
-        { id: 3, fileName: "spreadsheet1.xlsx", date: "2023-05-14",  status: 0 },
-        { id: 4, fileName: "presentation1.pptx", date: "2023-05-16",  status: 1 },
-        { id: 5, fileName: "notes.txt", date: "2023-05-18", status: 1 }]);
+    const sheets = ref([]);
     const currentPage = ref(0);
     const pageSize = ref(100);
     const selectedSheet = ref(null);
