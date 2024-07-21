@@ -1,8 +1,10 @@
 <script setup>
 import useSheets from "/src/composables/useSheets";
 import {onMounted} from "vue";
+import useSheet from "../composables/useSheet.js";
 
 const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
+const {sheet, _currentPage, _totalPages, recordId, fetchSheetData} = useSheet()
 
 onMounted(async () => {
   await fetchSheets();
@@ -49,7 +51,8 @@ const submitFile = async () => {
           <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
         </td>
         <td>
-          <img src="/src/assets/visibility.svg" alt="view icon" class="cursor-pointer"/>
+          <img src="/src/assets/visibility.svg" alt="view icon" class="cursor-pointer"
+               @click="recordId = sheet.id; fetchSheetData()" onclick="my_modal_1.showModal(); "/>
         </td>
         <td>
           <img src="/src/assets/delete.svg" alt="delete icon" class="cursor-pointer"/>
@@ -94,4 +97,61 @@ const submitFile = async () => {
       »
     </button>
   </div>
+
+  <dialog id="my_modal_1" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>თარიღი</th>
+            <th>სრული თანხა</th>
+            <th>მიზანი</th>
+            <th>აღწერა</th>
+            <th>სტატუსი</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="(extraction, index) in sheet" :key="index">
+            <td v-text="extraction.date"/>
+            <td v-text="extraction.totalAmount"/>
+            <td v-text="extraction.purpose"/>
+            <td v-text="extraction.description"/>
+            <td>
+              <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status"/>
+              <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-action">
+        <div class="join justify-center w-full">
+          <button class="join-item btn" @click="
+            _currentPage = _currentPage - 1;
+          fetchSheetData();
+          " :disabled="_currentPage === 1">
+            «
+          </button>
+          <button class="join-item btn focus:outline-0">
+            {{ _currentPage }}
+          </button>
+          <button class="join-item btn" @click="
+            _currentPage = _currentPage + 1;
+          fetchSheetData();
+          " :disabled="_currentPage === _totalPages">
+            »
+          </button>
+        </div>
+        <form method="dialog" @submit="_currentPage=1; sheet = null">
+          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+        </form>
+        <form method="dialog" @submit="_currentPage=1; sheet = null">
+          <button class="btn">დახურვა</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
 </template>
