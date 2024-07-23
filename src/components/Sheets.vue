@@ -96,7 +96,7 @@ const handleFileChange = async (event) => {
       </form>
       <h3 class="font-bold">ნამდვილად გსურთ ფაილის წაშლა?</h3>
       <div class="flex items-center justify-center gap-x-10 pt-5">
-        <button class="btn" onclick="my_modal_3.close();" @click="deleteSheet(deleteId)">დიახ</button>
+        <button class="btn" onclick="setTimeout(() => my_modal_3.close(), 1000);" @click="deleteSheet(deleteId)">დიახ</button>
         <button class="btn btn-neutral" onclick="my_modal_3.close();">არა</button>
       </div>
     </div>
