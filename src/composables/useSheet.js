@@ -12,7 +12,6 @@ export default function useSheet() {
     const total = ref()
     const amount = ref()
 
-    // Function to fetch sheet data from the server
     const fetchSheetData = async () => {
         try {
             const response = await axios.get(`excels/getExtractionsByFile`, {
@@ -33,7 +32,6 @@ export default function useSheet() {
         }
     };
 
-    // Function to fetch sheet data from the server
     const fetchSheetDataWarnings = async () => {
         try {
             const response = await axios.get(`excels/getWarningExtractionsByFile`, {
