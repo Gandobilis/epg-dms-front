@@ -47,6 +47,7 @@ export default function useSheets() {
                     taskId: sheetId,
                 },
             });
+            await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
         }
