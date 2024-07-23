@@ -3,7 +3,7 @@ import useSheets from "/src/composables/useSheets";
 import {onMounted, ref} from "vue";
 import useSheet from "../composables/useSheet.js";
 
-const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate} = useSheets();
+const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate, deleteSheet} = useSheets();
 const warn = ref(null)
 
 const {
@@ -30,6 +30,8 @@ const handleCheckboxChange = async (event) => {
     await fetchSheetData();
   }
 }
+
+const deleteId = ref();
 
 const fileInput = ref(null);
 
@@ -87,6 +89,19 @@ const handleFileChange = async (event) => {
     </label>
   </div>
 
+  <dialog id="my_modal_3" class="modal">
+    <div class="modal-box">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+      <h3 class="font-bold">ნამდვილად გსურთ ფაილის წაშლა?</h3>
+      <div class="flex items-center justify-center gap-x-10 pt-5">
+        <button class="btn" onclick="my_modal_3.close();" @click="deleteSheet(deleteId)">დიახ</button>
+        <button class="btn btn-neutral" onclick="my_modal_3.close();">არა</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="overflow-x-auto h-[80vh]">
     <table class="table">
       <thead>
@@ -117,7 +132,7 @@ const handleFileChange = async (event) => {
                @click="recordId = sheet.id; fetchSheetData()" onclick="my_modal_1.showModal(); "/>
         </td>
         <td>
-          <img src="/src/assets/delete.svg" alt="delete icon" class="cursor-pointer"/>
+          <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id" onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
       </tr>
       </tbody>

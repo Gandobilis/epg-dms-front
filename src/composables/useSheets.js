@@ -40,6 +40,18 @@ export default function useSheets() {
         }
     };
 
+    const deleteSheet = async (sheetId) => {
+        try {
+            await axios.delete(`excels/delete`, {
+                params: {
+                    taskId: sheetId,
+                },
+            });
+        } catch (error) {
+            console.error("Error deleting sheets:", error);
+        }
+    };
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
 
@@ -67,6 +79,7 @@ export default function useSheets() {
         lastResponse,
         fetchSheets,
         createSheet,
-        formatDate
+        formatDate,
+        deleteSheet
     };
 }
