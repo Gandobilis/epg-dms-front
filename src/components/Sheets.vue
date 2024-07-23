@@ -22,28 +22,48 @@ onMounted(async () => {
   await fetchSheets();
 
 });
-const handleFileUpload = async (event) => {
-  selectedSheet.value = event.target.files[0];
-  await createSheet();
-  event.target.value = '';
 
-};
 const handleCheckboxChange = async (event) => {
   if (event.target.checked) {
     await fetchSheetDataWarnings();
   } else {
     await fetchSheetData();
   }
-
 }
+
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleFileChange = async (event) => {
+  selectedSheet.value = event.target.files[0]
+  await createSheet();
+  event.target.value = '';
+  setTimeout(() => selectedSheet.value = '', 2000);
+};
 </script>
 
 <template>
   <div class="flex items-center justify-between mb-3.5 ml-3.5">
-    <input type="file" @change="handleFileUpload"
-           class="file-input btn file-input-ghost file-input-bordered file-input-md w-full max-w-xs"/>
+    <div class="flex items-center gap-x-2.5">
+      <input
+          ref="fileInput"
+          type="file"
+          @change="handleFileChange"
+          class="hidden"
+      />
+      <button
+          @click="triggerFileInput"
+          class="btn"
+      >
+        აირჩიეთ ფაილი
+      </button>
+      <p class="text-sm">{{ selectedSheet ? selectedSheet.name : 'ფაილი არჩეული არ არის' }}</p>
+    </div>
 
-    <label class="swap swap-rotate btn">
+    <label class="swap swap-rotate">
       <!-- this hidden checkbox controls the state -->
       <input type="checkbox" class="theme-controller" value="dark"/>
 
