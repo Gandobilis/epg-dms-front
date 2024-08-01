@@ -96,7 +96,8 @@ const handleFileChange = async (event) => {
       </form>
       <h3 class="font-bold">ნამდვილად გსურთ ფაილის წაშლა?</h3>
       <div class="flex items-center justify-center gap-x-10 pt-5">
-        <button class="btn" onclick="setTimeout(() => my_modal_3.close(), 1000);" @click="deleteSheet(deleteId)">დიახ</button>
+        <button class="btn" onclick="setTimeout(() => my_modal_3.close(), 1000);" @click="deleteSheet(deleteId)">დიახ
+        </button>
         <button class="btn btn-neutral" onclick="my_modal_3.close();">არა</button>
       </div>
     </div>
@@ -132,7 +133,8 @@ const handleFileChange = async (event) => {
                @click="recordId = sheet.id; fetchSheetData()" onclick="my_modal_1.showModal(); "/>
         </td>
         <td>
-          <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id" onclick="my_modal_3.showModal()" class="cursor-pointer"/>
+          <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id"
+               onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
       </tr>
       </tbody>
@@ -178,24 +180,41 @@ const handleFileChange = async (event) => {
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
       <div class="overflow-x-auto h-[70vh]">
-        <div class="flex items-center justify-between pr-5">
-          <div class="flex items-center gap-x-2.5">
-            <input type="checkbox" ref="warn" class="checkbox checkbox-sm" @change="handleCheckboxChange"/> მხოლოდ
-            დახარვეზებული
-          </div>
-          <p>{{ amount }} თანხა</p>
-          <p>{{ total }} ჩანაწერი</p>
-          <p>{{ ok }} უხარვეზო</p>
-          <p>{{ warning }} დახარვეზებული</p>
+        <div class="flex items-center justify-between px-4 font-bold">
+          <!--          <div class="flex items-center gap-x-2.5">-->
+          <!--            <input type="checkbox" ref="warn" class="checkbox checkbox-sm focus:outline-none"-->
+          <!--                   @change="handleCheckboxChange"/> მხოლოდ-->
+          <!--            დახარვეზებული-->
+          <!--          </div>-->
+          <p>ჯამური თანხა - {{ amount }}</p>
+          <p>ჩანაწერი - {{ total }}</p>
+          <p>უხარვეზო - {{ ok }}</p>
+          <p>დახარვეზებული - {{ warning }}</p>
         </div>
         <table class="table">
           <thead>
           <tr>
-            <th>თარიღი</th>
+            <th class="flex flex-col gap-y-2">თარიღი
+              <div class="flex flex-col gap-y-2.5">
+                <div class="flex items-center gap-x-2">
+                  დან <input type="date">
+                </div>
+                <div class="flex items-center gap-x-2">
+                  მდე <input type="date">
+                </div>
+              </div>
+            </th>
             <th>სრული თანხა</th>
             <th>მიზანი</th>
             <th>აღწერა</th>
-            <th>სტატუსი</th>
+            <th class="flex flex-col gap-y-2">სტატუსი
+              <select class="select select-bordered select-xs w-full max-w-xs">
+                <option disabled selected>აირჩიეთ სტატუსი</option>
+                <option>ერთად</option>
+                <option>უხარვეზო</option>
+                <option>დახარვეზებული</option>
+              </select>
+            </th>
           </tr>
           </thead>
           <tbody v-if="sheet && sheet.length > 0">
