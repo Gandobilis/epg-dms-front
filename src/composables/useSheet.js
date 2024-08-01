@@ -11,16 +11,46 @@ export default function useSheet() {
     const warning = ref()
     const total = ref()
     const amount = ref()
+    const status = ref()
+    const filter_amount = ref()
+    const startDate = ref()
+    const endDate = ref()
 
     const fetchSheetData = async () => {
+        let url;
+        const params = {
+            page: _currentPage.value,
+            size: pageSize.value,
+            fileId: recordId.value,
+        };
+
+        if (startDate.value && endDate.value) {
+            url = 'excels/getByDate'
+            params.startDate = startDate.value
+            params.endDate = endDate.value
+        } else {
+            if (filter_amount.value) {
+                if (status.value) {
+                    url = 'excels/getByAmountAndStatus'
+                    params.amount = filter_amount.value
+                    params.status = status.value === 'ok' ? 1 : 0;
+                } else {
+                    url = 'excels/getByAmount'
+                    params.amount = filter_amount.value
+                }
+            } else {
+                if (status.value === 'ok') {
+                    url = 'excels/getOkExtractionsByFile';
+                } else if (status.value === 'warn') {
+                    url = 'excels/getWarningExtractionsByFile';
+                } else {
+                    url = 'excels/getExtractionsByFile'
+                }
+            }
+        }
+
         try {
-            const response = await axios.get(`excels/getExtractionsByFile`, {
-                params: {
-                    page: _currentPage.value,
-                    size: pageSize.value,
-                    fileId: recordId.value,
-                },
-            });
+            const response = await axios.get(url, {params});
             sheet.value = response.data.data.content;
             _totalPages.value = response.data.data.page.totalPages;
             ok.value = response.data.ok;
@@ -32,21 +62,6 @@ export default function useSheet() {
         }
     };
 
-    const fetchSheetDataWarnings = async () => {
-        try {
-            const response = await axios.get(`excels/getWarningExtractionsByFile`, {
-                params: {
-                    page: _currentPage.value,
-                    size: pageSize.value,
-                    fileId: recordId.value,
-                },
-            });
-            sheet.value = response.data.data.content;
-            _totalPages.value = response.data.data.page.totalPages;
-        } catch (error) {
-            console.error("Error fetching sheet data:", error);
-        }
-    };
 
     return {
         sheet,
@@ -57,7 +72,10 @@ export default function useSheet() {
         warning,
         total,
         amount,
-        fetchSheetData,
-        fetchSheetDataWarnings
+        status,
+        filter_amount,
+        startDate,
+        endDate,
+        fetchSheetData
     };
 }

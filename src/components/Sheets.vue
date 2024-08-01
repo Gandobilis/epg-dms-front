@@ -1,10 +1,9 @@
 <script setup>
 import useSheets from "/src/composables/useSheets";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 
 const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate, deleteSheet} = useSheets();
-const warn = ref(null)
 
 const {
   sheet,
@@ -15,21 +14,16 @@ const {
   warning,
   total,
   amount,
-  fetchSheetData,
-  fetchSheetDataWarnings
+  status,
+  filter_amount,
+  startDate,
+  endDate,
+  fetchSheetData
 } = useSheet()
+
 onMounted(async () => {
   await fetchSheets();
-
 });
-
-const handleCheckboxChange = async (event) => {
-  if (event.target.checked) {
-    await fetchSheetDataWarnings();
-  } else {
-    await fetchSheetData();
-  }
-}
 
 const deleteId = ref();
 
@@ -45,6 +39,22 @@ const handleFileChange = async (event) => {
   event.target.value = '';
   setTimeout(() => selectedSheet.value = '', 2000);
 };
+
+watch(status, async () => {
+  await fetchSheetData();
+});
+
+watch(filter_amount, async () => {
+  await fetchSheetData();
+})
+
+watch(startDate, async () => {
+  await fetchSheetData();
+})
+
+watch(endDate, async () => {
+  await fetchSheetData();
+})
 </script>
 
 <template>
@@ -178,74 +188,111 @@ const handleFileChange = async (event) => {
   </div>
 
   <dialog id="my_modal_1" class="modal">
-    <div class="modal-box w-11/12 max-w-5xl">
-      <div class="overflow-x-auto h-[70vh]">
-        <div class="flex items-center justify-between px-4 font-bold">
-          <!--          <div class="flex items-center gap-x-2.5">-->
-          <!--            <input type="checkbox" ref="warn" class="checkbox checkbox-sm focus:outline-none"-->
-          <!--                   @change="handleCheckboxChange"/> მხოლოდ-->
-          <!--            დახარვეზებული-->
-          <!--          </div>-->
+    <div class="modal-box max-w-7xl pt-8">
+      <div class="overflow-x-auto space-y-4">
+        <div class="flex items-center justify-between px-4 font-semibold">
           <p>ჯამური თანხა - {{ amount }}</p>
           <p>ჩანაწერი - {{ total }}</p>
           <p>უხარვეზო - {{ ok }}</p>
           <p>დახარვეზებული - {{ warning }}</p>
         </div>
-        <table class="table">
-          <thead>
-          <tr>
-            <th class="flex flex-col gap-y-2">თარიღი
-              <div class="flex flex-col gap-y-2.5">
+        <div class="flex gap-x-16">
+          <table class="table w-3/4 min-h-[62vh]">
+            <thead>
+            <tr>
+              <th>თარიღი</th>
+              <th>სრული თანხა</th>
+              <th>მიზანი</th>
+              <th>აღწერა</th>
+              <th>სტატუსი</th>
+            </tr>
+            </thead>
+            <tbody v-if="sheet && sheet.length > 0">
+            <tr v-for="(extraction, index) in sheet" :key="index">
+              <td v-text="extraction.date"/>
+              <td v-text="extraction.totalAmount"/>
+              <td v-text="extraction.purpose"/>
+              <td v-text="extraction.description"/>
+              <td>
+                <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status"/>
+                <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
+              </td>
+            </tr>
+            </tbody>
+
+            <tbody v-else-if="sheet && sheet.length === 0">
+            <tr>
+              <td>
+                ჩანაწერები ვერ მოიძებნა!
+              </td>
+            </tr>
+            </tbody>
+
+            <tbody v-else>
+            <tr>
+              <td class="flex items-center gap-x-2.5">
+                იტვირთება <span class="loading loading-spinner loading-md"/>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <div class="flex flex-col gap-y-10 font-medium">
+            <div class="flex flex-col gap-y-2.5">
+              <p>თარიღი</p>
+
+              <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-x-2">
-                  დან <input type="date">
+                  <input type="date" class="text-sm" v-model="startDate"/>
+                  <span class="text-xs">დან</span>
                 </div>
+
                 <div class="flex items-center gap-x-2">
-                  მდე <input type="date">
+                  <input type="date" class="text-sm" v-model="endDate"/>
+                  <span class="text-xs">მდე</span>
                 </div>
               </div>
-            </th>
-            <th>სრული თანხა</th>
-            <th>მიზანი</th>
-            <th>აღწერა</th>
-            <th class="flex flex-col gap-y-2">სტატუსი
-              <select class="select select-bordered select-xs w-full max-w-xs">
-                <option disabled selected>აირჩიეთ სტატუსი</option>
-                <option>ერთად</option>
-                <option>უხარვეზო</option>
-                <option>დახარვეზებული</option>
-              </select>
-            </th>
-          </tr>
-          </thead>
-          <tbody v-if="sheet && sheet.length > 0">
-          <tr v-for="(extraction, index) in sheet" :key="index">
-            <td v-text="extraction.date"/>
-            <td v-text="extraction.totalAmount"/>
-            <td v-text="extraction.purpose"/>
-            <td v-text="extraction.description"/>
-            <td>
-              <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status"/>
-              <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
-            </td>
-          </tr>
-          </tbody>
+            </div>
 
-          <tbody v-else-if="sheet && sheet.length === 0">
-          <tr>
-            <td>
-              ჩანაწერები ვერ მოიძებნა!
-            </td>
-          </tr>
-          </tbody>
+            <div class="flex flex-col gap-y-2">
+              <p>თანხა</p>
 
-          <tbody v-else>
-          <tr>
-            <td class="flex items-center gap-x-2.5">
-              იტვირთება <span class="loading loading-spinner loading-md"/>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+              <input
+                  type="text"
+                  v-model="filter_amount"
+                  placeholder="შეიყვანეთ თანხა"
+                  class="input input-bordered input-xs w-full max-w-xs focus:outline-none"/>
+            </div>
+
+            <div class="flex flex-col gap-y-2">
+              <p>სტატუსი</p>
+
+              <div class="flex flex-col gap-y-2.5">
+                <div class="flex items-center gap-x-2">
+                  <input type="radio" name="radio" value="" class="radio radio-xs focus:outline-none"
+                         checked="checked" v-model="status"/>
+                  <span class="text-xs">ერთად</span>
+                </div>
+
+                <div class="flex items-center gap-x-2">
+                  <input type="radio" name="radio" value="ok" class="radio radio-xs focus:outline-none"
+                         v-model="status"/>
+                  <span class="text-xs">უხარვეზო</span>
+                </div>
+
+                <div class="flex items-center gap-x-2">
+                  <input type="radio" name="radio" value="warn" class="radio radio-xs focus:outline-none"
+                         v-model="status"/>
+                  <span class="text-xs">დახარვეზებული</span>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-neutral btn-sm"
+                    @click="startDate = null; endDate = null; amount = null; status = ''">გასუფთავება
+            </button>
+          </div>
+        </div>
       </div>
       <div class="modal-action">
         <div class="join justify-center w-full">
@@ -265,12 +312,14 @@ const handleFileChange = async (event) => {
             »
           </button>
         </div>
-        <form method="dialog" @submit="_currentPage=1; sheet = null; warn.checked = false;">
+        <form method="dialog"
+              @submit="_currentPage=1; sheet = null; startDate = null; endDate = null; filter_amount = null; status = ''">
           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>
-        <form method="dialog" @submit="_currentPage=1; sheet = null; warn.checked = false;">
+        <form method="dialog"
+              @submit="_currentPage=1; sheet = null;startDate = null; endDate = null; filter_amount = null; status = null">
           <button class="btn">დახურვა</button>
         </form>
       </div>
