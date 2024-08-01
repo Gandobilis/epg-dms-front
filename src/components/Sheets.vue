@@ -289,7 +289,7 @@ watch(endDate, async () => {
             </div>
 
             <button class="btn btn-neutral btn-sm"
-                    @click="startDate = null; endDate = null; amount = null; status = ''">გასუფთავება
+                    @click="startDate = null; endDate = null; filter_amount = null; status = ''">გასუფთავება
             </button>
           </div>
         </div>
