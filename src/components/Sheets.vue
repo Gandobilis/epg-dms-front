@@ -3,7 +3,7 @@ import useSheets from "/src/composables/useSheets";
 import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 
-const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate, deleteSheet} = useSheets();
+const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate, deleteSheet, saveSheet} = useSheets();
 
 const {
   sheet,
@@ -26,6 +26,7 @@ onMounted(async () => {
 });
 
 const deleteId = ref();
+const saveId = ref();
 
 const fileInput = ref(null);
 
@@ -59,6 +60,11 @@ watch(endDate, async () => {
 
 <template>
   <div class="flex items-center justify-between mb-3.5 ml-3.5">
+    <div class="flex gap-x-5">
+      <router-link class="btn" to="/">ატვირთულები</router-link>
+      <router-link class="btn" to="/records">შენახულები</router-link>
+    </div>
+
     <div class="flex items-center gap-x-2.5">
       <input
           ref="fileInput"
@@ -113,6 +119,20 @@ watch(endDate, async () => {
     </div>
   </dialog>
 
+  <dialog id="my_modal_4" class="modal">
+    <div class="modal-box">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+      <h3 class="font-bold">ნამდვილად გსურთ ყველა ჩანაწერის გადატანა?</h3>
+      <div class="flex items-center justify-center gap-x-10 pt-5">
+        <button class="btn" onclick="setTimeout(() => my_modal_4.close(), 1000);" @click="saveSheet(saveId)">დიახ
+        </button>
+        <button class="btn btn-neutral" onclick="my_modal_4.close();">არა</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="overflow-x-auto h-[80vh]">
     <table class="table">
       <thead>
@@ -122,6 +142,7 @@ watch(endDate, async () => {
         <th>ფაილის სტატუსი</th>
         <th>ფაილის ნახვა</th>
         <th>ფაილის წაშლა</th>
+        <th>ბაზაში გადატანა</th>
       </tr>
       </thead>
 
@@ -145,6 +166,10 @@ watch(endDate, async () => {
         <td>
           <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id"
                onclick="my_modal_3.showModal()" class="cursor-pointer"/>
+        </td>
+        <td>
+          <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"
+               onclick="my_modal_4.showModal()" class="cursor-pointer"/>
         </td>
       </tr>
       </tbody>

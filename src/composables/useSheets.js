@@ -53,6 +53,19 @@ export default function useSheets() {
         }
     };
 
+    const saveSheet = async (sheetId) => {
+        try {
+            await axios.post(`connection-fees`, {
+                params: {
+                    taskId: sheetId,
+                },
+            });
+            await fetchSheets();
+        } catch (error) {
+            console.error("Error deleting sheets:", error);
+        }
+    };
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
 
@@ -81,6 +94,7 @@ export default function useSheets() {
         fetchSheets,
         createSheet,
         formatDate,
-        deleteSheet
+        deleteSheet,
+        saveSheet
     };
 }
