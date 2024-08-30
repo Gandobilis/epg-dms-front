@@ -8,6 +8,7 @@ export default function useSheets() {
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref(1);
+    const records = ref()
 
     const fetchSheets = async () => {
         try {
@@ -55,14 +56,25 @@ export default function useSheets() {
 
     const saveSheet = async (sheetId) => {
         try {
-            await axios.post(`connection-fees`, {
-                params: {
-                    taskId: sheetId,
-                },
-            });
+            await axios.post(`connection-fees/${sheetId}`);
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
+        }
+    };
+
+    const getFees = async () => {
+        try {
+            lastResponse.value = await axios.get(`connection-fees`, {
+                params: {
+                    page: currentPage.value,
+                    size: pageSize.value,
+                },
+            });
+            records.value = lastResponse.value.data.data.content;
+            totalPages.value = lastResponse.value.data.data.page.totalPages;
+        } catch (error) {
+            console.error("Error fetching sheets:", error);
         }
     };
 
@@ -95,6 +107,8 @@ export default function useSheets() {
         createSheet,
         formatDate,
         deleteSheet,
-        saveSheet
+        saveSheet,
+        getFees,
+        records
     };
 }

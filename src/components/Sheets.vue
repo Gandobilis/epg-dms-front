@@ -134,7 +134,7 @@ watch(endDate, async () => {
   </dialog>
 
   <div class="overflow-x-auto h-[80vh]">
-    <table class="table">
+    <table class="table table-xs">
       <thead>
       <tr>
         <th>ფაილის სახელი</th>
