@@ -17,7 +17,7 @@ const extractionFee = ref()
 
 import useCenters from "../composables/useCenters.js";
 
-const {getRegionsByParentId, setCenter, regions, serviceCenters, region, serviceCenter} = useCenters()
+const {getRegionsByParentId, regions, serviceCenters, region, serviceCenter} = useCenters()
 
 
 onMounted(async () => {
@@ -46,9 +46,9 @@ onMounted(async () => {
       <th>სერვისცენტრი</th>
       <th>პროექტის Id</th>
       <th>გადარიხვის ტიპი</th>
-      <th>ფაილი</th>
       <th>გარკვევის თარიღი</th>
       <th>ბოლო ცვლილება</th>
+      <th>ფაილი</th>
       <th>გადმოტანის თარიღი</th>
       <th>შენიშვნა</th>
       <th>ატვირთვის თარიღი</th>
@@ -65,16 +65,17 @@ onMounted(async () => {
       <td v-text="extraction.serviceCenter"/>
       <td v-text="extraction.projectID"/>
       <td v-text="extraction.withdrawType"/>
-      <th v-text="extraction.extractionTask.fileName"/>
       <td v-text="extraction.clarificationDate"/>
       <td v-text="extraction.changeDate"/>
+      <th v-text="extraction.extractionTask.fileName"/>
       <td v-text="extraction.transferDate"/>
       <td v-text="extraction.note"/>
       <td v-text="extraction.extractionDate"/>
       <td v-text="extraction.totalAmount"/>
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
-      <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer" onclick="my_modal_1.showModal()" @click="extractionFee = extraction"/></td>
+      <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer" onclick="my_modal_1.showModal()"
+               @click="extractionFee = extraction"/></td>
     </tr>
     </tbody>
 
@@ -105,9 +106,9 @@ onMounted(async () => {
           <th>სერვისცენტრი</th>
           <th>პროექტის Id</th>
           <th>გადარიხვის ტიპი</th>
-          <th>ფაილი</th>
           <th>გარკვევის თარიღი</th>
           <th>ბოლო ცვლილება</th>
+          <th>ფაილი</th>
           <th>გადმოტანის თარიღი</th>
           <th>შენიშვნა</th>
           <th>ატვირთვის თარიღი</th>
@@ -118,7 +119,8 @@ onMounted(async () => {
         </thead>
         <tbody v-if="extractionFee">
         <tr>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"/></td>
+          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                     v-model="orderN"/></td>
           <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0" v-model="region"
                       @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
             <option disabled selected>აირჩიეთ რეგიონი</option>
@@ -130,11 +132,13 @@ onMounted(async () => {
             <option :value="center.name" v-for="(center, index) in serviceCenters" v-text="center.name" :key="index"/>
           </select>
           </td>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"/></td>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"/></td>
-          <th v-text="extractionFee.extractionTask.fileName"/>
+          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                     v-model="projectID"/></td>
+          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                     v-model="withdrawType"/></td>
           <td v-text="extractionFee.clarificationDate"/>
           <td v-text="extractionFee.changeDate"/>
+          <th v-text="extractionFee.extractionTask.fileName"/>
           <td v-text="extractionFee.transferDate"/>
           <td v-text="extractionFee.note"/>
           <td v-text="extractionFee.extractionDate"/>
