@@ -6,6 +6,10 @@ export default function useCenters() {
     const serviceCenters = ref();
     const region = ref("აირჩიეთ რეგიონი");
     const serviceCenter = ref("აირჩიეთ სერვისცენტრი");
+    const orderN = ref()
+    const projectID = ref()
+    const withdrawType = ref()
+    const extractionFee = ref()
 
     const getRegionsByParentId = async (parentId = 68) => {
         try {
@@ -20,5 +24,30 @@ export default function useCenters() {
         }
     };
 
-    return {getRegionsByParentId, regions, serviceCenters, region, serviceCenter};
+    const updateRecord = async () => {
+        try {
+            const response = await axios.put(`connection-fees/${extractionFee.value.id}`, {
+                "orderN": orderN.value,
+                "region": region.value,
+                "serviceCenter": serviceCenter.value,
+                "projectID": projectID.value,
+                "withdrawType": withdrawType.value,
+            })
+        } catch (error) {
+            console.error("Error updating fee:", error);
+        }
+    }
+
+    return {
+        getRegionsByParentId,
+        regions,
+        serviceCenters,
+        orderN,
+        region,
+        serviceCenter,
+        projectID,
+        withdrawType,
+        updateRecord,
+        extractionFee
+    };
 }

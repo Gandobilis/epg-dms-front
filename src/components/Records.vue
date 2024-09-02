@@ -6,18 +6,23 @@ const {records, getFees} = useSheets()
 const records1 = ref()
 onMounted(async () => {
   await getFees();
-  records1.value = records.value.filter(rec => !rec.status)
+  records1.value = records.value.filter(rec => rec.status)
 })
-
-const orderN = ref()
-const projectID = ref()
-const withdrawType = ref()
-
-const extractionFee = ref()
 
 import useCenters from "../composables/useCenters.js";
 
-const {getRegionsByParentId, regions, serviceCenters, region, serviceCenter} = useCenters()
+const {
+  getRegionsByParentId,
+  regions,
+  serviceCenters,
+  orderN,
+  region,
+  serviceCenter,
+  projectID,
+  withdrawType,
+  updateRecord,
+  extractionFee
+} = useCenters()
 
 
 onMounted(async () => {
@@ -33,8 +38,8 @@ onMounted(async () => {
     </div>
 
     <div class="flex gap-x-5">
-      <button class="btn btn-sm" @click="records1 = records.filter(rec => rec.status)">შევსებული</button>
-      <button class="btn btn-neutral btn-sm" @click="records1 = records.filter(rec => !rec.status)">შესავსები</button>
+      <button class="btn btn-sm" @click="records1 = records.filter(rec => !rec.status)">შევსებული</button>
+      <button class="btn btn-neutral btn-sm" @click="records1 = records.filter(rec => rec.status)">შესავსები</button>
     </div>
   </div>
 
@@ -151,7 +156,7 @@ onMounted(async () => {
 
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-neutral">შენახვა</button>
+          <button class="btn btn-neutral" @click="updateRecord(); getFees()">შენახვა</button>
         </form>
 
         <form method="dialog">
