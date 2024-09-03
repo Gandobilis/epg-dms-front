@@ -4,7 +4,7 @@ import HeaderComponent from "../components/HeaderComponent.vue"
 
 <template>
   <header-component/>
-  <main class="p-5">
+  <main class="px-5 py-2.5">
     <slot/>
   </main>
 </template>

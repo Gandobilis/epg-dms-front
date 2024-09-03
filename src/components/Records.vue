@@ -19,14 +19,33 @@ const {
   extractionFee
 } = useCenters()
 
+const status = ref('TRANSFERRED')
+
 const handleEditClick = async (extraction) => {
   extractionFee.value = {...extraction};
   if (!extractionFee.value.region) {
     extractionFee.value.region = 'აირჩიეთ რეგიონი';
+  } else {
+    await getRegionsByParentId(regions.value.find(reg => reg.name === extraction.region).id)
   }
+
   if (!extractionFee.value.serviceCenter) {
     extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
   }
+}
+
+const handleSaveClick = async () => {
+  if (!extractionFee.value.orderM || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
+    document.getElementById('my_modal_3').showModal()
+  } else {
+    await updateRecord();
+    await getFees();
+    records1.value = records.value.filter(rec => rec.status === status.value)
+  }
+}
+
+const filterRecords = () => {
+  records1.value = records.value.filter(rec => rec.status === status.value)
 }
 
 onMounted(async () => {
@@ -36,16 +55,13 @@ onMounted(async () => {
 
 <template>
   <div class="flex justify-between">
-    <div class="flex gap-x-5">
-      <router-link class="btn btn-sm" to="/">ატვირთულები</router-link>
-      <router-link class="btn  btn-neutral btn-sm" to="/records">შენახულები</router-link>
-    </div>
-
-    <div class="flex gap-x-5">
-      <button class="btn btn-sm" @click="records1 = records.filter(rec => rec.status === 'TRANSFER_COMPLETE')">
+    <div class="flex gap-x-5 mb-3.5">
+      <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFER_COMPLETE'}"
+              @click="status = 'TRANSFER_COMPLETE'; filterRecords()">
         შევსებული
       </button>
-      <button class="btn btn-neutral btn-sm" @click="records1 = records.filter(rec => rec.status === 'TRANSFERRED')">
+      <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFERRED'}"
+              @click="status = 'TRANSFERRED'; filterRecords()">
         შესავსები
       </button>
     </div>
@@ -87,7 +103,8 @@ onMounted(async () => {
       <td v-text="extraction.totalAmount"/>
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
-      <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer" onclick="my_modal_1.showModal()"
+      <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
+               onclick="my_modal_1.showModal()"
                @click="handleEditClick(extraction)"/>
       </td>
     </tr>
@@ -164,19 +181,36 @@ onMounted(async () => {
       </table>
 
       <div class="flex  justify-between items-center">
-        <textarea v-if="extractionFee"
-                  class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
-                  placeholder="შენიშვნა" v-model="extractionFee.note"></textarea>
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text text-gray-500 font-semibold text-xs">შენიშვნა</span>
+          </div>
+          <textarea v-if="extractionFee"
+                    class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
+                    v-model="extractionFee.note"></textarea>
+        </label>
 
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn btn-neutral" @click="updateRecord(); getFees(); records1 = records.filter(rec => rec.status === 'TRANSFERRED')">შენახვა</button>
+            <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
           </form>
 
           <form method="dialog">
             <button class="btn">გაუქმება</button>
           </form>
         </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="my_modal_3" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">შეცდომა</h3>
+      <p class="py-4">გთხოვთ შეავსოთ ყველა სავადლებულო ველი!</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">დახურვა</button>
+        </form>
       </div>
     </div>
   </dialog>

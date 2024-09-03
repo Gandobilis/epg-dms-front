@@ -59,12 +59,7 @@ watch(endDate, async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between mb-3.5 ml-3.5">
-    <div class="flex gap-x-5">
-      <router-link class="btn btn-sm" to="/">ატვირთულები</router-link>
-      <router-link class="btn btn-sm" to="/records">შენახულები</router-link>
-    </div>
-
+  <div class="flex items-center justify-between mb-3.5">
     <div class="flex items-center gap-x-2.5">
       <input
           ref="fileInput"
