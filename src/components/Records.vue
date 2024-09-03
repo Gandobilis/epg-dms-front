@@ -1,29 +1,33 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import useSheets from "../composables/useSheets.js";
+import {onMounted, ref, watch} from "vue";
+import useCenters from "../composables/useCenters.js"
+import useSheets from "../composables/useSheets.js"
 
 const {records, getFees} = useSheets()
 const records1 = ref()
+
 onMounted(async () => {
   await getFees();
-  records1.value = records.value.filter(rec => rec.status)
+  records1.value = records.value.filter(rec => rec.status === 'TRANSFERRED')
 })
-
-import useCenters from "../composables/useCenters.js";
 
 const {
   getRegionsByParentId,
   regions,
   serviceCenters,
-  orderN,
-  region,
-  serviceCenter,
-  projectID,
-  withdrawType,
   updateRecord,
   extractionFee
 } = useCenters()
 
+const handleEditClick = async (extraction) => {
+  extractionFee.value = {...extraction};
+  if (!extractionFee.value.region) {
+    extractionFee.value.region = 'აირჩიეთ რეგიონი';
+  }
+  if (!extractionFee.value.serviceCenter) {
+    extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
+  }
+}
 
 onMounted(async () => {
   await getRegionsByParentId()
@@ -38,8 +42,12 @@ onMounted(async () => {
     </div>
 
     <div class="flex gap-x-5">
-      <button class="btn btn-sm" @click="records1 = records.filter(rec => !rec.status)">შევსებული</button>
-      <button class="btn btn-neutral btn-sm" @click="records1 = records.filter(rec => rec.status)">შესავსები</button>
+      <button class="btn btn-sm" @click="records1 = records.filter(rec => rec.status === 'TRANSFER_COMPLETE')">
+        შევსებული
+      </button>
+      <button class="btn btn-neutral btn-sm" @click="records1 = records.filter(rec => rec.status === 'TRANSFERRED')">
+        შესავსები
+      </button>
     </div>
   </div>
 
@@ -80,7 +88,8 @@ onMounted(async () => {
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
       <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer" onclick="my_modal_1.showModal()"
-               @click="extractionFee = extraction"/></td>
+               @click="handleEditClick(extraction)"/>
+      </td>
     </tr>
     </tbody>
 
@@ -102,7 +111,7 @@ onMounted(async () => {
   </table>
 
   <dialog id="my_modal_1" class="modal">
-    <div class="modal-box max-w-[95vw]">
+    <div class="modal-box max-w-[95vw] flex flex-col gap-y-3">
       <table class="table table-xs">
         <thead>
         <tr>
@@ -115,7 +124,6 @@ onMounted(async () => {
           <th>ბოლო ცვლილება</th>
           <th>ფაილი</th>
           <th>გადმოტანის თარიღი</th>
-          <th>შენიშვნა</th>
           <th>ატვირთვის თარიღი</th>
           <th>სრული თანხა</th>
           <th>მიზანი</th>
@@ -125,27 +133,28 @@ onMounted(async () => {
         <tbody v-if="extractionFee">
         <tr>
           <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="orderN"/></td>
-          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0" v-model="region"
+                     v-model="extractionFee.orderN"/></td>
+          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                      v-model="extractionFee.region"
                       @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
             <option disabled selected>აირჩიეთ რეგიონი</option>
             <option :value="region.name" v-for="(region, index) in regions" v-text="region.name" :key="index"
                     :data-id="region.id"/>
           </select></td>
-          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0" v-model="serviceCenter">
+          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                      v-model="extractionFee.serviceCenter">
             <option disabled selected>აირჩიეთ სერვისცენტრი</option>
             <option :value="center.name" v-for="(center, index) in serviceCenters" v-text="center.name" :key="index"/>
           </select>
           </td>
           <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="projectID"/></td>
+                     v-model="extractionFee.projectID"/></td>
           <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="withdrawType"/></td>
+                     v-model="extractionFee.withdrawType"/></td>
           <td v-text="extractionFee.clarificationDate"/>
           <td v-text="extractionFee.changeDate"/>
           <th v-text="extractionFee.extractionTask.fileName"/>
           <td v-text="extractionFee.transferDate"/>
-          <td v-text="extractionFee.note"/>
           <td v-text="extractionFee.extractionDate"/>
           <td v-text="extractionFee.totalAmount"/>
           <td v-text="extractionFee.purpose"/>
@@ -154,14 +163,20 @@ onMounted(async () => {
         </tbody>
       </table>
 
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-neutral" @click="updateRecord(); getFees()">შენახვა</button>
-        </form>
+      <div class="flex  justify-between items-center">
+        <textarea v-if="extractionFee"
+                  class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
+                  placeholder="შენიშვნა" v-model="extractionFee.note"></textarea>
 
-        <form method="dialog">
-          <button class="btn">გაუქმება</button>
-        </form>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-neutral" @click="updateRecord(); getFees(); records1 = records.filter(rec => rec.status === 'TRANSFERRED')">შენახვა</button>
+          </form>
+
+          <form method="dialog">
+            <button class="btn">გაუქმება</button>
+          </form>
+        </div>
       </div>
     </div>
   </dialog>
