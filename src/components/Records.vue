@@ -35,7 +35,7 @@ const handleEditClick = async (extraction) => {
 }
 
 const handleSaveClick = async () => {
-  if (!extractionFee.value.orderM || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
+  if (!extractionFee.value.orderN || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
     document.getElementById('my_modal_3').showModal()
   } else {
     await updateRecord();
