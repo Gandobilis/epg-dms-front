@@ -4,7 +4,7 @@ import axios from "../interceptors/axios";
 export default function useSheets() {
     const sheets = ref();
     const currentPage = ref(1);
-    const pageSize = ref(100);
+    const pageSize = ref(10);
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref(1);
@@ -72,7 +72,7 @@ export default function useSheets() {
                 },
             });
             records.value = lastResponse.value.data.data.content;
-            totalPages.value = lastResponse.value.data.data.page.totalPages;
+            totalPages.value = lastResponse.value.data.data.page.totalElements;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }

@@ -3,7 +3,7 @@ import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useSheets from "../composables/useSheets.js"
 
-const {records, getFees} = useSheets()
+const {records, getFees, currentPage, totalPages} = useSheets()
 const records1 = ref()
 
 onMounted(async () => {
@@ -67,7 +67,7 @@ onMounted(async () => {
     </div>
   </div>
 
-  <table class="table table-xs">
+  <table class="table table-xs h-[75vh]">
     <thead>
     <tr>
       <th>ორდერის ნომერი</th>
@@ -127,69 +127,110 @@ onMounted(async () => {
     </tbody>
   </table>
 
+  <div class="join justify-center w-full mt-5">
+    <button class="join-item btn" @click="
+            currentPage = currentPage - 1;
+          getFees(); filterRecords();
+          " :disabled="currentPage === 1">
+      «
+    </button>
+
+    <button class="join-item btn focus:outline-0">
+      {{ currentPage }}
+    </button>
+
+    <button class="join-item btn" @click="
+            currentPage = currentPage + 1;
+          getFees(); filterRecords();
+          " :disabled="currentPage === totalPages">
+      »
+    </button>
+  </div>
+
   <dialog id="my_modal_1" class="modal">
-    <div class="modal-box max-w-[95vw] flex flex-col gap-y-3">
-      <table class="table table-xs">
-        <thead>
-        <tr>
-          <th>ორდერის ნომერი</th>
-          <th>რეგიონი</th>
-          <th>სერვისცენტრი</th>
-          <th>პროექტის Id</th>
-          <th>გადარიხვის ტიპი</th>
-          <th>გარკვევის თარიღი</th>
-          <th>ბოლო ცვლილება</th>
-          <th>ფაილი</th>
-          <th>გადმოტანის თარიღი</th>
-          <th>ატვირთვის თარიღი</th>
-          <th>სრული თანხა</th>
-          <th>მიზანი</th>
-          <th>აღწერა</th>
-        </tr>
-        </thead>
-        <tbody v-if="extractionFee">
-        <tr>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="extractionFee.orderN"/></td>
-          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                      v-model="extractionFee.region"
-                      @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
-            <option disabled selected>აირჩიეთ რეგიონი</option>
-            <option :value="region.name" v-for="(region, index) in regions" v-text="region.name" :key="index"
-                    :data-id="region.id"/>
-          </select></td>
-          <td><select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                      v-model="extractionFee.serviceCenter">
-            <option disabled selected>აირჩიეთ სერვისცენტრი</option>
-            <option :value="center.name" v-for="(center, index) in serviceCenters" v-text="center.name" :key="index"/>
-          </select>
-          </td>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="extractionFee.projectID"/></td>
-          <td><input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                     v-model="extractionFee.withdrawType"/></td>
-          <td v-text="extractionFee.clarificationDate"/>
-          <td v-text="extractionFee.changeDate"/>
-          <th v-text="extractionFee.extractionTask.fileName"/>
-          <td v-text="extractionFee.transferDate"/>
-          <td v-text="extractionFee.extractionDate"/>
-          <td v-text="extractionFee.totalAmount"/>
-          <td v-text="extractionFee.purpose"/>
-          <td v-text="extractionFee.description"/>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="flex  justify-between items-center">
-        <label class="form-control">
-          <div class="label">
-            <span class="label-text text-gray-500 font-semibold text-xs">შენიშვნა</span>
+    <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm">
+      <div class="flex flex-row gap-x-6">
+        <!-- Left Column -->
+        <div class="flex flex-col w-1/2 gap-y-2">
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">ორდერის ნომერი</label>
+            <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                   v-model="extractionFee.orderN"/>
           </div>
-          <textarea v-if="extractionFee"
-                    class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
-                    v-model="extractionFee.note"></textarea>
-        </label>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">რეგიონი</label>
+            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                    v-model="extractionFee.region"
+                    @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
+              <option disabled selected>აირჩიეთ რეგიონი</option>
+              <option :value="region.name" v-for="(region, index) in regions" v-text="region.name" :key="index"
+                      :data-id="region.id"/>
+            </select>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">სერვისცენტრი</label>
+            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                    v-model="extractionFee.serviceCenter">
+              <option disabled selected>აირჩიეთ სერვისცენტრი</option>
+              <option :value="center.name" v-for="(center, index) in serviceCenters" v-text="center.name" :key="index"/>
+            </select>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">პროექტის Id</label>
+            <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                   v-model="extractionFee.projectID"/>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">გადარიხვის ტიპი</label>
+            <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                   v-model="extractionFee.withdrawType"/>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">შენიშვნა</label>
+            <textarea v-if="extractionFee"
+                      class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
+                      v-model="extractionFee.note"></textarea>
+          </div>
+        </div>
 
+        <!-- Right Column -->
+        <div class="flex flex-col justify-between gap-y-2">
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">გარკვევის თარიღი</label>
+            <div v-text="extractionFee.clarificationDate"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">ბოლო ცვლილება</label>
+            <div v-text="extractionFee.changeDate"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">ფაილი</label>
+            <div v-text="extractionFee.extractionTask.fileName"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
+            <div v-text="extractionFee.transferDate"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">ატვირთვის თარიღი</label>
+            <div v-text="extractionFee.extractionDate"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">სრული თანხა</label>
+            <div v-text="extractionFee.totalAmount"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">მიზანი</label>
+            <div v-text="extractionFee.purpose"/>
+          </div>
+          <div class="flex gap-x-2">
+            <label class="font-semibold text-gray-600">აღწერა</label>
+            <div v-text="extractionFee.description"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mt-4">
         <div class="modal-action">
           <form method="dialog">
             <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
@@ -202,6 +243,7 @@ onMounted(async () => {
       </div>
     </div>
   </dialog>
+
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">

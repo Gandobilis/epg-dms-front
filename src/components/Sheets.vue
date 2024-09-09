@@ -105,7 +105,7 @@ watch(endDate, async () => {
     </div>
   </dialog>
 
-  <div class="overflow-x-auto h-[80vh]">
+  <div class="overflow-x-auto h-[75vh]">
     <table class="table table-xs">
       <thead>
       <tr>
