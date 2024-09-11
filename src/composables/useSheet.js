@@ -17,6 +17,7 @@ export default function useSheet() {
     const endDate = ref()
 
     const fetchSheetData = async () => {
+        sheet.value = undefined
         let url;
         const params = {
             page: _currentPage.value,

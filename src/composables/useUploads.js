@@ -1,14 +1,15 @@
 import {ref} from "vue";
 import axios from "../interceptors/axios";
 
-export default function useSheets() {
+export default function useUploads() {
     const sheets = ref();
     const currentPage = ref(1);
-    const pageSize = ref(10);
+    const pageSize = ref(17);
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref(1);
     const records = ref()
+    const status = ref('TRANSFERRED')
 
     const fetchSheets = async () => {
         try {
@@ -65,14 +66,15 @@ export default function useSheets() {
 
     const getFees = async () => {
         try {
-            lastResponse.value = await axios.get(`connection-fees`, {
+            lastResponse.value = await axios.get(`connection-fees/filter`, {
                 params: {
+                    status: status.value,
                     page: currentPage.value,
                     size: pageSize.value,
                 },
             });
             records.value = lastResponse.value.data.data.content;
-            totalPages.value = lastResponse.value.data.data.page.totalElements;
+            totalPages.value = lastResponse.value.data.data.page.totalPages;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }
@@ -109,6 +111,7 @@ export default function useSheets() {
         deleteSheet,
         saveSheet,
         getFees,
-        records
+        records,
+        status
     };
 }

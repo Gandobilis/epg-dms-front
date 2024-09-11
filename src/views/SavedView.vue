@@ -1,14 +1,12 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
-import useSheets from "../composables/useSheets.js"
+import useUploads from "../composables/useUploads.js"
 
-const {records, getFees, currentPage, totalPages} = useSheets()
-const records1 = ref()
+const {records, getFees, currentPage, totalPages, status} = useUploads()
 
 onMounted(async () => {
   await getFees();
-  records1.value = records.value.filter(rec => rec.status === 'TRANSFERRED')
 })
 
 const {
@@ -18,8 +16,6 @@ const {
   updateRecord,
   extractionFee
 } = useCenters()
-
-const status = ref('TRANSFERRED')
 
 const handleEditClick = async (extraction) => {
   extractionFee.value = {...extraction};
@@ -40,12 +36,7 @@ const handleSaveClick = async () => {
   } else {
     await updateRecord();
     await getFees();
-    records1.value = records.value.filter(rec => rec.status === status.value)
   }
-}
-
-const filterRecords = () => {
-  records1.value = records.value.filter(rec => rec.status === status.value)
 }
 
 onMounted(async () => {
@@ -57,80 +48,82 @@ onMounted(async () => {
   <div class="flex justify-between">
     <div class="flex gap-x-5 mb-3.5">
       <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFER_COMPLETE'}"
-              @click="status = 'TRANSFER_COMPLETE'; filterRecords()">
+              @click="status = 'TRANSFER_COMPLETE'; records = undefined; getFees()">
         შევსებული
       </button>
       <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFERRED'}"
-              @click="status = 'TRANSFERRED'; filterRecords()">
+              @click="status = 'TRANSFERRED'; records = undefined; getFees()">
         შესავსები
       </button>
     </div>
   </div>
 
-  <table class="table table-xs h-[75vh]">
-    <thead>
-    <tr>
-      <th>ორდერის ნომერი</th>
-      <th>რეგიონი</th>
-      <th>სერვისცენტრი</th>
-      <th>პროექტის Id</th>
-      <th>გადარიხვის ტიპი</th>
-      <th>გარკვევის თარიღი</th>
-      <th>ბოლო ცვლილება</th>
-      <th>ფაილი</th>
-      <th>გადმოტანის თარიღი</th>
-      <th>შენიშვნა</th>
-      <th>ატვირთვის თარიღი</th>
-      <th>სრული თანხა</th>
-      <th>მიზანი</th>
-      <th>აღწერა</th>
-      <th></th>
-    </tr>
-    </thead>
-    <tbody v-if="records1 && records1.length > 0">
-    <tr v-for="(extraction, index) in records1" :key="index">
-      <td v-text="extraction.orderN"/>
-      <td v-text="extraction.region"/>
-      <td v-text="extraction.serviceCenter"/>
-      <td v-text="extraction.projectID"/>
-      <td v-text="extraction.withdrawType"/>
-      <td v-text="extraction.clarificationDate"/>
-      <td v-text="extraction.changeDate"/>
-      <th v-text="extraction.extractionTask.fileName"/>
-      <td v-text="extraction.transferDate"/>
-      <td v-text="extraction.note"/>
-      <td v-text="extraction.extractionDate"/>
-      <td v-text="extraction.totalAmount"/>
-      <td v-text="extraction.purpose"/>
-      <td v-text="extraction.description"/>
-      <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
-               onclick="my_modal_1.showModal()"
-               @click="handleEditClick(extraction)"/>
-      </td>
-    </tr>
-    </tbody>
+  <div class="h-[75vh]">
+    <table class="table table-xs">
+      <thead>
+      <tr>
+        <th>ორდერის ნომერი</th>
+        <th>რეგიონი</th>
+        <th>სერვისცენტრი</th>
+        <th>პროექტის Id</th>
+        <th>გადარიხვის ტიპი</th>
+        <th>გარკვევის თარიღი</th>
+        <th>ბოლო ცვლილება</th>
+        <th>ფაილი</th>
+        <th>გადმოტანის თარიღი</th>
+        <th>შენიშვნა</th>
+        <th>ატვირთვის თარიღი</th>
+        <th>სრული თანხა</th>
+        <th>მიზანი</th>
+        <th>აღწერა</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody v-if="records && records.length > 0">
+      <tr v-for="(extraction, index) in records" :key="index">
+        <td v-text="extraction.orderN"/>
+        <td v-text="extraction.region"/>
+        <td v-text="extraction.serviceCenter"/>
+        <td v-text="extraction.projectID"/>
+        <td v-text="extraction.withdrawType"/>
+        <td v-text="extraction.clarificationDate"/>
+        <td v-text="extraction.changeDate"/>
+        <th v-text="extraction.extractionTask.fileName"/>
+        <td v-text="extraction.transferDate"/>
+        <td v-text="extraction.note"/>
+        <td v-text="extraction.extractionDate"/>
+        <td v-text="extraction.totalAmount"/>
+        <td v-text="extraction.purpose"/>
+        <td v-text="extraction.description"/>
+        <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
+                 onclick="my_modal_1.showModal()"
+                 @click="handleEditClick(extraction)"/>
+        </td>
+      </tr>
+      </tbody>
 
-    <tbody v-else-if="records1 && records1.length === 0">
-    <tr>
-      <td>
-        ჩანაწერები ვერ მოიძებნა!
-      </td>
-    </tr>
-    </tbody>
+      <tbody v-else-if="records && records.length === 0">
+      <tr>
+        <td>
+          ჩანაწერები ვერ მოიძებნა!
+        </td>
+      </tr>
+      </tbody>
 
-    <tbody v-else>
-    <tr>
-      <td class="flex items-center gap-x-2.5">
-        იტვირთება <span class="loading loading-spinner loading-md"/>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      <tbody v-else>
+      <tr>
+        <td class="flex items-center gap-x-2.5">
+          იტვირთება <span class="loading loading-spinner loading-md"/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div class="join justify-center w-full mt-5">
     <button class="join-item btn" @click="
             currentPage = currentPage - 1;
-          getFees(); filterRecords();
+          getFees();
           " :disabled="currentPage === 1">
       «
     </button>
@@ -141,13 +134,13 @@ onMounted(async () => {
 
     <button class="join-item btn" @click="
             currentPage = currentPage + 1;
-          getFees(); filterRecords();
+          getFees();
           " :disabled="currentPage === totalPages">
       »
     </button>
   </div>
 
-  <dialog id="my_modal_1" class="modal">
+  <dialog id="my_modal_1" class="modal" v-if="extractionFee">
     <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm">
       <div class="flex flex-row gap-x-6">
         <!-- Left Column -->

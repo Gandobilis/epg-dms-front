@@ -1,9 +1,10 @@
 <script setup>
-import useSheets from "/src/composables/useSheets";
+import useUploads from "/src/composables/useUploads";
 import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
+import FileInput from "../components/uploads/FileInput.vue"
 
-const {sheets, currentPage, selectedSheet, totalPages, fetchSheets, createSheet, formatDate, deleteSheet, saveSheet} = useSheets();
+const {sheets, currentPage, totalPages, fetchSheets, formatDate, deleteSheet, saveSheet} = useUploads();
 
 const {
   sheet,
@@ -28,19 +29,6 @@ onMounted(async () => {
 const deleteId = ref();
 const saveId = ref();
 
-const fileInput = ref(null);
-
-const triggerFileInput = () => {
-  fileInput.value.click();
-};
-
-const handleFileChange = async (event) => {
-  selectedSheet.value = event.target.files[0]
-  await createSheet();
-  event.target.value = '';
-  setTimeout(() => selectedSheet.value = '', 2000);
-};
-
 watch(status, async () => {
   await fetchSheetData();
 });
@@ -59,23 +47,7 @@ watch(endDate, async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between mb-3.5">
-    <div class="flex items-center gap-x-2.5">
-      <input
-          ref="fileInput"
-          type="file"
-          @change="handleFileChange"
-          class="hidden"
-      />
-      <button
-          @click="triggerFileInput"
-          class="btn btn-sm"
-      >
-        აირჩიეთ ფაილი
-      </button>
-      <p class="text-sm">{{ selectedSheet ? selectedSheet.name : 'ფაილი არჩეული არ არის' }}</p>
-    </div>
-  </div>
+  <file-input />
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">
@@ -211,7 +183,7 @@ watch(endDate, async () => {
               <td v-text="extraction.purpose"/>
               <td v-text="extraction.description"/>
               <td>
-                <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status"/>
+                <img src="/src/assets/check_circle.svg" alt="check icon" v-if="extraction.status === 'GOOD'"/>
                 <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
               </td>
             </tr>
@@ -294,7 +266,7 @@ watch(endDate, async () => {
       <div class="modal-action">
         <div class="join justify-center w-full">
           <button class="join-item btn" @click="
-            _currentPage = _currentPage - 1;
+            _currentPage = _currentPage - 1; sheet = undefined;
           fetchSheetData();
           " :disabled="_currentPage === 1">
             «
@@ -303,7 +275,7 @@ watch(endDate, async () => {
             {{ _currentPage }}
           </button>
           <button class="join-item btn" @click="
-            _currentPage = _currentPage + 1;
+            _currentPage = _currentPage + 1; sheet = undefined;
           fetchSheetData();
           " :disabled="_currentPage === _totalPages">
             »
