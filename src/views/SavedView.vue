@@ -76,13 +76,19 @@ onMounted(async () => {
     <div class="grid grid-cols-4">
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">რეგიონი</label>
-        <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                v-model="filter.region"
-                @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
-          <option disabled selected>აირჩიეთ რეგიონი</option>
-          <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :key="index"
-                  :data-id="region.id"/>
-        </select>
+        <div class="flex items-center gap-x-1">
+          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                  v-model="filter.region"
+                  @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
+            <option disabled selected>აირჩიეთ რეგიონი</option>
+            <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :key="index"
+                    :data-id="region.id"/>
+          </select>
+
+          <button class="btn btn-sm btn-circle btn-ghost" @click="filter.region = 'აირჩიეთ რეგიონი'">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
@@ -110,11 +116,17 @@ onMounted(async () => {
     <div class="grid grid-cols-4">
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">სერვისცენტრი</label>
-        <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                v-model="filter.serviceCenter">
-          <option disabled selected>აირჩიეთ სერვისცენტრი</option>
-          <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
-        </select>
+        <div class="flex items-center gap-x-1">
+          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                  v-model="filter.serviceCenter">
+            <option disabled selected>აირჩიეთ სერვისცენტრი</option>
+            <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
+          </select>
+
+          <button class="btn btn-sm btn-circle btn-ghost" @click="filter.serviceCenter = 'აირჩიეთ სერვისცენტრი'">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
