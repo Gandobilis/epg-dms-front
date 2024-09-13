@@ -259,7 +259,7 @@ onMounted(async () => {
 
     <div class="flex flex-col gap-y-10 font-medium">
       <div class="flex flex-col gap-y-2.5">
-        <p>ატვირთვის თარიღი</p>
+        <p>ჩარიცხვის თარიღი</p>
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
@@ -314,10 +314,8 @@ onMounted(async () => {
         <th class="flex items-center gap-x-1">ორდერის ნომერი <span class="cursor-pointer" v-text="caret('orderN')"
                                                                    @click="sortBy = 'orderN'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
         </th>
-        <th>რეგიონი <span class="cursor-pointer" v-text="caret('region')"
-                          @click="sortBy = 'region'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>სერვისცენტრი <span class="cursor-pointer" v-text="caret('serviceCenter')"
-                               @click="sortBy = 'serviceCenter'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>რეგიონი</th>
+        <th>სერვისცენტრი</th>
         <th>პროექტის Id <span class="cursor-pointer" v-text="caret('projectID')"
                               @click="sortBy = 'projectID'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th>გადარიხვის ტიპი <span class="cursor-pointer" v-text="caret('withdrawType')"
@@ -326,21 +324,17 @@ onMounted(async () => {
                                    @click="sortBy = 'clarificationDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th>ბოლო ცვლილება <span class="cursor-pointer" v-text="caret('changeDate')"
                                 @click="sortBy = 'changeDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>ფაილი <span class="cursor-pointer" v-text="caret('file')"
-                        @click="sortBy = 'file'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>ფაილი</th>
         <th>გადმოტანის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
                                     @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>შენიშვნა <span class="cursor-pointer" v-text="caret('note')"
-                           @click="sortBy = 'note'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>ატვირთვის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
-                                   @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>შენიშვნა</th>
+        <th>ჩარიცხვის თარიღი <span class="cursor-pointer" v-text="caret('extractionDate')"
+                                   @click="sortBy = 'extractionDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th class="flex items-center gap-x-1">სრული თანხა <span class="cursor-pointer" v-text="caret('totalAmount')"
                                                                 @click="sortBy = 'totalAmount'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
         </th>
-        <th>მიზანი <span class="cursor-pointer" v-text="caret('purpose')"
-                         @click="sortBy = 'purpose'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>აღწერა <span class="cursor-pointer" v-text="caret('description')"
-                         @click="sortBy = 'description'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>მიზანი</th>
+        <th>აღწერა</th>
         <th></th>
       </tr>
       </thead>
@@ -351,10 +345,10 @@ onMounted(async () => {
         <td v-text="extraction.serviceCenter"/>
         <td v-text="extraction.projectID"/>
         <td v-text="extraction.withdrawType"/>
-        <td v-text="extraction.clarificationDate"/>
-        <td v-text="extraction.changeDate"/>
+        <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
+        <td v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
         <th v-text="extraction.extractionTask.fileName"/>
-        <td v-text="extraction.transferDate"/>
+        <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.note"/>
         <td v-text="extraction.extractionDate"/>
         <td v-text="extraction.totalAmount"/>
