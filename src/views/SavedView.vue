@@ -266,7 +266,7 @@ onMounted(async () => {
 
     <button class="btn btn-neutral btn-sm w-fit"
             @click="filter = {
-        status: 'TRANSFERRED',
+        status: filter.status,
         orderN: undefined,
         region: 'აირჩიეთ რეგიონი',
     serviceCenter: 'აირჩიეთ სერვისცენტრი',
