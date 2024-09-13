@@ -27,7 +27,9 @@ export default function useUploads() {
         extractionDateEnd: undefined,
         totalAmount: undefined,
         purpose: undefined,
-
+        note: undefined,
+        description: undefined,
+        filter: undefined
     })
 
     const fetchSheets = async () => {

@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
 
@@ -8,8 +8,6 @@ const {
   getFees,
   currentPage,
   totalPages,
-  _region,
-  _serviceCenter,
   filter
 } = useUploads()
 
@@ -73,7 +71,7 @@ onMounted(async () => {
   </div>
 
   <div class="flex flex-col">
-    <div class="grid grid-cols-4">
+    <div class="grid grid-cols-5">
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">რეგიონი</label>
         <div class="flex items-center gap-x-1">
@@ -111,9 +109,16 @@ onMounted(async () => {
                v-model="filter.withdrawType"
         />
       </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">შენიშვნა</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.note"
+        />
+      </div>
     </div>
 
-    <div class="grid grid-cols-4">
+    <div class="grid grid-cols-5 mt-2.5">
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">სერვისცენტრი</label>
         <div class="flex items-center gap-x-1">
@@ -132,7 +137,7 @@ onMounted(async () => {
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">ფაილი</label>
         <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-        />
+        v-model="filter.file"/>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
@@ -148,24 +153,38 @@ onMounted(async () => {
                v-model="filter.purpose"
         />
       </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">აღწერა</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.description"
+        />
+      </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-4 text-sm py-2.5">
+  <div class="grid grid-cols-5 text-sm py-2.5 items-center">
     <div class="flex flex-col gap-y-10 font-medium">
       <div class="flex flex-col gap-y-2.5">
         <p>გარკვევის თარიღი</p>
 
-        <div class="flex flex-col gap-y-2">
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.clarificationDateStart"/>
-            <span class="text-xs">დან</span>
+        <div class="flex items-center gap-x-1">
+          <div class="flex flex-col gap-y-2">
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.clarificationDateStart"/>
+              <span class="text-xs">დან</span>
+            </div>
+
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.clarificationDateEnd"/>
+              <span class="text-xs">მდე</span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.clarificationDateEnd"/>
-            <span class="text-xs">მდე</span>
-          </div>
+          <button class="btn btn-sm btn-circle btn-ghost"
+                  @click="filter.clarificationDateStart = undefined; filter.clarificationDateEnd = undefined">
+            ✕
+          </button>
         </div>
       </div>
     </div>
@@ -174,16 +193,23 @@ onMounted(async () => {
       <div class="flex flex-col gap-y-2.5">
         <p>ბოლო ცვლილება</p>
 
-        <div class="flex flex-col gap-y-2">
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.changeDateStart"/>
-            <span class="text-xs">დან</span>
+        <div class="flex items-center gap-x-1">
+          <div class="flex flex-col gap-y-2">
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.changeDateStart"/>
+              <span class="text-xs">დან</span>
+            </div>
+
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.changeDateEnd"/>
+              <span class="text-xs">მდე</span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.changeDateEnd"/>
-            <span class="text-xs">მდე</span>
-          </div>
+          <button class="btn btn-sm btn-circle btn-ghost"
+                  @click="filter.changeDateStart = undefined; filter.changeDateEnd = undefined">
+            ✕
+          </button>
         </div>
       </div>
     </div>
@@ -192,16 +218,23 @@ onMounted(async () => {
       <div class="flex flex-col gap-y-2.5">
         <p>გადმოტანის თარიღი</p>
 
-        <div class="flex flex-col gap-y-2">
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.transferDateStart"/>
-            <span class="text-xs">დან</span>
+        <div class="flex items-center gap-x-1">
+          <div class="flex flex-col gap-y-2">
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.transferDateStart"/>
+              <span class="text-xs">დან</span>
+            </div>
+
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.transferDateEnd"/>
+              <span class="text-xs">მდე</span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.transferDateEnd"/>
-            <span class="text-xs">მდე</span>
-          </div>
+          <button class="btn btn-sm btn-circle btn-ghost"
+                  @click="filter.transferDateStart = undefined; filter.transferDateEnd = undefined">
+            ✕
+          </button>
         </div>
       </div>
     </div>
@@ -210,19 +243,50 @@ onMounted(async () => {
       <div class="flex flex-col gap-y-2.5">
         <p>ატვირთვის თარიღი</p>
 
-        <div class="flex flex-col gap-y-2">
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.extractionDateStart"/>
-            <span class="text-xs">დან</span>
+        <div class="flex items-center gap-x-1">
+          <div class="flex flex-col gap-y-2">
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.extractionDateStart"/>
+              <span class="text-xs">დან</span>
+            </div>
+
+            <div class="flex items-center gap-x-2">
+              <input type="date" class="text-sm" v-model="filter.extractionDateEnd"/>
+              <span class="text-xs">მდე</span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-x-2">
-            <input type="date" class="text-sm" v-model="filter.extractionDateEnd"/>
-            <span class="text-xs">მდე</span>
-          </div>
+          <button class="btn btn-sm btn-circle btn-ghost"
+                  @click="filter.extractionDateStart = undefined; filter.extractionDateEnd = undefined">
+            ✕
+          </button>
         </div>
       </div>
     </div>
+
+    <button class="btn btn-neutral btn-sm w-fit"
+            @click="filter = {
+        status: 'TRANSFERRED',
+        orderN: undefined,
+        region: 'აირჩიეთ რეგიონი',
+    serviceCenter: 'აირჩიეთ სერვისცენტრი',
+    projectID: undefined,
+    withdrawType: undefined,
+    clarificationDateStart: undefined,
+    clarificationDateEnd: undefined,
+    changeDateStart: undefined,
+    changeDateEnd: undefined,
+    transferDateStart: undefined,
+    transferDateEnd: undefined,
+    extractionDateStart: undefined,
+    extractionDateEnd: undefined,
+    totalAmount: undefined,
+    purpose: undefined,
+    note: undefined,
+    description: undefined,
+    file: undefined
+    }">გასუფთავება
+    </button>
   </div>
 
   <div class="h-[75vh]">
