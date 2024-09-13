@@ -266,7 +266,7 @@ watch(endDate, async () => {
       <div class="modal-action">
         <div class="join justify-center w-full">
           <button class="join-item btn" @click="
-            _currentPage = _currentPage - 1; sheet = undefined;
+            _currentPage = _currentPage - 1;
           fetchSheetData();
           " :disabled="_currentPage === 1">
             «
@@ -275,7 +275,7 @@ watch(endDate, async () => {
             {{ _currentPage }}
           </button>
           <button class="join-item btn" @click="
-            _currentPage = _currentPage + 1; sheet = undefined;
+            _currentPage = _currentPage + 1;
           fetchSheetData();
           " :disabled="_currentPage === _totalPages">
             »

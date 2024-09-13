@@ -4,12 +4,30 @@ import axios from "../interceptors/axios";
 export default function useUploads() {
     const sheets = ref();
     const currentPage = ref(1);
-    const pageSize = ref(17);
+    const pageSize = ref(10); //17
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref(1);
     const records = ref()
-    const status = ref('TRANSFERRED')
+
+    const filter = ref({
+        status: 'TRANSFERRED',
+        orderN: undefined,
+        region: "აირჩიეთ რეგიონი",
+        serviceCenter: "აირჩიეთ სერვისცენტრი",
+        projectID: undefined,
+        withdrawType: undefined,
+        clarificationDateStart: undefined,
+        clarificationDateEnd: undefined,
+        changeDateStart: undefined,
+        changeDateEnd: undefined,
+        transferDateStart: undefined,
+        transferDateEnd: undefined,
+        extractionDateStart: undefined,
+        extractionDateEnd: undefined,
+        totalAmount: undefined,
+        purpose: undefined
+    })
 
     const fetchSheets = async () => {
         try {
@@ -65,14 +83,21 @@ export default function useUploads() {
     };
 
     const getFees = async () => {
+        records.value = undefined;
+        const params = {
+            page: currentPage.value,
+            size: pageSize.value,
+        }
+
+        const undefinedValues = ["აირჩიეთ რეგიონი", "აირჩიეთ სერვისცენტრი"];
+        const filtered = Object.entries(filter.value)
+            .filter(([_, value]) => value && !undefinedValues.includes(value))
+            .reduce((_, [key, value]) => {
+                params[key] = value;
+            }, {});
+
         try {
-            lastResponse.value = await axios.get(`connection-fees/filter`, {
-                params: {
-                    status: status.value,
-                    page: currentPage.value,
-                    size: pageSize.value,
-                },
-            });
+            lastResponse.value = await axios.get(`connection-fees/filter`, {params});
             records.value = lastResponse.value.data.data.content;
             totalPages.value = lastResponse.value.data.data.page.totalPages;
         } catch (error) {
@@ -112,6 +137,6 @@ export default function useUploads() {
         saveSheet,
         getFees,
         records,
-        status
+        filter
     };
 }

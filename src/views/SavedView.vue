@@ -3,7 +3,15 @@ import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
 
-const {records, getFees, currentPage, totalPages, status} = useUploads()
+const {
+  records,
+  getFees,
+  currentPage,
+  totalPages,
+  _region,
+  _serviceCenter,
+  filter
+} = useUploads()
 
 onMounted(async () => {
   await getFees();
@@ -12,9 +20,11 @@ onMounted(async () => {
 const {
   getRegionsByParentId,
   regions,
+  _regions,
   serviceCenters,
+  _serviceCenters,
   updateRecord,
-  extractionFee
+  extractionFee,
 } = useCenters()
 
 const handleEditClick = async (extraction) => {
@@ -39,6 +49,10 @@ const handleSaveClick = async () => {
   }
 }
 
+watch(filter, async () => {
+  await getFees();
+}, {deep: true})
+
 onMounted(async () => {
   await getRegionsByParentId()
 })
@@ -47,14 +61,155 @@ onMounted(async () => {
 <template>
   <div class="flex justify-between">
     <div class="flex gap-x-5 mb-3.5">
-      <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFER_COMPLETE'}"
-              @click="status = 'TRANSFER_COMPLETE'; records = undefined; getFees()">
+      <button class="btn btn-sm" :class="{'btn-neutral': filter.status === 'TRANSFER_COMPLETE'}"
+              @click="filter.status = 'TRANSFER_COMPLETE'; getFees()">
         შევსებული
       </button>
-      <button class="btn btn-sm" :class="{'btn-neutral': status === 'TRANSFERRED'}"
-              @click="status = 'TRANSFERRED'; records = undefined; getFees()">
+      <button class="btn btn-sm" :class="{'btn-neutral': filter.status === 'TRANSFERRED'}"
+              @click="filter.status = 'TRANSFERRED'; getFees()">
         შესავსები
       </button>
+    </div>
+  </div>
+
+  <div class="flex flex-col">
+    <div class="grid grid-cols-4">
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">რეგიონი</label>
+        <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                v-model="filter.region"
+                @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
+          <option disabled selected>აირჩიეთ რეგიონი</option>
+          <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :key="index"
+                  :data-id="region.id"/>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">ორდერის ნომერი</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.orderN"
+        />
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">პროექტის Id</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.projectID"
+        />
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">გადარიხვის ტიპი</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.withdrawType"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-4">
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">სერვისცენტრი</label>
+        <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                v-model="filter.serviceCenter">
+          <option disabled selected>აირჩიეთ სერვისცენტრი</option>
+          <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">ფაილი</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+        />
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">სრული თანხა</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.totalAmount"
+        />
+      </div>
+
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">მიზანი</label>
+        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+               v-model="filter.purpose"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-4 text-sm py-2.5">
+    <div class="flex flex-col gap-y-10 font-medium">
+      <div class="flex flex-col gap-y-2.5">
+        <p>გარკვევის თარიღი</p>
+
+        <div class="flex flex-col gap-y-2">
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.clarificationDateStart"/>
+            <span class="text-xs">დან</span>
+          </div>
+
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.clarificationDateEnd"/>
+            <span class="text-xs">მდე</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-y-10 font-medium">
+      <div class="flex flex-col gap-y-2.5">
+        <p>ბოლო ცვლილება</p>
+
+        <div class="flex flex-col gap-y-2">
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.changeDateStart"/>
+            <span class="text-xs">დან</span>
+          </div>
+
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.changeDateEnd"/>
+            <span class="text-xs">მდე</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-y-10 font-medium">
+      <div class="flex flex-col gap-y-2.5">
+        <p>გადმოტანის თარიღი</p>
+
+        <div class="flex flex-col gap-y-2">
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.transferDateStart"/>
+            <span class="text-xs">დან</span>
+          </div>
+
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.transferDateEnd"/>
+            <span class="text-xs">მდე</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-y-10 font-medium">
+      <div class="flex flex-col gap-y-2.5">
+        <p>ატვირთვის თარიღი</p>
+
+        <div class="flex flex-col gap-y-2">
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.extractionDateStart"/>
+            <span class="text-xs">დან</span>
+          </div>
+
+          <div class="flex items-center gap-x-2">
+            <input type="date" class="text-sm" v-model="filter.extractionDateEnd"/>
+            <span class="text-xs">მდე</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
