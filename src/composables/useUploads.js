@@ -96,11 +96,31 @@ export default function useUploads() {
             sortDir: sortDir.value
         }
 
-        const undefinedValues = ["აირჩიეთ რეგიონი", "აირჩიეთ სერვისცენტრი"];
+        const dates = [
+            'clarificationDateStart',
+            'clarificationDateEnd',
+            'changeDateStart',
+            'changeDateEnd',
+            'transferDateStart',
+            'transferDateEnd',
+            'extractionDateStart',
+            'extractionDateEnd'
+        ]
+        const undefinedValues = [
+            "აირჩიეთ რეგიონი",
+            "აირჩიეთ სერვისცენტრი"
+        ]
         const filtered = Object.entries(filter.value)
             .filter(([_, value]) => value && !undefinedValues.includes(value))
             .reduce((_, [key, value]) => {
-                params[key] = value;
+                if (dates.includes(key)) {
+                    params[key] = value
+                    if (key.indexOf('extraction') === -1) {
+                        params[key] += ` ${key.indexOf('Start') !== -1 ? '00' : '24'}:00:00.000000`
+                    }
+                } else {
+                    params[key] = value;
+                }
             }, {});
 
         try {
