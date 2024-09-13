@@ -9,6 +9,8 @@ export default function useUploads() {
     const lastResponse = ref();
     const totalPages = ref(1);
     const records = ref()
+    const sortBy = ref("totalAmount")
+    const sortDir = ref("ASC")
 
     const filter = ref({
         status: 'TRANSFERRED',
@@ -29,7 +31,7 @@ export default function useUploads() {
         purpose: undefined,
         note: undefined,
         description: undefined,
-        filter: undefined
+        file: undefined
     })
 
     const fetchSheets = async () => {
@@ -90,6 +92,8 @@ export default function useUploads() {
         const params = {
             page: currentPage.value,
             size: pageSize.value,
+            sortBy: sortBy.value,
+            sortDir: sortDir.value
         }
 
         const undefinedValues = ["აირჩიეთ რეგიონი", "აირჩიეთ სერვისცენტრი"];
@@ -140,6 +144,8 @@ export default function useUploads() {
         saveSheet,
         getFees,
         records,
-        filter
+        filter,
+        sortBy,
+        sortDir
     };
 }

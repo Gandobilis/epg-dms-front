@@ -8,7 +8,9 @@ const {
   getFees,
   currentPage,
   totalPages,
-  filter
+  filter,
+  sortBy,
+  sortDir
 } = useUploads()
 
 onMounted(async () => {
@@ -22,7 +24,7 @@ const {
   serviceCenters,
   _serviceCenters,
   updateRecord,
-  extractionFee,
+  extractionFee
 } = useCenters()
 
 const handleEditClick = async (extraction) => {
@@ -50,6 +52,22 @@ const handleSaveClick = async () => {
 watch(filter, async () => {
   await getFees();
 }, {deep: true})
+
+watch(sortBy, async () => {
+  await getFees();
+})
+
+watch(sortDir, async () => {
+  await getFees();
+})
+
+const caret = (_sortBy) => {
+  if (_sortBy === sortBy.value && sortDir.value === "DESC") {
+    return 'v'
+  }
+
+  return '^'
+}
 
 onMounted(async () => {
   await getRegionsByParentId()
@@ -137,7 +155,7 @@ onMounted(async () => {
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">ფაილი</label>
         <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-        v-model="filter.file"/>
+               v-model="filter.file"/>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
@@ -293,20 +311,36 @@ onMounted(async () => {
     <table class="table table-xs">
       <thead>
       <tr>
-        <th>ორდერის ნომერი</th>
-        <th>რეგიონი</th>
-        <th>სერვისცენტრი</th>
-        <th>პროექტის Id</th>
-        <th>გადარიხვის ტიპი</th>
-        <th>გარკვევის თარიღი</th>
-        <th>ბოლო ცვლილება</th>
-        <th>ფაილი</th>
-        <th>გადმოტანის თარიღი</th>
-        <th>შენიშვნა</th>
-        <th>ატვირთვის თარიღი</th>
-        <th>სრული თანხა</th>
-        <th>მიზანი</th>
-        <th>აღწერა</th>
+        <th class="flex items-center gap-x-1">ორდერის ნომერი <span class="cursor-pointer" v-text="caret('orderN')"
+                                                                   @click="sortBy = 'orderN'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
+        <th>რეგიონი <span class="cursor-pointer" v-text="caret('region')"
+                          @click="sortBy = 'region'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>სერვისცენტრი <span class="cursor-pointer" v-text="caret('serviceCenter')"
+                               @click="sortBy = 'serviceCenter'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>პროექტის Id <span class="cursor-pointer" v-text="caret('projectID')"
+                              @click="sortBy = 'projectID'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>გადარიხვის ტიპი <span class="cursor-pointer" v-text="caret('withdrawType')"
+                                  @click="sortBy = 'withdrawType'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>გარკვევის თარიღი <span class="cursor-pointer" v-text="caret('clarificationDate')"
+                                   @click="sortBy = 'clarificationDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>ბოლო ცვლილება <span class="cursor-pointer" v-text="caret('changeDate')"
+                                @click="sortBy = 'changeDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>ფაილი <span class="cursor-pointer" v-text="caret('file')"
+                        @click="sortBy = 'file'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>გადმოტანის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
+                                    @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>შენიშვნა <span class="cursor-pointer" v-text="caret('note')"
+                           @click="sortBy = 'note'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>ატვირთვის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
+                                   @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th class="flex items-center gap-x-1">სრული თანხა <span class="cursor-pointer" v-text="caret('totalAmount')"
+                                                                @click="sortBy = 'totalAmount'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
+        <th>მიზანი <span class="cursor-pointer" v-text="caret('purpose')"
+                         @click="sortBy = 'purpose'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+        <th>აღწერა <span class="cursor-pointer" v-text="caret('description')"
+                         @click="sortBy = 'description'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th></th>
       </tr>
       </thead>
