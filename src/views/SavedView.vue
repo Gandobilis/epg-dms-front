@@ -29,6 +29,7 @@ const {
 
 const handleEditClick = async (extraction) => {
   extractionFee.value = {...extraction};
+  document.getElementById('my_modal_1').showModal();
   if (!extractionFee.value.region) {
     extractionFee.value.region = 'აირჩიეთ რეგიონი';
   } else {
@@ -355,7 +356,6 @@ onMounted(async () => {
         <td v-text="extraction.purpose"/>
         <td v-text="extraction.description"/>
         <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
-                 onclick="my_modal_1.showModal()"
                  @click="handleEditClick(extraction)"/>
         </td>
       </tr>
@@ -495,7 +495,6 @@ onMounted(async () => {
       </div>
     </div>
   </dialog>
-
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">
