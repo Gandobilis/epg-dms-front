@@ -56,6 +56,7 @@ export default function useUploads() {
 
     const fetchSheets = async () => {
         try {
+            sheets.value = undefined;
             lastResponse.value = await axios.get(`extraction-task/all-upls`, {
                 params: {
                     page: currentPage.value,

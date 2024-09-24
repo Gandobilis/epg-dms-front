@@ -1,8 +1,5 @@
 <script setup>
 import {ref} from "vue";
-import useUploads from "../../composables/useUploads.js";
-
-const {selectedSheet, createSheet} = useUploads()
 
 const fileInput = ref(null);
 
@@ -10,12 +7,15 @@ const triggerFileInput = () => {
   fileInput.value.click();
 };
 
+const emit = defineEmits(['createSheet'])
+
+const model = defineModel()
+
 const handleFileChange = async (event) => {
-  selectedSheet.value = event.target.files[0]
-  createSheet().then(() => {
-    event.target.value = '';
-    selectedSheet.value = ''
-  });
+  model.value = event.target.files[0]
+  emit('createSheet')
+  event.target.value = '';
+  model.value = ''
 };
 </script>
 

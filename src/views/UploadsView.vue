@@ -4,7 +4,7 @@ import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 import FileInput from "../components/uploads/FileInput.vue"
 
-const {sheets, currentPage, totalPages, fetchSheets, formatDate, deleteSheet, saveSheet} = useUploads();
+const {sheets, currentPage, totalPages, fetchSheets, formatDate, deleteSheet, saveSheet, createSheet, selectedSheet} = useUploads();
 
 const {
   sheet,
@@ -47,7 +47,7 @@ watch(endDate, async () => {
 </script>
 
 <template>
-  <file-input />
+  <file-input v-model="selectedSheet" @createSheet="createSheet"/>
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">
@@ -100,8 +100,8 @@ watch(endDate, async () => {
         </td>
         <td v-text="formatDate(sheet.date)"/>
         <td>
-          <img src="/src/assets/check_circle.svg" alt="check icon" v-if="sheet.status"/>
-          <img src="/src/assets/warning.svg" alt="warning icon" v-else/>
+          <img src="/src/assets/check_circle.svg" alt="check icon" v-if="sheet.status === 'GOOD' || sheet.status === 'TRANSFERRED_GOOD'"/>
+          <img src="/src/assets/warning.svg" alt="warning icon" v-else-if="sheet.status === 'WARNING' ||  sheet.status === 'TRANSFERRED_WARNING'"/>
         </td>
         <td>
           <img src="/src/assets/visibility.svg" alt="view icon" class="cursor-pointer"
@@ -112,8 +112,9 @@ watch(endDate, async () => {
                onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
         <td>
-          <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"
-               onclick="my_modal_4.showModal()" class="cursor-pointer"/>
+          <button onclick="my_modal_4.showModal()" :class="{'cursor-not-allowed': sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'}" :disabled="sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'">
+            <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"/>
+          </button>
         </td>
       </tr>
       </tbody>
