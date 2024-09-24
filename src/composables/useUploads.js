@@ -72,11 +72,7 @@ export default function useUploads() {
 
     const deleteSheet = async (sheetId) => {
         try {
-            await axios.delete(`excels/delete`, {
-                params: {
-                    taskId: sheetId,
-                },
-            });
+            await axios.delete(`connection-fees/delete-by-task/${sheetId}`);
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
