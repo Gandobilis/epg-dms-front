@@ -35,6 +35,10 @@ export default function useCenters() {
         if (!extractionFee.value.serviceCenter) {
             extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
         }
+
+        if (!extractionFee.value.withdrawType) {
+            extractionFee.value.withdrawType = 'აირჩიეთ გადარიცხვის ტიპი';
+        }
     }
 
     const getRegionsByParentId = async (parentId = 68) => {

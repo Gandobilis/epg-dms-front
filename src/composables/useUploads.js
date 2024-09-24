@@ -18,7 +18,7 @@ export default function useUploads() {
         region: "აირჩიეთ რეგიონი",
         serviceCenter: "აირჩიეთ სერვისცენტრი",
         projectID: undefined,
-        withdrawType: undefined,
+        withdrawType: "აირჩიეთ გადარიცხვის ტიპი",
         clarificationDateStart: undefined,
         clarificationDateEnd: undefined,
         changeDateStart: undefined,
@@ -129,9 +129,10 @@ export default function useUploads() {
         ]
         const undefinedValues = [
             "აირჩიეთ რეგიონი",
-            "აირჩიეთ სერვისცენტრი"
+            "აირჩიეთ სერვისცენტრი",
+            "აირჩიეთ გადარიცხვის ტიპი"
         ]
-        const filtered = Object.entries(filter.value)
+        Object.entries(filter.value)
             .filter(([_, value]) => value && !undefinedValues.includes(value))
             .reduce((_, [key, value]) => {
                 if (dates.includes(key)) {

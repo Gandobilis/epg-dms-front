@@ -38,6 +38,45 @@ onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
 })
+
+const withdrawTypes = [
+  '1 (პირველი გადახდა)',
+  '2 (მეორე გადახდა)',
+  '3 (სრული საფასურის გადახდა)',
+  '4 (ერთანი გადახდა, გადანაწილებული რამოდენიმე პროექტის საფასურად)',
+  '5 (სავარაუდოდ არაა ახალი მიერთების საფასური)',
+  '6 (თანხის დაბრუნება)',
+  '7 (გადანაწილებული გადახდა / რამოდენიმეჯერ გადახდა)',
+  '8 (სააბონენტო ბარათზე თანხის დასმა)',
+  '9 (ხაზის მშენებლობა / არარეგულირებული პროექტები (პირველი ან სრული გადახდა))',
+  '10 (სისტემის ნებართვის საფასური)',
+  '11 (ხაზის მშენებლობა / არარეგულირებული პროექტები (მეორე გადახდა))',
+  '12 (სააბონენტო ბარათიდან თანხის გადმოტანა)',
+  '13 (ჯარიმის გადატანა)',
+  '14 (საპროექტო ტრასის შეტანხმება)',
+  '15 (ჰესები DDSH)',
+  '16 (ჰესები DDNA)'
+];
+
+
+const sortOptions = [
+  'N',
+  'ორდერის N',
+  'რეგიონი',
+  'სერვისცენტრი',
+  'პროექტის N',
+  'გადარიხვის ტიპი',
+  'გარკვევის თარიღი',
+  'ბოლო ცვლილება',
+  'გადმოტანის თარიღი',
+  'შენიშვნა',
+  'ჩარიცხვის თარიღი',
+  'სრული თანხა',
+  'მიზანი',
+  'აღწერა'
+];
+
+const _sortOptions = ['ზრდადობით', 'კლებადობით']
 </script>
 
 <template>
@@ -75,10 +114,18 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">გადარიხვის ტიპი</label>
-        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-               v-model="filter.withdrawType"
-        />
+        <label class="font-semibold text-gray-600">გადარიცხვის ტიპი</label>
+        <div class="flex items-center gap-x-1">
+          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                  v-model="filter.withdrawType">
+            <option disabled selected>აირჩიეთ გადარიცხვის ტიპი</option>
+            <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
+          </select>
+
+          <button class="btn btn-sm btn-circle btn-ghost" @click="filter.withdrawType = 'აირჩიეთ გადარიცხვის ტიპი'">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
@@ -228,7 +275,7 @@ onMounted(async () => {
         region: 'აირჩიეთ რეგიონი',
     serviceCenter: 'აირჩიეთ სერვისცენტრი',
     projectID: undefined,
-    withdrawType: undefined,
+    withdrawType: 'აირჩიეთ გადარიცხვის ტიპი',
     clarificationDateStart: undefined,
     clarificationDateEnd: undefined,
     changeDateStart: undefined,
@@ -250,33 +297,18 @@ onMounted(async () => {
     <table class="table table-xs">
       <thead>
       <tr>
-        <th># <span class="cursor-pointer" v-text="caret('id')"
-                    @click="sortBy = 'id'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th class="flex items-center gap-x-1">ორდერის ნომერი <span class="cursor-pointer" v-text="caret('orderN')"
-                                                                   @click="sortBy = 'orderN'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
+        <th>N</th>
+        <th class="flex items-center gap-x-1">ორდერის ნომერი</th>
         <th>რეგიონი</th>
         <th>სერვისცენტრი</th>
-        <th>პროექტის Id <span class="cursor-pointer" v-text="caret('projectID')"
-                              @click="sortBy = 'projectID'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>გადარიხვის ტიპი <span class="cursor-pointer" v-text="caret('withdrawType')"
-                                  @click="sortBy = 'withdrawType'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
-        <th>გარკვევის თარიღი <span class="cursor-pointer" v-text="caret('clarificationDate')"
-                                   @click="sortBy = 'clarificationDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
-        <th>ბოლო ცვლილება <span class="cursor-pointer" v-text="caret('changeDate')"
-                                @click="sortBy = 'changeDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>გადმოტანის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
-                                    @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
+        <th>პროექტის Id</th>
+        <th>გადარიხვის ტიპი</th>
+        <th>გარკვევის თარიღი</th>
+        <th>ბოლო ცვლილება</th>
+        <th>გადმოტანის თარიღი</th>
         <th>შენიშვნა</th>
-        <th>ჩარიცხვის თარიღი <span class="cursor-pointer" v-text="caret('extractionDate')"
-                                   @click="sortBy = 'extractionDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
-        <th class="flex items-center gap-x-1">სრული თანხა <span class="cursor-pointer" v-text="caret('totalAmount')"
-                                                                @click="sortBy = 'totalAmount'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
-        </th>
+        <th>ჩარიცხვის თარიღი</th>
+        <th>სრული თანხა</th>
         <th>მიზანი</th>
         <th>აღწერა</th>
         <th></th>
@@ -376,9 +408,12 @@ onMounted(async () => {
                    v-model="extractionFee.projectID"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">გადარიხვის ტიპი</label>
-            <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                   v-model="extractionFee.withdrawType"/>
+            <label class="font-semibold text-gray-600">გადარიცხვის ტიპი</label>
+            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                    v-model="extractionFee.withdrawType">
+              <option disabled selected>აირჩიეთ გადარიცხვის ტიპი</option>
+              <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
+            </select>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">შენიშვნა</label>
