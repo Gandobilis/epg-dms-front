@@ -343,7 +343,7 @@ onMounted(async () => {
   </div>
 
   <dialog id="my_modal_1" class="modal">
-    <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm">
+    <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
       <div class="flex flex-row gap-x-6">
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
