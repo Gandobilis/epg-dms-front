@@ -320,26 +320,26 @@ onMounted(async () => {
       </tr>
       </tbody>
     </table>
-  </div>
 
-  <div class="join justify-center w-full mt-5">
-    <button class="join-item btn" @click="
+    <div class="join justify-center w-full my-5" v-if="records && records.length > 0">
+      <button class="join-item btn" @click="
             currentPage = currentPage - 1;
           getFees();
           " :disabled="currentPage === 1">
-      «
-    </button>
+        «
+      </button>
 
-    <button class="join-item btn focus:outline-0">
-      {{ currentPage }}
-    </button>
+      <button class="join-item btn focus:outline-0">
+        {{ currentPage }}
+      </button>
 
-    <button class="join-item btn" @click="
+      <button class="join-item btn" @click="
             currentPage = currentPage + 1;
           getFees();
           " :disabled="currentPage === totalPages">
-      »
-    </button>
+        »
+      </button>
+    </div>
   </div>
 
   <dialog id="my_modal_1" class="modal">
