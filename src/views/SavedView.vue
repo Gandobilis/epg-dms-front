@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
 
@@ -11,7 +11,6 @@ const {
   filter,
   sortBy,
   sortDir,
-  caret
 } = useUploads()
 
 const {
@@ -60,23 +59,37 @@ const withdrawTypes = [
 
 
 const sortOptions = [
-  'N',
-  'ორდერის N',
-  'რეგიონი',
-  'სერვისცენტრი',
-  'პროექტის N',
-  'გადარიხვის ტიპი',
-  'გარკვევის თარიღი',
-  'ბოლო ცვლილება',
-  'გადმოტანის თარიღი',
-  'შენიშვნა',
-  'ჩარიცხვის თარიღი',
-  'სრული თანხა',
-  'მიზანი',
-  'აღწერა'
+  {text: 'N კლებადი', by: 'id', dir: 'DESC'},
+  {text: 'N ზრდადი', by: 'id', dir: 'ASC'},
+  {text: 'ორდერის N კლებადი', by: 'orderN', dir: 'DESC'},
+  {text: 'ორდერის N ზრდადი', by: 'orderN', dir: 'ASC'},
+  {text: 'რეგიონი კლებადი', by: 'region', dir: 'DESC'},
+  {text: 'რეგიონი ზრდადი', by: 'region', dir: 'ASC'},
+  {text: 'სერვისცენტრი კლებადი', by: 'serviceCenter', dir: 'DESC'},
+  {text: 'სერვისცენტრი ზრდადი', by: 'serviceCenter', dir: 'ASC'},
+  {text: 'პროექტის N კლებადი', by: 'projectID', dir: 'DESC'},
+  {text: 'პროექტის N ზრდადი', by: 'projectID', dir: 'ASC'},
+  {text: 'გადარიხვის ტიპი კლებადი', by: 'withdrawType', dir: 'DESC'},
+  {text: 'გადარიხვის ტიპი ზრდადი', by: 'withdrawType', dir: 'ASC'},
+  {text: 'გარკვევის თარიღი კლებადი', by: 'clarificationDate', dir: 'DESC'},
+  {text: 'გარკვევის თარიღი ზრდადი', by: 'clarificationDate', dir: 'ASC'},
+  {text: 'ბოლო ცვლილება კლებადი', by: 'changeDate', dir: 'DESC'},
+  {text: 'ბოლო ცვლილება ზრდადი', by: 'changeDate', dir: 'ASC'},
+  {text: 'გადმოტანის თარიღი კლებადი', by: 'transferDate', dir: 'DESC'},
+  {text: 'გადმოტანის თარიღი ზრდადი', by: 'transferDate', dir: 'ASC'},
+  {text: 'ჩარიცხვის თარიღი კლებადი', by: 'extractionDate', dir: 'DESC'},
+  {text: 'ჩარიცხვის თარიღი ზრდადი', by: 'extractionDate', dir: 'ASC'},
+  {text: 'სრული თანხა კლებადი', by: 'totalAmount', dir: 'DESC'},
+  {text: 'სრული თანხა ზრდადი', by: 'totalAmount', dir: 'ASC'},
 ];
 
-const _sortOptions = ['ზრდადობით', 'კლებადობით']
+
+const sortByDir = ref('დალაგება');
+
+watch(sortByDir, (newSortDir) => {
+  sortBy.value = newSortDir.by;
+  sortDir.value = newSortDir.dir;
+})
 </script>
 
 <template>
@@ -173,21 +186,17 @@ const _sortOptions = ['ზრდადობით', 'კლებადობ�
         />
       </div>
 
-      <div class="flex items-center gap-x-4 pt-5">
-        <label class="flex items-center gap-x-1">
-          <input type="radio" name="status" class="radio radio-xs" value="" v-model="filter.status" checked/>
-          ორივე
-        </label>
-        <label class="flex items-center gap-x-1">
-          <input type="radio" name="status" class="radio radio-xs" v-model="filter.status" value="TRANSFER_COMPLETE"/>
-          შევსებული
-        </label>
-        <label class="flex items-center gap-x-1">
-          <input type="radio" name="status" class="radio radio-xs" v-model="filter.status" value="TRANSFERRED"/>
-          შესავსები
-        </label>
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">სტატუსი</label>
+        <div class="flex items-center gap-x-1">
+          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                  v-model="filter.status">
+            <option :value="undefined" selected>ორივე</option>
+            <option value="TRANSFER_COMPLETE">შევსებული</option>
+            <option value="TRANSFERRED">შესავსები</option>
+          </select>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -268,8 +277,25 @@ const _sortOptions = ['ზრდადობით', 'კლებადობ�
       </div>
     </div>
 
-    <button class="btn btn-neutral btn-sm w-fit"
-            @click="filter = {
+    <div class="grid grid-cols-2 items-end gap-x-2.5">
+      <div class="flex flex-col gap-y-2 text-sm">
+        <label class="font-semibold text-gray-600">დალაგება</label>
+        <div class="flex items-center gap-x-1">
+          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                  v-model="sortByDir">
+            <option disabled selected>დალაგება</option>
+            <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
+          </select>
+
+          <button class="btn btn-sm btn-circle btn-ghost"
+                  @click="sortByDir = 'დალაგება'">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-neutral btn-sm w-fit"
+              @click="filter = {
         status: filter.status,
         orderN: undefined,
         region: 'აირჩიეთ რეგიონი',
@@ -290,7 +316,8 @@ const _sortOptions = ['ზრდადობით', 'კლებადობ�
     description: undefined,
     file: undefined
     }">გასუფთავება
-    </button>
+      </button>
+    </div>
   </div>
 
   <div class="h-[75vh]">

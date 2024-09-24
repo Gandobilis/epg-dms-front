@@ -34,14 +34,6 @@ export default function useUploads() {
         file: undefined
     })
 
-    const caret = (_sortBy) => {
-        if (_sortBy === sortBy.value && sortDir.value === "DESC") {
-            return 'v'
-        }
-
-        return '^'
-    }
-
     watch(filter, async () => {
         await getFees();
     }, {deep: true})
@@ -189,6 +181,5 @@ export default function useUploads() {
         filter,
         sortBy,
         sortDir,
-        caret
     };
 }
