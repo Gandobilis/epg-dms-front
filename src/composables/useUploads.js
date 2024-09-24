@@ -4,13 +4,13 @@ import axios from "../interceptors/axios";
 export default function useUploads() {
     const sheets = ref();
     const currentPage = ref(1);
-    const pageSize = ref(17); //17
+    const pageSize = ref(10);
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref(1);
     const records = ref()
-    const sortBy = ref("totalAmount")
-    const sortDir = ref("ASC")
+    const sortBy = ref()
+    const sortDir = ref()
 
     const filter = ref({
         status: undefined,
@@ -37,14 +37,6 @@ export default function useUploads() {
     watch(filter, async () => {
         await getFees();
     }, {deep: true})
-
-    watch(sortBy, async () => {
-        await getFees();
-    })
-
-    watch(sortDir, async () => {
-        await getFees();
-    })
 
     const fetchSheets = async () => {
         try {
@@ -103,10 +95,10 @@ export default function useUploads() {
     const getFees = async () => {
         records.value = undefined;
         const params = {
+            sortBy: sortBy.value,
+            sortDir: sortDir.value,
             page: currentPage.value,
             size: pageSize.value,
-            sortBy: sortBy.value,
-            sortDir: sortDir.value
         }
 
         const dates = [
@@ -164,6 +156,68 @@ export default function useUploads() {
         return `${year} წლის ${day} ${month}, ${hours}:${minutes}:${seconds}`;
     }
 
+    const withdrawTypes = [
+        '1 (პირველი გადახდა)',
+        '2 (მეორე გადახდა)',
+        '3 (სრული საფასურის გადახდა)',
+        '4 (ერთანი გადახდა, გადანაწილებული რამოდენიმე პროექტის საფასურად)',
+        '5 (სავარაუდოდ არაა ახალი მიერთების საფასური)',
+        '6 (თანხის დაბრუნება)',
+        '7 (გადანაწილებული გადახდა / რამოდენიმეჯერ გადახდა)',
+        '8 (სააბონენტო ბარათზე თანხის დასმა)',
+        '9 (ხაზის მშენებლობა / არარეგულირებული პროექტები (პირველი ან სრული გადახდა))',
+        '10 (სისტემის ნებართვის საფასური)',
+        '11 (ხაზის მშენებლობა / არარეგულირებული პროექტები (მეორე გადახდა))',
+        '12 (სააბონენტო ბარათიდან თანხის გადმოტანა)',
+        '13 (ჯარიმის გადატანა)',
+        '14 (საპროექტო ტრასის შეტანხმება)',
+        '15 (ჰესები DDSH)',
+        '16 (ჰესები DDNA)'
+    ];
+
+
+    const sortOptions = [
+        {text: 'N კლებადი', by: 'id', dir: 'DESC'},
+        {text: 'N ზრდადი', by: 'id', dir: 'ASC'},
+        {text: 'ორდერის N კლებადი', by: 'orderN', dir: 'DESC'},
+        {text: 'ორდერის N ზრდადი', by: 'orderN', dir: 'ASC'},
+        {text: 'რეგიონი კლებადი', by: 'region', dir: 'DESC'},
+        {text: 'რეგიონი ზრდადი', by: 'region', dir: 'ASC'},
+        {text: 'სერვისცენტრი კლებადი', by: 'serviceCenter', dir: 'DESC'},
+        {text: 'სერვისცენტრი ზრდადი', by: 'serviceCenter', dir: 'ASC'},
+        {text: 'პროექტის N კლებადი', by: 'projectID', dir: 'DESC'},
+        {text: 'პროექტის N ზრდადი', by: 'projectID', dir: 'ASC'},
+        {text: 'გადარიხვის ტიპი კლებადი', by: 'withdrawType', dir: 'DESC'},
+        {text: 'გადარიხვის ტიპი ზრდადი', by: 'withdrawType', dir: 'ASC'},
+        {text: 'გარკვევის თარიღი კლებადი', by: 'clarificationDate', dir: 'DESC'},
+        {text: 'გარკვევის თარიღი ზრდადი', by: 'clarificationDate', dir: 'ASC'},
+        {text: 'ბოლო ცვლილება კლებადი', by: 'changeDate', dir: 'DESC'},
+        {text: 'ბოლო ცვლილება ზრდადი', by: 'changeDate', dir: 'ASC'},
+        {text: 'გადმოტანის თარიღი კლებადი', by: 'transferDate', dir: 'DESC'},
+        {text: 'გადმოტანის თარიღი ზრდადი', by: 'transferDate', dir: 'ASC'},
+        {text: 'ჩარიცხვის თარიღი კლებადი', by: 'extractionDate', dir: 'DESC'},
+        {text: 'ჩარიცხვის თარიღი ზრდადი', by: 'extractionDate', dir: 'ASC'},
+        {text: 'სრული თანხა კლებადი', by: 'totalAmount', dir: 'DESC'},
+        {text: 'სრული თანხა ზრდადი', by: 'totalAmount', dir: 'ASC'},
+    ];
+
+
+    const sortByDir = ref(sortOptions[1]);
+
+    const pageOptions = [
+        10, 25, 50, 100, 250, 500, 1000
+    ];
+
+    watch(sortByDir, async (newSortDir) => {
+        sortBy.value = newSortDir.by;
+        sortDir.value = newSortDir.dir;
+        await getFees();
+    })
+
+    watch(pageSize, async () => {
+        await getFees();
+    })
+
     return {
         sheets,
         currentPage,
@@ -181,5 +235,9 @@ export default function useUploads() {
         filter,
         sortBy,
         sortDir,
+        sortByDir,
+        withdrawTypes,
+        sortOptions,
+        pageOptions,
     };
 }

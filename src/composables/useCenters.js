@@ -67,6 +67,17 @@ export default function useCenters() {
         }
     }
 
+
+    const deleteRecord = async () => {
+        try {
+            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`);
+            extractionFee.value = undefined;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
     return {
         getRegionsByParentId,
         regions,
@@ -75,6 +86,7 @@ export default function useCenters() {
         _serviceCenters,
         updateRecord,
         extractionFee,
-        handleEditClick
+        handleEditClick,
+        deleteRecord
     };
 }

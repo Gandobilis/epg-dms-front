@@ -9,8 +9,11 @@ const {
   currentPage,
   totalPages,
   filter,
-  sortBy,
-  sortDir,
+  pageSize,
+  withdrawTypes,
+  sortOptions,
+  pageOptions,
+  sortByDir,
 } = useUploads()
 
 const {
@@ -22,6 +25,7 @@ const {
   updateRecord,
   extractionFee,
   handleEditClick,
+  deleteRecord
 } = useCenters()
 
 const handleSaveClick = async () => {
@@ -33,62 +37,14 @@ const handleSaveClick = async () => {
   }
 }
 
+const handleDeleteClick = async () => {
+  await deleteRecord();
+  await getFees();
+}
+
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
-})
-
-const withdrawTypes = [
-  '1 (პირველი გადახდა)',
-  '2 (მეორე გადახდა)',
-  '3 (სრული საფასურის გადახდა)',
-  '4 (ერთანი გადახდა, გადანაწილებული რამოდენიმე პროექტის საფასურად)',
-  '5 (სავარაუდოდ არაა ახალი მიერთების საფასური)',
-  '6 (თანხის დაბრუნება)',
-  '7 (გადანაწილებული გადახდა / რამოდენიმეჯერ გადახდა)',
-  '8 (სააბონენტო ბარათზე თანხის დასმა)',
-  '9 (ხაზის მშენებლობა / არარეგულირებული პროექტები (პირველი ან სრული გადახდა))',
-  '10 (სისტემის ნებართვის საფასური)',
-  '11 (ხაზის მშენებლობა / არარეგულირებული პროექტები (მეორე გადახდა))',
-  '12 (სააბონენტო ბარათიდან თანხის გადმოტანა)',
-  '13 (ჯარიმის გადატანა)',
-  '14 (საპროექტო ტრასის შეტანხმება)',
-  '15 (ჰესები DDSH)',
-  '16 (ჰესები DDNA)'
-];
-
-
-const sortOptions = [
-  {text: 'N კლებადი', by: 'id', dir: 'DESC'},
-  {text: 'N ზრდადი', by: 'id', dir: 'ASC'},
-  {text: 'ორდერის N კლებადი', by: 'orderN', dir: 'DESC'},
-  {text: 'ორდერის N ზრდადი', by: 'orderN', dir: 'ASC'},
-  {text: 'რეგიონი კლებადი', by: 'region', dir: 'DESC'},
-  {text: 'რეგიონი ზრდადი', by: 'region', dir: 'ASC'},
-  {text: 'სერვისცენტრი კლებადი', by: 'serviceCenter', dir: 'DESC'},
-  {text: 'სერვისცენტრი ზრდადი', by: 'serviceCenter', dir: 'ASC'},
-  {text: 'პროექტის N კლებადი', by: 'projectID', dir: 'DESC'},
-  {text: 'პროექტის N ზრდადი', by: 'projectID', dir: 'ASC'},
-  {text: 'გადარიხვის ტიპი კლებადი', by: 'withdrawType', dir: 'DESC'},
-  {text: 'გადარიხვის ტიპი ზრდადი', by: 'withdrawType', dir: 'ASC'},
-  {text: 'გარკვევის თარიღი კლებადი', by: 'clarificationDate', dir: 'DESC'},
-  {text: 'გარკვევის თარიღი ზრდადი', by: 'clarificationDate', dir: 'ASC'},
-  {text: 'ბოლო ცვლილება კლებადი', by: 'changeDate', dir: 'DESC'},
-  {text: 'ბოლო ცვლილება ზრდადი', by: 'changeDate', dir: 'ASC'},
-  {text: 'გადმოტანის თარიღი კლებადი', by: 'transferDate', dir: 'DESC'},
-  {text: 'გადმოტანის თარიღი ზრდადი', by: 'transferDate', dir: 'ASC'},
-  {text: 'ჩარიცხვის თარიღი კლებადი', by: 'extractionDate', dir: 'DESC'},
-  {text: 'ჩარიცხვის თარიღი ზრდადი', by: 'extractionDate', dir: 'ASC'},
-  {text: 'სრული თანხა კლებადი', by: 'totalAmount', dir: 'DESC'},
-  {text: 'სრული თანხა ზრდადი', by: 'totalAmount', dir: 'ASC'},
-];
-
-
-const sortByDir = ref('დალაგება');
-
-watch(sortByDir, (newSortDir) => {
-  sortBy.value = newSortDir.by;
-  sortDir.value = newSortDir.dir;
 })
 </script>
 
@@ -277,20 +233,26 @@ watch(sortByDir, (newSortDir) => {
       </div>
     </div>
 
-    <div class="grid grid-cols-2 items-end gap-x-2.5">
-      <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">დალაგება</label>
-        <div class="flex items-center gap-x-1">
-          <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                  v-model="sortByDir">
-            <option disabled selected>დალაგება</option>
-            <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
-          </select>
+    <div class="grid grid-cols-2 items-center gap-x-2.5">
+      <div class="grid grid-rows-2 gap-y-2.5">
+        <div class="flex flex-col gap-y-2 text-sm">
+          <div class="flex items-center gap-x-1">
+            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                    v-model="sortByDir">
+              <option disabled>დალაგება</option>
+              <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
+            </select>
+          </div>
+        </div>
 
-          <button class="btn btn-sm btn-circle btn-ghost"
-                  @click="sortByDir = 'დალაგება'">
-            ✕
-          </button>
+        <div class="flex flex-col gap-y-2 text-sm">
+          <div class="flex items-center gap-x-1">
+            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
+                    v-model="pageSize">
+              <option disabled>ერთ გვერდზე</option>
+              <option :value="option" v-for="(option, index) in pageOptions" v-text="option" :key="index"/>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -325,10 +287,10 @@ watch(sortByDir, (newSortDir) => {
       <thead>
       <tr>
         <th>N</th>
-        <th class="flex items-center gap-x-1">ორდერის ნომერი</th>
+        <th>ორდერის N</th>
         <th>რეგიონი</th>
         <th>სერვისცენტრი</th>
-        <th>პროექტის Id</th>
+        <th>პროექტის N</th>
         <th>გადარიხვის ტიპი</th>
         <th>გარკვევის თარიღი</th>
         <th>ბოლო ცვლილება</th>
@@ -402,8 +364,8 @@ watch(sortByDir, (newSortDir) => {
   </div>
 
   <dialog id="my_modal_1" class="modal">
-    <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
-      <div class="flex flex-row gap-x-6">
+    <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
+      <div class="flex justify-between">
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
@@ -451,46 +413,54 @@ watch(sortByDir, (newSortDir) => {
         </div>
 
         <!-- Right Column -->
-        <div class="flex flex-col justify-between gap-y-2">
-          <div class="flex gap-x-2">
+        <div class="flex flex-col justify-between w-1/2 gap-y-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გარკვევის თარიღი</label>
             <div v-text="extractionFee.clarificationDate"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ბოლო ცვლილება</label>
             <div v-text="extractionFee.changeDate"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
             <div v-text="extractionFee.transferDate"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ატვირთვის თარიღი</label>
             <div v-text="extractionFee.extractionDate"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">სრული თანხა</label>
             <div v-text="extractionFee.totalAmount"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">მიზანი</label>
             <div v-text="extractionFee.purpose"/>
           </div>
-          <div class="flex gap-x-2">
+          <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">აღწერა</label>
             <div v-text="extractionFee.description"/>
           </div>
         </div>
       </div>
 
-      <div class="flex justify-between items-center mt-4">
+      <div class="flex items-center justify-between mt-4">
+        <div class="flex justify-between items-center">
+          <div class="modal-action">
+            <form method="dialog">
+              <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
+            </form>
+
+            <form method="dialog">
+              <button class="btn">გაუქმება</button>
+            </form>
+          </div>
+        </div>
+
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
-          </form>
-
-          <form method="dialog">
-            <button class="btn">გაუქმება</button>
+            <button class="btn btn-error text-white" @click="handleDeleteClick">წაშლა</button>
           </form>
         </div>
       </div>
