@@ -1,4 +1,4 @@
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import axios from "../interceptors/axios";
 
 export default function useUploads() {
@@ -13,7 +13,7 @@ export default function useUploads() {
     const sortDir = ref("ASC")
 
     const filter = ref({
-        status: 'TRANSFERRED',
+        status: undefined,
         orderN: undefined,
         region: "აირჩიეთ რეგიონი",
         serviceCenter: "აირჩიეთ სერვისცენტრი",
@@ -32,6 +32,26 @@ export default function useUploads() {
         note: undefined,
         description: undefined,
         file: undefined
+    })
+
+    const caret = (_sortBy) => {
+        if (_sortBy === sortBy.value && sortDir.value === "DESC") {
+            return 'v'
+        }
+
+        return '^'
+    }
+
+    watch(filter, async () => {
+        await getFees();
+    }, {deep: true})
+
+    watch(sortBy, async () => {
+        await getFees();
+    })
+
+    watch(sortDir, async () => {
+        await getFees();
     })
 
     const fetchSheets = async () => {
@@ -166,6 +186,7 @@ export default function useUploads() {
         records,
         filter,
         sortBy,
-        sortDir
+        sortDir,
+        caret
     };
 }

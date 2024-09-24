@@ -6,7 +6,36 @@ export default function useCenters() {
     const _regions = ref();
     const serviceCenters = ref();
     const _serviceCenters = ref()
-    const extractionFee = ref()
+    const extractionFee = ref({
+            orderN: '',                 // For the order number input field
+            region: '',                 // For the selected region
+            serviceCenter: '',          // For the selected service center
+            projectID: '',              // For the project ID input field
+            withdrawType: '',           // For the withdrawal type input field
+            note: '',                   // For the note textarea
+            clarificationDate: '',     // For the clarification date display
+            changeDate: '',            // For the last change date display
+            transferDate: '',          // For the transfer date display
+            extractionDate: '',        // For the extraction date display
+            totalAmount: '',           // For the total amount display
+            purpose: '',               // For the purpose display
+            description: ''
+        }
+    )
+
+    const handleEditClick = async (extraction) => {
+        extractionFee.value = {...extraction};
+        document.getElementById('my_modal_1').showModal();
+        if (!extractionFee.value.region) {
+            extractionFee.value.region = 'აირჩიეთ რეგიონი';
+        } else {
+            await getRegionsByParentId(regions.value.find(reg => reg.name === extraction.region).id)
+        }
+
+        if (!extractionFee.value.serviceCenter) {
+            extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
+        }
+    }
 
     const getRegionsByParentId = async (parentId = 68) => {
         try {
@@ -41,6 +70,7 @@ export default function useCenters() {
         serviceCenters,
         _serviceCenters,
         updateRecord,
-        extractionFee
+        extractionFee,
+        handleEditClick
     };
 }

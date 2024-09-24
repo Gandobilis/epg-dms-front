@@ -10,12 +10,9 @@ const {
   totalPages,
   filter,
   sortBy,
-  sortDir
+  sortDir,
+  caret
 } = useUploads()
-
-onMounted(async () => {
-  await getFees();
-})
 
 const {
   getRegionsByParentId,
@@ -24,22 +21,9 @@ const {
   serviceCenters,
   _serviceCenters,
   updateRecord,
-  extractionFee
+  extractionFee,
+  handleEditClick,
 } = useCenters()
-
-const handleEditClick = async (extraction) => {
-  extractionFee.value = {...extraction};
-  document.getElementById('my_modal_1').showModal();
-  if (!extractionFee.value.region) {
-    extractionFee.value.region = 'აირჩიეთ რეგიონი';
-  } else {
-    await getRegionsByParentId(regions.value.find(reg => reg.name === extraction.region).id)
-  }
-
-  if (!extractionFee.value.serviceCenter) {
-    extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
-  }
-}
 
 const handleSaveClick = async () => {
   if (!extractionFee.value.orderN || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
@@ -50,45 +34,13 @@ const handleSaveClick = async () => {
   }
 }
 
-watch(filter, async () => {
-  await getFees();
-}, {deep: true})
-
-watch(sortBy, async () => {
-  await getFees();
-})
-
-watch(sortDir, async () => {
-  await getFees();
-})
-
-const caret = (_sortBy) => {
-  if (_sortBy === sortBy.value && sortDir.value === "DESC") {
-    return 'v'
-  }
-
-  return '^'
-}
-
 onMounted(async () => {
-  await getRegionsByParentId()
+  await getRegionsByParentId();
+  await getFees();
 })
 </script>
 
 <template>
-  <div class="flex justify-between">
-    <div class="flex gap-x-5 mb-3.5">
-      <button class="btn btn-sm" :class="{'btn-neutral': filter.status === 'TRANSFER_COMPLETE'}"
-              @click="filter.status = 'TRANSFER_COMPLETE'; getFees()">
-        შევსებული
-      </button>
-      <button class="btn btn-sm" :class="{'btn-neutral': filter.status === 'TRANSFERRED'}"
-              @click="filter.status = 'TRANSFERRED'; getFees()">
-        შესავსები
-      </button>
-    </div>
-  </div>
-
   <div class="flex flex-col">
     <div class="grid grid-cols-5">
       <div class="flex flex-col gap-y-2 text-sm">
@@ -154,12 +106,6 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">ფაილი</label>
-        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-               v-model="filter.file"/>
-      </div>
-
-      <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">სრული თანხა</label>
         <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                v-model="filter.totalAmount"
@@ -179,6 +125,22 @@ onMounted(async () => {
                v-model="filter.description"
         />
       </div>
+
+      <div class="flex items-center gap-x-4 pt-5">
+        <label class="flex items-center gap-x-1">
+          <input type="radio" name="status" class="radio radio-xs" value="" v-model="filter.status" checked/>
+          ორივე
+        </label>
+        <label class="flex items-center gap-x-1">
+          <input type="radio" name="status" class="radio radio-xs" v-model="filter.status" value="TRANSFER_COMPLETE"/>
+          შევსებული
+        </label>
+        <label class="flex items-center gap-x-1">
+          <input type="radio" name="status" class="radio radio-xs" v-model="filter.status" value="TRANSFERRED"/>
+          შესავსები
+        </label>
+      </div>
+
     </div>
   </div>
 
@@ -189,15 +151,9 @@ onMounted(async () => {
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.clarificationDateStart"/>
-              <span class="text-xs">დან</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.clarificationDateStart"/>
 
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.clarificationDateEnd"/>
-              <span class="text-xs">მდე</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.clarificationDateEnd"/>
           </div>
 
           <button class="btn btn-sm btn-circle btn-ghost"
@@ -214,15 +170,9 @@ onMounted(async () => {
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.changeDateStart"/>
-              <span class="text-xs">დან</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.changeDateStart"/>
 
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.changeDateEnd"/>
-              <span class="text-xs">მდე</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.changeDateEnd"/>
           </div>
 
           <button class="btn btn-sm btn-circle btn-ghost"
@@ -239,15 +189,9 @@ onMounted(async () => {
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.transferDateStart"/>
-              <span class="text-xs">დან</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.transferDateStart"/>
 
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.transferDateEnd"/>
-              <span class="text-xs">მდე</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.transferDateEnd"/>
           </div>
 
           <button class="btn btn-sm btn-circle btn-ghost"
@@ -264,15 +208,9 @@ onMounted(async () => {
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.extractionDateStart"/>
-              <span class="text-xs">დან</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.extractionDateStart"/>
 
-            <div class="flex items-center gap-x-2">
-              <input type="date" class="text-sm" v-model="filter.extractionDateEnd"/>
-              <span class="text-xs">მდე</span>
-            </div>
+            <input type="date" class="text-sm" v-model="filter.extractionDateEnd"/>
           </div>
 
           <button class="btn btn-sm btn-circle btn-ghost"
@@ -312,6 +250,8 @@ onMounted(async () => {
     <table class="table table-xs">
       <thead>
       <tr>
+        <th># <span class="cursor-pointer" v-text="caret('id')"
+                    @click="sortBy = 'id'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th class="flex items-center gap-x-1">ორდერის ნომერი <span class="cursor-pointer" v-text="caret('orderN')"
                                                                    @click="sortBy = 'orderN'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
         </th>
@@ -320,17 +260,20 @@ onMounted(async () => {
         <th>პროექტის Id <span class="cursor-pointer" v-text="caret('projectID')"
                               @click="sortBy = 'projectID'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
         <th>გადარიხვის ტიპი <span class="cursor-pointer" v-text="caret('withdrawType')"
-                                  @click="sortBy = 'withdrawType'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+                                  @click="sortBy = 'withdrawType'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
         <th>გარკვევის თარიღი <span class="cursor-pointer" v-text="caret('clarificationDate')"
-                                   @click="sortBy = 'clarificationDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+                                   @click="sortBy = 'clarificationDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
         <th>ბოლო ცვლილება <span class="cursor-pointer" v-text="caret('changeDate')"
                                 @click="sortBy = 'changeDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
-        <th>ფაილი</th>
         <th>გადმოტანის თარიღი <span class="cursor-pointer" v-text="caret('transferDate')"
-                                    @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+                                    @click="sortBy = 'transferDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
         <th>შენიშვნა</th>
         <th>ჩარიცხვის თარიღი <span class="cursor-pointer" v-text="caret('extractionDate')"
-                                   @click="sortBy = 'extractionDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/></th>
+                                   @click="sortBy = 'extractionDate'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
+        </th>
         <th class="flex items-center gap-x-1">სრული თანხა <span class="cursor-pointer" v-text="caret('totalAmount')"
                                                                 @click="sortBy = 'totalAmount'; sortDir = (sortDir === 'DESC' ? 'ASC' : 'DESC')"/>
         </th>
@@ -341,6 +284,7 @@ onMounted(async () => {
       </thead>
       <tbody v-if="records && records.length > 0">
       <tr v-for="(extraction, index) in records" :key="index">
+        <td v-text="extraction.id"/>
         <td v-text="extraction.orderN"/>
         <td v-text="extraction.region"/>
         <td v-text="extraction.serviceCenter"/>
@@ -348,7 +292,6 @@ onMounted(async () => {
         <td v-text="extraction.withdrawType"/>
         <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
-        <th v-text="extraction.extractionTask.fileName"/>
         <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.note"/>
         <td v-text="extraction.extractionDate"/>
@@ -399,7 +342,7 @@ onMounted(async () => {
     </button>
   </div>
 
-  <dialog id="my_modal_1" class="modal" v-if="extractionFee">
+  <dialog id="my_modal_1" class="modal">
     <div class="modal-box max-w-[52.5vw] flex flex-col gap-y-3 text-sm">
       <div class="flex flex-row gap-x-6">
         <!-- Left Column -->
@@ -454,10 +397,6 @@ onMounted(async () => {
           <div class="flex gap-x-2">
             <label class="font-semibold text-gray-600">ბოლო ცვლილება</label>
             <div v-text="extractionFee.changeDate"/>
-          </div>
-          <div class="flex gap-x-2">
-            <label class="font-semibold text-gray-600">ფაილი</label>
-            <div v-text="extractionFee.extractionTask.fileName"/>
           </div>
           <div class="flex gap-x-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
