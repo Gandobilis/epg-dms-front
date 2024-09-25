@@ -31,7 +31,9 @@ export default function useUploads() {
         purpose: undefined,
         note: undefined,
         description: undefined,
-        file: undefined
+        file: undefined,
+        totalAmountStart: undefined,
+        totalAmountEnd: undefined
     })
 
     watch(filter, async () => {

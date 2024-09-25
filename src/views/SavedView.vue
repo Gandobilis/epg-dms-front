@@ -123,9 +123,17 @@ onMounted(async () => {
 
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">სრული თანხა</label>
-        <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-               v-model="filter.totalAmount"
-        />
+        <div class="grid grid-cols-2">
+          <input type="text" class="input input-bordered input-sm focus:outline-0"
+                 placeholder="მინ"
+                 v-model="filter.totalAmountStart"
+          />
+
+          <input type="text" class="input input-bordered input-sm focus:outline-0"
+                 placeholder="მაქს"
+                 v-model="filter.totalAmountEnd"
+          />
+        </div>
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
@@ -276,7 +284,9 @@ onMounted(async () => {
     purpose: undefined,
     note: undefined,
     description: undefined,
-    file: undefined
+    file: undefined,
+    totalAmountStart: undefined,
+    totalAmountEnd: undefined
     }">გასუფთავება
       </button>
     </div>
