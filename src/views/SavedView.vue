@@ -164,7 +164,14 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div class="grid grid-cols-5 text-sm py-2.5 items-center">
+  <div class="grid grid-cols-6 text-sm py-2.5 items-center">
+    <div class="flex flex-col gap-y-2 text-sm">
+      <label class="font-semibold text-gray-600">გადამხდელი</label>
+      <input type="text" class="input input-bordered w-4/5 input-sm focus:outline-0"
+             v-model="filter.tax"
+      />
+    </div>
+
     <div class="flex flex-col gap-y-10 font-medium">
       <div class="flex flex-col gap-y-2.5">
         <p>გარკვევის თარიღი</p>
@@ -286,7 +293,8 @@ onMounted(async () => {
     description: undefined,
     file: undefined,
     totalAmountStart: undefined,
-    totalAmountEnd: undefined
+    totalAmountEnd: undefined,
+    tax: undefined
     }">გასუფთავება
       </button>
     </div>

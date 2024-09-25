@@ -33,7 +33,8 @@ export default function useUploads() {
         description: undefined,
         file: undefined,
         totalAmountStart: undefined,
-        totalAmountEnd: undefined
+        totalAmountEnd: undefined,
+        tax: undefined
     })
 
     watch(filter, async () => {
