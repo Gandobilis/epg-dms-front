@@ -123,7 +123,7 @@ onMounted(async () => {
 
       <div class="flex flex-col gap-y-2 text-sm">
         <label class="font-semibold text-gray-600">სრული თანხა</label>
-        <div class="grid grid-cols-2">
+        <div class="grid grid-cols-3 gap-x-5">
           <input type="text" class="input input-bordered input-sm focus:outline-0"
                  placeholder="მინ"
                  v-model="filter.totalAmountStart"
@@ -299,15 +299,16 @@ onMounted(async () => {
         <th>N</th>
         <th>ორდერის N</th>
         <th>რეგიონი</th>
-        <th>სერვისცენტრი</th>
+        <th>ს/ც</th>
         <th>პროექტის N</th>
         <th>გადარიხვის ტიპი</th>
         <th>გარკვევის თარიღი</th>
         <th>ბოლო ცვლილება</th>
-        <th>გადმოტანის თარიღი</th>
         <th>შენიშვნა</th>
+        <th>გადმოტანის თარიღი</th>
         <th>ჩარიცხვის თარიღი</th>
         <th>სრული თანხა</th>
+        <th>გადამხდელი</th>
         <th>მიზანი</th>
         <th>აღწერა</th>
         <th></th>
@@ -323,10 +324,11 @@ onMounted(async () => {
         <td v-text="extraction.withdrawType"/>
         <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
-        <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.note"/>
+        <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
         <td v-text="extraction.extractionDate"/>
         <td v-text="extraction.totalAmount"/>
+        <td v-text="extraction.tax"/>
         <td v-text="extraction.purpose"/>
         <td v-text="extraction.description"/>
         <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
