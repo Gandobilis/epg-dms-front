@@ -232,12 +232,10 @@ watch(endDate, async () => {
               <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-x-2">
                   <input type="date" class="text-sm" v-model="startDate"/>
-                  <span class="text-xs">დან</span>
                 </div>
 
                 <div class="flex items-center gap-x-2">
                   <input type="date" class="text-sm" v-model="endDate"/>
-                  <span class="text-xs">მდე</span>
                 </div>
               </div>
             </div>
