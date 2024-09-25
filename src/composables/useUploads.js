@@ -36,6 +36,7 @@ export default function useUploads() {
 
     watch(filter, async () => {
         await getFees();
+        currentPage.value = 1;
     }, {deep: true})
 
     const fetchSheets = async () => {
@@ -207,10 +208,12 @@ export default function useUploads() {
     watch(sortByDir, async (newSortDir) => {
         sortBy.value = newSortDir.by;
         sortDir.value = newSortDir.dir;
+        currentPage.value = 1;
         await getFees();
     })
 
     watch(pageSize, async () => {
+        currentPage.value = 1;
         await getFees();
     })
 
