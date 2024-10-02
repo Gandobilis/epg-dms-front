@@ -7,18 +7,18 @@ export default function useCenters() {
     const serviceCenters = ref();
     const _serviceCenters = ref()
     const extractionFee = ref({
-            orderN: '',                 // For the order number input field
-            region: '',                 // For the selected region
-            serviceCenter: '',          // For the selected service center
-            projectID: '',              // For the project ID input field
-            withdrawType: '',           // For the withdrawal type input field
-            note: '',                   // For the note textarea
-            clarificationDate: '',     // For the clarification date display
-            changeDate: '',            // For the last change date display
-            transferDate: '',          // For the transfer date display
-            extractionDate: '',        // For the extraction date display
-            totalAmount: '',           // For the total amount display
-            purpose: '',               // For the purpose display
+            orderN: '',
+            region: '',
+            serviceCenter: '',
+            projectID: '',
+            withdrawType: '',
+            note: '',
+            clarificationDate: '',
+            changeDate: '',
+            transferDate: '',
+            extractionDate: '',
+            totalAmount: '',
+            purpose: '',
             description: ''
         }
     )
@@ -58,7 +58,7 @@ export default function useCenters() {
 
     const updateRecord = async () => {
         try {
-            const response = await axios.put(`connection-fees/${extractionFee.value.id}`,
+            await axios.put(`connection-fees/${extractionFee.value.id}`,
                 extractionFee.value
             )
             extractionFee.value = undefined;

@@ -2,6 +2,7 @@
 import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
+import RecursiveRow from "../components/RecursiveRow.vue";
 
 const {
   records,
@@ -24,8 +25,8 @@ const {
   _serviceCenters,
   updateRecord,
   extractionFee,
-  handleEditClick,
-  deleteRecord
+  deleteRecord,
+  handleEditClick
 } = useCenters()
 
 const handleSaveClick = async () => {
@@ -37,14 +38,32 @@ const handleSaveClick = async () => {
   }
 }
 
+function addShowProperty() {
+  const stack = [...records.value];
+
+  while (stack.length > 0) {
+    const record = stack.pop();
+    record.show = ref(false);
+
+    if (record.children && record.children.length > 0) {
+      stack.push(...record.children);
+    }
+  }
+}
+
 const handleDeleteClick = async () => {
   await deleteRecord();
   await getFees();
 }
 
+const handleDivide = async () => {
+
+}
+
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
+  addShowProperty();
 })
 </script>
 
@@ -300,7 +319,7 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div class="h-[75vh]">
+  <div class="flex flex-col gap-y-5">
     <table class="table table-xs">
       <thead>
       <tr>
@@ -309,7 +328,7 @@ onMounted(async () => {
         <th>რეგიონი</th>
         <th>ს/ც</th>
         <th>პროექტის N</th>
-        <th>გადარიხვის ტიპი</th>
+        <th>ტიპი</th>
         <th>გარკვევის თარიღი</th>
         <th>ბოლო ცვლილება</th>
         <th>შენიშვნა</th>
@@ -319,30 +338,12 @@ onMounted(async () => {
         <th>გადამხდელი</th>
         <th>მიზანი</th>
         <th>აღწერა</th>
-        <th></th>
+        <th/>
+        <th/>
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
-      <tr v-for="(extraction, index) in records" :key="index">
-        <td v-text="extraction.id"/>
-        <td v-text="extraction.orderN"/>
-        <td v-text="extraction.region"/>
-        <td v-text="extraction.serviceCenter"/>
-        <td v-text="extraction.projectID"/>
-        <td v-text="extraction.withdrawType"/>
-        <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
-        <td v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
-        <td v-text="extraction.note"/>
-        <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
-        <td v-text="extraction.extractionDate"/>
-        <td v-text="extraction.totalAmount"/>
-        <td v-text="extraction.tax"/>
-        <td v-text="extraction.purpose"/>
-        <td v-text="extraction.description"/>
-        <td><img src="/src/assets/edit.svg" alt="edit icon" class="cursor-pointer max-w-8"
-                 @click="handleEditClick(extraction)"/>
-        </td>
-      </tr>
+      <RecursiveRow @handleEditClick="handleEditClick" :records="records"/>
       </tbody>
 
       <tbody v-else-if="records && records.length === 0">
@@ -362,7 +363,7 @@ onMounted(async () => {
       </tbody>
     </table>
 
-    <div class="join justify-center w-full my-5" v-if="records && records.length > 0">
+    <div class="join justify-center w-full" v-if="records && records.length > 0">
       <button class="join-item btn" @click="
             currentPage = currentPage - 1;
           getFees();
