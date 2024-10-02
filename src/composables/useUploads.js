@@ -92,6 +92,24 @@ export default function useUploads() {
         }
     };
 
+    function addShowProperty() {
+        const stack = [...records.value];
+
+        while (stack.length > 0) {
+            const record = stack.pop();
+            record.show = ref(false);
+
+            if (record.children && record.children.length > 0) {
+                const childrenTotal = record.children.reduce((sum, child) => sum + child.totalAmount, 0);
+                record.remainder = record.totalAmount - childrenTotal;
+
+                stack.push(...record.children);
+            } else {
+                record.remainder = record.totalAmount;
+            }
+        }
+    }
+
     const getFees = async () => {
         records.value = undefined;
         const params = {
@@ -132,6 +150,7 @@ export default function useUploads() {
         try {
             lastResponse.value = await axios.get(`connection-fees/filter`, {params});
             records.value = lastResponse.value.data.data.content;
+            addShowProperty();
             totalPages.value = lastResponse.value.data.data.page.totalPages;
         } catch (error) {
             console.error("Error fetching sheets:", error);

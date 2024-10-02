@@ -47,7 +47,8 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
              @click="emit('handleEditClick', extraction)"/>
       </td>
       <td title="გაყოფა">
-        <img src="/src/assets/divide.svg" alt="divide icon" @click="emit('handleDivideClick', extraction.id)"
+        <img src="/src/assets/divide.svg" alt="divide icon"
+             @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
              class="cursor-pointer max-w-8"/>
       </td>
     </tr>

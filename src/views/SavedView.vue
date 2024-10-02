@@ -39,46 +39,43 @@ const handleSaveClick = async () => {
   }
 }
 
-function addShowProperty() {
-  const stack = [...records.value];
-
-  while (stack.length > 0) {
-    const record = stack.pop();
-    record.show = ref(false);
-
-    if (record.children && record.children.length > 0) {
-      stack.push(...record.children);
-    }
-  }
-}
-
 const handleDeleteClick = async () => {
   await deleteRecord();
   await getFees();
 }
 
-
 const id = ref()
 const amount = ref()
+const remainder = ref();
+const error = ref(false)
+watch(amount, (newAmount) => {
+  error.value = remainder.value < newAmount;
+})
 
 
-const handleDivideClick = async (_id) => {
+const handleDivideClick = async (args) => {
   document.getElementById('my_modal_7').showModal()
-  id.value = _id;
+  id.value = args[0];
+  remainder.value = args[1];
 }
 
 
 const handleDivision = async () => {
+  if (remainder < amount.value) {
+    error.value = true;
+    return;
+  }
   await divide(id.value, amount.value)
   await getFees()
   id.value = undefined;
   amount.value = undefined;
+  remainder.value = undefined;
+  error.value = false;
 }
 
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
-  addShowProperty();
 })
 </script>
 
@@ -520,11 +517,13 @@ onMounted(async () => {
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 focus:outline-none">✕</button>
       </form>
-      <h3 class="text-lg font-bold" v-text="'გთხოვთ შეიყვანოთ თანხა!'"/>
+      <h3 class="text-lg font-bold" v-text="`გთხოვთ შეიყვანოთ თანხა! ნაშთი ${remainder}`"/>
       <div class="modal-action items-center">
-        <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount" placeholder="თანხა"/>
+        <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount"
+               placeholder="თანხა"/>
         <form method="dialog" class="flex items-center justify-end w-full gap-x-5">
-          <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'" @click="handleDivision"/>
+          <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'" :disabled="remainder < amount || !amount"
+                  @click="handleDivision"/>
           <button class="btn btn-sm" v-text="'გაუქმება'"/>
         </form>
       </div>
