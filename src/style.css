@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'bpg_glaho_sylfaen';
+    src: url('/src/assets/bpg_glaho_sylfaen.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'bpg_glaho_sylfaen', sans-serif;
+}

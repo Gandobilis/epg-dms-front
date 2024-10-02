@@ -77,6 +77,14 @@ export default function useCenters() {
         }
     }
 
+    const divide = async (id, amount) => {
+        try {
+            await axios.post(`connection-fees/divide-fee/${id}/${amount}`)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return {
         getRegionsByParentId,
@@ -87,6 +95,7 @@ export default function useCenters() {
         updateRecord,
         extractionFee,
         handleEditClick,
-        deleteRecord
+        deleteRecord,
+        divide
     };
 }

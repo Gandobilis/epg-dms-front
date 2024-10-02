@@ -26,7 +26,8 @@ const {
   updateRecord,
   extractionFee,
   deleteRecord,
-  handleEditClick
+  handleEditClick,
+  divide
 } = useCenters()
 
 const handleSaveClick = async () => {
@@ -56,8 +57,22 @@ const handleDeleteClick = async () => {
   await getFees();
 }
 
-const handleDivide = async () => {
 
+const id = ref()
+const amount = ref()
+
+
+const handleDivideClick = async (_id) => {
+  document.getElementById('my_modal_7').showModal()
+  id.value = _id;
+}
+
+
+const handleDivision = async () => {
+  await divide(id.value, amount.value)
+  await getFees()
+  id.value = undefined;
+  amount.value = undefined;
 }
 
 onMounted(async () => {
@@ -334,7 +349,7 @@ onMounted(async () => {
         <th>შენიშვნა</th>
         <th>გადმოტანის თარიღი</th>
         <th>ჩარიცხვის თარიღი</th>
-        <th>სრული თანხა</th>
+        <th>თანხა</th>
         <th>გადამხდელი</th>
         <th>მიზანი</th>
         <th>აღწერა</th>
@@ -343,7 +358,7 @@ onMounted(async () => {
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
-      <RecursiveRow @handleEditClick="handleEditClick" :records="records"/>
+      <RecursiveRow @handleDivideClick="handleDivideClick" @handleEditClick="handleEditClick" :records="records"/>
       </tbody>
 
       <tbody v-else-if="records && records.length === 0">
@@ -495,6 +510,22 @@ onMounted(async () => {
       <div class="modal-action">
         <form method="dialog">
           <button class="btn btn-sm">დახურვა</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="my_modal_7" class="modal">
+    <div class="modal-box">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 focus:outline-none">✕</button>
+      </form>
+      <h3 class="text-lg font-bold" v-text="'გთხოვთ შეიყვანოთ თანხა!'"/>
+      <div class="modal-action items-center">
+        <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount" placeholder="თანხა"/>
+        <form method="dialog" class="flex items-center justify-end w-full gap-x-5">
+          <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'" @click="handleDivision"/>
+          <button class="btn btn-sm" v-text="'გაუქმება'"/>
         </form>
       </div>
     </div>

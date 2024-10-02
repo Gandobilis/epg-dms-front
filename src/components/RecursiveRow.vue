@@ -11,7 +11,7 @@ defineProps({
   }
 });
 
-const emit = defineEmits(['handleEditClick'])
+const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
 </script>
 
 <template>
@@ -47,10 +47,13 @@ const emit = defineEmits(['handleEditClick'])
              @click="emit('handleEditClick', extraction)"/>
       </td>
       <td title="გაყოფა">
-        <img src="/src/assets/divide.svg" alt="divide icon" class="cursor-pointer max-w-8"/>
+        <img src="/src/assets/divide.svg" alt="divide icon" @click="emit('handleDivideClick', extraction.id)"
+             class="cursor-pointer max-w-8"/>
       </td>
     </tr>
-    <RecursiveRow v-if="extraction.children && extraction.children.length > 0 && extraction.show"
+    <RecursiveRow @handleDivideClick="emit('handleDivideClick', $event)"
+                  @handleEditClick="emit('handleEditClick', $event)"
+                  v-if="extraction.children && extraction.children.length > 0 && extraction.show"
                   :records="extraction.children" :level="level + 1"/>
   </template>
 </template>
