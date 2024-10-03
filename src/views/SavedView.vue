@@ -522,7 +522,8 @@ onMounted(async () => {
         <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount"
                placeholder="თანხა"/>
         <form method="dialog" class="flex items-center justify-end w-full gap-x-5">
-          <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'" :disabled="remainder < amount || !amount"
+          <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'"
+                  :disabled="remainder < amount || !amount || amount == 0"
                   @click="handleDivision"/>
           <button class="btn btn-sm" v-text="'გაუქმება'"/>
         </form>

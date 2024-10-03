@@ -16,7 +16,7 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
 
 <template>
   <template v-for="extraction in records" :key="extraction.id">
-    <tr>
+    <tr class="hover:bg-gray-300 hover:cursor-pointer">
       <td>
         <div :style="{ marginLeft: `${level * 10 + (level !== 0 && extraction.children.length === 0 ? 20 : 0)}px` }"
              class="flex items-center gap-x-1.5"><img
