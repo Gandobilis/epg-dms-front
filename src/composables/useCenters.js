@@ -77,9 +77,9 @@ export default function useCenters() {
         }
     }
 
-    const divide = async (id, amount) => {
+    const divide = async (id, amounts) => {
         try {
-            await axios.post(`connection-fees/divide-fee/${id}/${amount}`)
+            await axios.post(`connection-fees/divide-fee/${id}`, amounts)
         } catch (error) {
             console.log(error)
         }

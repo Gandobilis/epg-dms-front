@@ -45,7 +45,7 @@ const handleDeleteClick = async () => {
 }
 
 const id = ref()
-const amount = ref()
+const amount = ref('')
 const remainder = ref();
 const error = ref(false)
 watch(amount, (newAmount) => {
@@ -65,10 +65,10 @@ const handleDivision = async () => {
     error.value = true;
     return;
   }
-  await divide(id.value, amount.value)
+  await divide(id.value, mapToArray())
   await getFees()
   id.value = undefined;
-  amount.value = undefined;
+  amount.value = '';
   remainder.value = undefined;
   error.value = false;
 }
@@ -77,6 +77,12 @@ onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
 })
+
+const regex = /^(\d+(\s\d+)*)$/;
+const cleanAmount = () => amount.value.replace(/\s+/g, ' ').trim();
+const mapToArray = () => cleanAmount().split(' ').map(Number);
+const sumArray = () => mapToArray().reduce((a, b) => a + b, 0);
+const validateAmount = () => regex.test(cleanAmount()) && sumArray() <= remainder.value;
 </script>
 
 <template>
@@ -520,10 +526,10 @@ onMounted(async () => {
       <h3 class="text-lg font-bold" v-text="`გთხოვთ შეიყვანოთ თანხა! ნაშთი ${remainder}`"/>
       <div class="modal-action items-center">
         <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount"
-               placeholder="თანხა"/>
+               placeholder="10 25 50"/>
         <form method="dialog" class="flex items-center justify-end w-full gap-x-5">
           <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'"
-                  :disabled="remainder < amount || !amount || amount == 0"
+                  :disabled="!validateAmount()"
                   @click="handleDivision"/>
           <button class="btn btn-sm" v-text="'გაუქმება'"/>
         </form>
