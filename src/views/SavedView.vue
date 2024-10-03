@@ -82,7 +82,10 @@ const regex = /^(\d+(\s\d+)*)$/;
 const cleanAmount = () => amount.value.replace(/\s+/g, ' ').trim();
 const mapToArray = () => cleanAmount().split(' ').map(Number);
 const sumArray = () => mapToArray().reduce((a, b) => a + b, 0);
-const validateAmount = () => regex.test(cleanAmount()) && sumArray() <= remainder.value;
+const validateAmount = () => {
+  const numbers = mapToArray();
+  return regex.test(cleanAmount()) && numbers.every(n => n > 0) && (sumArray() >= remainder.value);
+};
 </script>
 
 <template>
