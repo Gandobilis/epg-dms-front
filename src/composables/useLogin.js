@@ -9,12 +9,14 @@ export default function useLogin() {
     const password = ref();
     const remember = ref(false);
     const error = ref();
+    const isLoading = ref()
 
     const toggleRemember = () => {
         remember.value = !remember.value;
     };
 
     const login = async () => {
+        isLoading.value = true;
         try {
             const {data} = await axios.post("auth/signin", {
                 email: email.value,
@@ -32,9 +34,11 @@ export default function useLogin() {
 
             await router.push("/");
         } catch (err) {
-            error.value = err.response.data.error;
+            error.value = err.response.data;
+        } finally {
+            isLoading.value = false;
         }
     };
 
-    return {email, password, remember, error, toggleRemember, login};
+    return {email, password, remember, error, isLoading, toggleRemember, login};
 }
