@@ -7,6 +7,10 @@ const routes = [
     path: "/saved",
     component: () => import("../views/SavedView.vue"),
   },
+  {
+    path: "/login",
+    component: () => import("../views/LoginView.vue"),
+  },
 ];
 
 export default routes;

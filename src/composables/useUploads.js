@@ -1,5 +1,6 @@
 import {ref, watch} from "vue";
 import axios from "../interceptors/axios";
+import cookies from "vue-cookies";
 
 export default function useUploads() {
     const sheets = ref();
@@ -11,6 +12,7 @@ export default function useUploads() {
     const records = ref()
     const sortBy = ref()
     const sortDir = ref()
+    const accessToken = cookies.get('access_token')
 
     const filter = ref({
         status: undefined,
@@ -50,6 +52,9 @@ export default function useUploads() {
                     page: currentPage.value,
                     size: pageSize.value,
                 },
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
             });
             sheets.value = lastResponse.value.data.data.content;
             totalPages.value = lastResponse.value.data.data.page.totalPages;
@@ -76,7 +81,11 @@ export default function useUploads() {
 
     const deleteSheet = async (sheetId) => {
         try {
-            await axios.delete(`connection-fees/delete-by-task/${sheetId}`);
+            await axios.delete(`connection-fees/delete-by-task/${sheetId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
@@ -85,7 +94,11 @@ export default function useUploads() {
 
     const saveSheet = async (sheetId) => {
         try {
-            await axios.post(`connection-fees/${sheetId}`);
+            await axios.post(`connection-fees/${sheetId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
@@ -148,7 +161,12 @@ export default function useUploads() {
             }, {});
 
         try {
-            lastResponse.value = await axios.get(`connection-fees/filter`, {params});
+            lastResponse.value = await axios.get(`connection-fees/filter`, {
+                params,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             records.value = lastResponse.value.data.data.content;
             addShowProperty();
             totalPages.value = lastResponse.value.data.data.page.totalPages;

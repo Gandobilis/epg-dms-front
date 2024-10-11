@@ -1,5 +1,6 @@
 import {ref} from "vue";
 import axios from "/src/interceptors/axios";
+import cookies from "vue-cookies";
 
 export default function useSheet() {
     const sheet = ref();
@@ -15,6 +16,7 @@ export default function useSheet() {
     const filter_amount = ref()
     const startDate = ref()
     const endDate = ref()
+    const accessToken = cookies.get('access_token')
 
     const fetchSheetData = async () => {
         sheet.value = undefined
@@ -51,7 +53,11 @@ export default function useSheet() {
         }
 
         try {
-            const response = await axios.get(url, {params});
+            const response = await axios.get(url, {
+                params, headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             sheet.value = response.data.data.content;
             _totalPages.value = response.data.data.page.totalPages;
             ok.value = response.data.ok;

@@ -1,11 +1,13 @@
 import {ref} from "vue";
 import axios from "/src/interceptors/axios";
+import cookies from "vue-cookies";
 
 export default function useCenters() {
     const regions = ref();
     const _regions = ref();
     const serviceCenters = ref();
     const _serviceCenters = ref()
+    const accessToken = cookies.get('access_token')
     const extractionFee = ref({
             orderN: '',
             region: '',
@@ -42,24 +44,35 @@ export default function useCenters() {
     }
 
     const getRegionsByParentId = async (parentId = 68) => {
-        try {
-            const {data} = await axios.get(`business-units/by-parent/${parentId}`);
-            if (parentId === 68) {
-                regions.value = data.data;
-                _regions.value = data.data
-            } else {
-                serviceCenters.value = data.data;
-                _serviceCenters.value = data.data;
+            try {
+                const {data} = await axios.get(`business-units/by-parent/${parentId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    }
+                });
+                if (parentId === 68) {
+                    regions.value = data.data;
+                    _regions.value = data.data
+                } else {
+                    serviceCenters.value = data.data;
+                    _serviceCenters.value = data.data;
+                }
+            } catch
+                (error) {
+                console.error("Error fetching data:", error);
             }
-        } catch (error) {
-            console.error("Error fetching data:", error);
         }
-    };
+    ;
 
     const updateRecord = async () => {
         try {
             await axios.put(`connection-fees/${extractionFee.value.id}`,
-                extractionFee.value
+                extractionFee.value,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    }
+                }
             )
             extractionFee.value = undefined;
         } catch (error) {
@@ -70,7 +83,11 @@ export default function useCenters() {
 
     const deleteRecord = async () => {
         try {
-            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`);
+            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             extractionFee.value = undefined;
         } catch (error) {
             console.log(error)
@@ -79,7 +96,11 @@ export default function useCenters() {
 
     const divide = async (id, amounts) => {
         try {
-            await axios.post(`connection-fees/divide-fee/${id}`, amounts)
+            await axios.post(`connection-fees/divide-fee/${id}`, amounts, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            })
         } catch (error) {
             console.log(error)
         }
