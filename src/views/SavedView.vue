@@ -462,11 +462,19 @@ const validateAmount = () => {
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ბოლო ცვლილება</label>
-            <div v-text="extractionFee.changeDate"/>
+            <div>
+              <p v-text="extractionFee.changeDate?.split('.')[0].replace('T', ' ')"/>
+              <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
+                 v-text="`${extractionFee.changePearson.firstName} ${extractionFee.changePearson.lastName}`"/>
+            </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
-            <div v-text="extractionFee.transferDate"/>
+            <div>
+              <p v-text="extractionFee.transferDate?.split('.')[0].replace('T', ' ')"/>
+              <p v-if="extractionFee.transferPearson" class="text-neutral underline font-bold"
+                 v-text="`${extractionFee.transferPearson.firstName} ${extractionFee.transferPearson.lastName}`"/>
+            </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ატვირთვის თარიღი</label>

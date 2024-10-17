@@ -34,9 +34,15 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
       <td v-text="extraction.projectID"/>
       <td v-text="extraction.withdrawType"/>
       <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
-      <td v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
+      <td>
+        <p v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')" />
+        <p class="text-neutral underline font-bold" v-if="extraction.changeDate" v-text="`${extraction.changePearson.firstName} ${extraction.changePearson.lastName}`"/>
+      </td>
       <td v-text="extraction.note"/>
-      <td v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
+      <td>
+        <p v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')" />
+        <p class="text-neutral underline font-bold" v-text="`${extraction.transferPearson.firstName} ${extraction.transferPearson.lastName}`"/>
+      </td>
       <td v-text="extraction.extractionDate"/>
       <td v-text="extraction.totalAmount"/>
       <td v-text="extraction.tax"/>
