@@ -44,7 +44,6 @@ export const useAuthStore = defineStore('auth', () => {
         const savedToken = cookies.get('auth_token');
         if (savedToken) {
             token.value = savedToken;
-            console.log(savedToken)
             isAuthenticated.value = true;
             axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
             try {

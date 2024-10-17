@@ -1,6 +1,5 @@
 import {ref, watch} from "vue";
 import axios from "../interceptors/axios";
-import cookies from "vue-cookies";
 
 export default function useUploads() {
     const sheets = ref();
@@ -64,7 +63,9 @@ export default function useUploads() {
             const formData = new FormData();
             formData.append("file", selectedSheet.value);
 
-            await axios.post("excels/upload", formData);
+            await axios.post("excels/upload", formData, {
+                requiresAuth: true
+            });
             await fetchSheets();
         } catch (error) {
             console.error("Error creating sheet:", error);
@@ -73,7 +74,9 @@ export default function useUploads() {
 
     const deleteSheet = async (sheetId) => {
         try {
-            await axios.delete(`connection-fees/delete-by-task/${sheetId}`);
+            await axios.delete(`connection-fees/delete-by-task/${sheetId}`, {
+                requiresAuth: true
+            });
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
@@ -82,7 +85,9 @@ export default function useUploads() {
 
     const saveSheet = async (sheetId) => {
         try {
-            await axios.post(`connection-fees/${sheetId}`);
+            await axios.post(`connection-fees/${sheetId}`, {}, {
+                requiresAuth: true
+            });
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);

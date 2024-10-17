@@ -1,6 +1,5 @@
 import {ref} from "vue";
 import axios from "/src/interceptors/axios";
-import cookies from "vue-cookies";
 
 export default function useSheet() {
     const sheet = ref();
@@ -52,7 +51,7 @@ export default function useSheet() {
         }
 
         try {
-            const response = await axios.get(url);
+            const response = await axios.get(url, {params: params});
             sheet.value = response.data.data.content;
             _totalPages.value = response.data.data.page.totalPages;
             ok.value = response.data.ok;

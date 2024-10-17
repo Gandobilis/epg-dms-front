@@ -34,7 +34,7 @@ const handleFileChange = async (event) => {
       >
         აირჩიეთ ფაილი
       </button>
-      <p class="text-sm">{{ selectedSheet ? selectedSheet.name : 'ფაილი არჩეული არ არის' }}</p>
+      <p class="text-sm">{{ 'ფაილი არჩეული არ არის' }}</p>
     </div>
   </div>
 </template>

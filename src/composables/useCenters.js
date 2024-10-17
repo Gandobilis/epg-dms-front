@@ -61,7 +61,9 @@ export default function useCenters() {
 
     const updateRecord = async () => {
         try {
-            await axios.put(`connection-fees/${extractionFee.value.id}`, extractionFee.value)
+            delete extractionFee.value.changePearson // გასასწორებელია
+            delete extractionFee.value.transferPearson // გასასწორებელია
+            await axios.put(`connection-fees/${extractionFee.value.id}`, extractionFee.value, {requiresAuth: true})
             extractionFee.value = undefined;
         } catch (error) {
             console.error("Error updating fee:", error);
@@ -71,7 +73,7 @@ export default function useCenters() {
 
     const deleteRecord = async () => {
         try {
-            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`);
+            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`, {requiresAuth: true});
             extractionFee.value = undefined;
         } catch (error) {
             console.log(error)
@@ -80,7 +82,7 @@ export default function useCenters() {
 
     const divide = async (id, amounts) => {
         try {
-            await axios.post(`connection-fees/divide-fee/${id}`, amounts)
+            await axios.post(`connection-fees/divide-fee/${id}`, amounts, {requiresAuth: true})
         } catch (error) {
             console.log(error)
         }
