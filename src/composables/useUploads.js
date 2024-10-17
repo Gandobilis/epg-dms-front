@@ -12,7 +12,6 @@ export default function useUploads() {
     const records = ref()
     const sortBy = ref()
     const sortDir = ref()
-    const accessToken = cookies.get('access_token')
 
     const filter = ref({
         status: undefined,
@@ -51,9 +50,6 @@ export default function useUploads() {
                 params: {
                     page: currentPage.value,
                     size: pageSize.value,
-                },
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
                 }
             });
             sheets.value = lastResponse.value.data.data.content;
@@ -68,11 +64,7 @@ export default function useUploads() {
             const formData = new FormData();
             formData.append("file", selectedSheet.value);
 
-            await axios.post("excels/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            await axios.post("excels/upload", formData);
             await fetchSheets();
         } catch (error) {
             console.error("Error creating sheet:", error);
@@ -81,11 +73,7 @@ export default function useUploads() {
 
     const deleteSheet = async (sheetId) => {
         try {
-            await axios.delete(`connection-fees/delete-by-task/${sheetId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            });
+            await axios.delete(`connection-fees/delete-by-task/${sheetId}`);
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
@@ -94,11 +82,7 @@ export default function useUploads() {
 
     const saveSheet = async (sheetId) => {
         try {
-            await axios.post(`connection-fees/${sheetId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            });
+            await axios.post(`connection-fees/${sheetId}`);
             await fetchSheets();
         } catch (error) {
             console.error("Error deleting sheets:", error);
@@ -162,10 +146,7 @@ export default function useUploads() {
 
         try {
             lastResponse.value = await axios.get(`connection-fees/filter`, {
-                params,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
+                params
             });
             records.value = lastResponse.value.data.data.content;
             addShowProperty();

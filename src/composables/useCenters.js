@@ -7,7 +7,6 @@ export default function useCenters() {
     const _regions = ref();
     const serviceCenters = ref();
     const _serviceCenters = ref()
-    const accessToken = cookies.get('access_token')
     const extractionFee = ref({
             orderN: '',
             region: '',
@@ -45,11 +44,7 @@ export default function useCenters() {
 
     const getRegionsByParentId = async (parentId = 68) => {
             try {
-                const {data} = await axios.get(`business-units/by-parent/${parentId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    }
-                });
+                const {data} = await axios.get(`business-units/by-parent/${parentId}`);
                 if (parentId === 68) {
                     regions.value = data.data;
                     _regions.value = data.data
@@ -66,14 +61,7 @@ export default function useCenters() {
 
     const updateRecord = async () => {
         try {
-            await axios.put(`connection-fees/${extractionFee.value.id}`,
-                extractionFee.value,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    }
-                }
-            )
+            await axios.put(`connection-fees/${extractionFee.value.id}`, extractionFee.value)
             extractionFee.value = undefined;
         } catch (error) {
             console.error("Error updating fee:", error);
@@ -83,11 +71,7 @@ export default function useCenters() {
 
     const deleteRecord = async () => {
         try {
-            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            });
+            await axios.delete(`connection-fees/soft-delete/${extractionFee.value.id}`);
             extractionFee.value = undefined;
         } catch (error) {
             console.log(error)
@@ -96,11 +80,7 @@ export default function useCenters() {
 
     const divide = async (id, amounts) => {
         try {
-            await axios.post(`connection-fees/divide-fee/${id}`, amounts, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            })
+            await axios.post(`connection-fees/divide-fee/${id}`, amounts)
         } catch (error) {
             console.log(error)
         }
