@@ -23,7 +23,7 @@ const authStore = useAuthStore();
                  to="/login"
                  v-text="'შესვლა'"/>
     <div class="avatar placeholder cursor-pointer items-center gap-x-2.5" v-else>
-      <div class="bg-neutral text-neutral-content w-12 rounded-full">
+      <div class="bg-neutral text-neutral-content w-12 rounded-full" @click="router.push('/users')">
         <span class="font-semibold text-sm">{{ `${authStore.user?.firstName[0]}.${authStore.user?.lastName[0]}`}}</span>
       </div>
       <button class="btn btn-error text-white btn-sm"
