@@ -87,11 +87,11 @@ onMounted(async () => {
         <td class="border px-4 py-2">{{ new Date(user.createdAt).toLocaleString() }}</td>
         <td class="border px-4 py-2">{{ new Date(user.updatedAt).toLocaleString() }}</td>
         <td class="border px-4 py-2">
-          <button @click="editUser(user)" class="btn  btn-info text-white">
+          <button @click="editUser(user)" class="btn btn-sm btn-info text-white">
             შეცვლა
           </button>
           <button @click="deleteUser(user.id)"
-                  class="btn btn-error text-white ml-2.5">წაშლა
+                  class="btn btn-error text-white btn-sm ml-2.5">წაშლა
           </button>
         </td>
       </tr>
