@@ -60,7 +60,7 @@ onMounted(async () => {
 
     <!-- Create User Button -->
     <button @click="openCreateModal"
-            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
+            class="btn btn-success text-white mb-4">
       მომხმარებლის დამატება
     </button>
 
@@ -87,11 +87,11 @@ onMounted(async () => {
         <td class="border px-4 py-2">{{ new Date(user.createdAt).toLocaleString() }}</td>
         <td class="border px-4 py-2">{{ new Date(user.updatedAt).toLocaleString() }}</td>
         <td class="border px-4 py-2">
-          <button @click="editUser(user)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+          <button @click="editUser(user)" class="btn  btn-info text-white">
             შეცვლა
           </button>
           <button @click="deleteUser(user.id)"
-                  class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded ml-2">წაშლა
+                  class="btn btn-error text-white ml-2.5">წაშლა
           </button>
         </td>
       </tr>
@@ -118,12 +118,12 @@ onMounted(async () => {
           <label class="block mb-1">როლი</label>
           <input v-model="selectedUser.role" type="text" class="w-full border px-3 py-2 rounded-lg"/>
         </div>
-        <div class="flex justify-end">
-          <button @click="saveUser" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <div class="flex justify-end gap-x-5">
+          <button @click="saveUser" class="btn btn-success text-white">
             {{ isEditing ? 'შენახვა' : 'შექმნა' }}
           </button>
           <button @click="showModal = false"
-                  class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">გაუქმება
+                  class="btn">გაუქმება
           </button>
         </div>
       </div>
