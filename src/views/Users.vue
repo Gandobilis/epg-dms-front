@@ -56,11 +56,11 @@ onMounted(async () => {
 
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">მომხმარებელთა სამართავი პანელი</h1>
+    <h1 class="text-xl font-bold mb-4">მომხმარებელთა სამართავი პანელი</h1>
 
     <!-- Create User Button -->
     <button @click="openCreateModal"
-            class="btn btn-success text-white mb-4">
+            class="btn btn-success text-white mb-4 btn-sm">
       მომხმარებლის დამატება
     </button>
 
