@@ -30,13 +30,20 @@ const {
   divide
 } = useCenters()
 
+const _error = ref(false)
 const handleSaveClick = async () => {
   if (!extractionFee.value.orderN || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
-    document.getElementById('my_modal_3').showModal()
+    _error.value = true;
   } else {
     await updateRecord();
     await getFees();
+    document.getElementById('my_modal_1').close()
   }
+}
+
+const hec = async () => {
+  _error.value = false;
+  await handleEditClick()
 }
 
 const handleDeleteClick = async () => {
@@ -364,7 +371,7 @@ const validateAmount = () => {
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
-      <RecursiveRow @handleDivideClick="handleDivideClick" @handleEditClick="handleEditClick" :records="records"/>
+      <RecursiveRow @handleDivideClick="handleDivideClick" @handleEditClick="hec" :records="records"/>
       </tbody>
 
       <tbody v-else-if="records && records.length === 0">
@@ -495,12 +502,12 @@ const validateAmount = () => {
         </div>
       </div>
 
+      <span class="text-error" v-if="_error">გთხოვთ შეავსოთ ყველა სავადლებულო ველი!</span>
+
       <div class="flex items-center justify-between mt-4">
         <div class="flex justify-between items-center">
           <div class="modal-action">
-            <form method="dialog">
-              <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
-            </form>
+            <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
 
             <form method="dialog">
               <button class="btn">გაუქმება</button>
@@ -513,18 +520,6 @@ const validateAmount = () => {
             <button class="btn btn-error text-white" @click="handleDeleteClick">წაშლა</button>
           </form>
         </div>
-      </div>
-    </div>
-  </dialog>
-
-  <dialog id="my_modal_3" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">შეცდომა</h3>
-      <p class="py-4">გთხოვთ შეავსოთ ყველა სავადლებულო ველი!</p>
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-sm">დახურვა</button>
-        </form>
       </div>
     </div>
   </dialog>

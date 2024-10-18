@@ -64,7 +64,10 @@ export default function useUploads() {
             formData.append("file", selectedSheet.value);
 
             await axios.post("excels/upload", formData, {
-                requiresAuth: true
+                requiresAuth: true,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
             });
             await fetchSheets();
         } catch (error) {

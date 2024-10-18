@@ -24,7 +24,7 @@ const authStore = useAuthStore();
                  v-text="'შესვლა'"/>
     <div class="avatar placeholder cursor-pointer items-center gap-x-2.5" v-else>
       <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span class="font-semibold text-sm">{{ `${authStore.user?.firstName[0]} ${authStore.user?.lastName[0]}`}}</span>
+        <span class="font-semibold text-sm">{{ `${authStore.user?.firstName[0]}.${authStore.user?.lastName[0]}`}}</span>
       </div>
       <button class="btn btn-error text-white btn-sm"
               @click="authStore.logout">გასვლა
