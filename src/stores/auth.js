@@ -1,15 +1,13 @@
 import {defineStore} from 'pinia';
 import {ref} from 'vue';
-import axios from "../interceptors/axios/index.js";
+import axios from "/src/interceptors/axios/index.js";
 import cookies from "vue-cookies";
 
 export const useAuthStore = defineStore('auth', () => {
-    // Define state
     const user = ref(null);
     const token = ref(null);
     const isAuthenticated = ref(false);
 
-    // Define actions (functions)
     const login = async (email, password) => {
         try {
             const response = await axios.post('auth/signin', {email, password});
@@ -17,10 +15,8 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = response.data.user;
             isAuthenticated.value = true;
 
-            // Persist token in localStorage
             cookies.set('auth_token', token.value);
 
-            // Set token in Axios headers for future requests
             axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
         } catch (error) {
             console.error('Login failed:', error);
@@ -33,10 +29,8 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null;
         isAuthenticated.value = false;
 
-        // Clear token from localStorage
         cookies.remove('auth_token');
 
-        // Remove Authorization header for future requests
         delete axios.defaults.headers.common['Authorization'];
     };
 
@@ -56,7 +50,6 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    // Return all the state and actions you want to expose
     return {
         user,
         token,

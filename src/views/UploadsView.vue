@@ -1,6 +1,6 @@
 <script setup>
 import useUploads from "/src/composables/useUploads";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import useSheet from "../composables/useSheet.js";
 import FileInput from "../components/uploads/FileInput.vue"
 import {useAuthStore} from "../stores/auth.js";
@@ -22,15 +22,10 @@ const {
   _currentPage,
   _totalPages,
   recordId,
-  ok,
-  warning,
-  total,
-  amount,
-  status,
-  filter_amount,
-  startDate,
-  endDate,
-  fetchSheetData
+  details,
+  fetchSheetData,
+  filter,
+  clearFilter
 } = useSheet()
 
 onMounted(async () => {
@@ -39,22 +34,6 @@ onMounted(async () => {
 
 const deleteId = ref();
 const saveId = ref();
-
-watch(status, async () => {
-  await fetchSheetData();
-});
-
-watch(filter_amount, async () => {
-  await fetchSheetData();
-})
-
-watch(startDate, async () => {
-  await fetchSheetData();
-})
-
-watch(endDate, async () => {
-  await fetchSheetData();
-})
 
 const authStore = useAuthStore();
 </script>
@@ -154,7 +133,7 @@ const authStore = useAuthStore();
     </table>
   </div>
 
-  <div class="join justify-center w-full mt-5">
+  <div v-if="sheets && sheets.length > 0" class="join justify-center w-full mt-5">
     <button class="join-item btn" @click="
             currentPage = currentPage - 1;
           fetchSheets();
@@ -178,10 +157,10 @@ const authStore = useAuthStore();
     <div class="modal-box max-w-7xl pt-8">
       <div class="overflow-x-auto space-y-4">
         <div class="flex items-center justify-between px-4 font-semibold">
-          <p>ჯამური თანხა - {{ amount }}</p>
-          <p>ჩანაწერი - {{ total }}</p>
-          <p>უხარვეზო - {{ ok }}</p>
-          <p>დახარვეზებული - {{ warning }}</p>
+          <p>ჯამური თანხა - {{ details.amount }}</p>
+          <p>ჩანაწერი - {{ details.total }}</p>
+          <p>უხარვეზო - {{ details.ok }}</p>
+          <p>დახარვეზებული - {{ details.warning }}</p>
         </div>
         <div class="flex gap-x-16">
           <table class="table w-3/4 min-h-[62vh]">
@@ -234,11 +213,11 @@ const authStore = useAuthStore();
 
               <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-x-2">
-                  <input type="date" class="text-sm" v-model="startDate"/>
+                  <input type="date" class="text-sm" v-model="filter.startDate"/>
                 </div>
 
                 <div class="flex items-center gap-x-2">
-                  <input type="date" class="text-sm" v-model="endDate"/>
+                  <input type="date" class="text-sm" v-model="filter.endDate"/>
                 </div>
               </div>
             </div>
@@ -248,7 +227,7 @@ const authStore = useAuthStore();
 
               <input
                   type="text"
-                  v-model="filter_amount"
+                  v-model="filter.amount"
                   placeholder="შეიყვანეთ თანხა"
                   class="input input-bordered input-xs w-full max-w-xs focus:outline-none"/>
             </div>
@@ -259,26 +238,26 @@ const authStore = useAuthStore();
               <div class="flex flex-col gap-y-2.5">
                 <div class="flex items-center gap-x-2">
                   <input type="radio" name="radio" value="" class="radio radio-xs focus:outline-none"
-                         checked="checked" v-model="status"/>
+                         checked="checked" v-model="filter.status"/>
                   <span class="text-xs">ერთად</span>
                 </div>
 
                 <div class="flex items-center gap-x-2">
-                  <input type="radio" name="radio" value="ok" class="radio radio-xs focus:outline-none"
-                         v-model="status"/>
+                  <input type="radio" name="radio" value="GOOD" class="radio radio-xs focus:outline-none"
+                         v-model="filter.status"/>
                   <span class="text-xs">უხარვეზო</span>
                 </div>
 
                 <div class="flex items-center gap-x-2">
-                  <input type="radio" name="radio" value="warn" class="radio radio-xs focus:outline-none"
-                         v-model="status"/>
+                  <input type="radio" name="radio" value="WARNING" class="radio radio-xs focus:outline-none"
+                         v-model="filter.status"/>
                   <span class="text-xs">დახარვეზებული</span>
                 </div>
               </div>
             </div>
 
             <button class="btn btn-neutral btn-sm"
-                    @click="startDate = null; endDate = null; filter_amount = null; status = ''">გასუფთავება
+                    @click="clearFilter();">გასუფთავება
             </button>
           </div>
         </div>
@@ -302,13 +281,13 @@ const authStore = useAuthStore();
           </button>
         </div>
         <form method="dialog"
-              @submit="_currentPage=1; sheet = null; startDate = null; endDate = null; filter_amount = null; status = ''">
+              @submit="_currentPage=1; sheet = null; clearFilter();">
           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>
         <form method="dialog"
-              @submit="_currentPage=1; sheet = null;startDate = null; endDate = null; filter_amount = null; status = null">
+              @submit="_currentPage=1; sheet = null; clearFilter();">
           <button class="btn">დახურვა</button>
         </form>
       </div>

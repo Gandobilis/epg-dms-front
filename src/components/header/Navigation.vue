@@ -32,7 +32,7 @@ const checkCurrentRoute = (path) => router.currentRoute.value.path === path;
       <button class="cursor-auto uppercase btn no-animation hover:bg-base-200 hover:border-base-200"
               v-text="`${authStore.user?.firstName[0]}. ${authStore.user?.lastName}`"/>
 
-      <button class="text-white btn btn-error" @click="authStore.logout" v-text="'გასვლა'"/>
+      <button class="text-white btn btn-error" @click="authStore.logout(); router.push('/');" v-text="'გასვლა'"/>
     </div>
   </div>
 </template>

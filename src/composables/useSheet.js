@@ -1,4 +1,4 @@
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import axios from "/src/interceptors/axios";
 
 export default function useSheet() {
@@ -7,76 +7,69 @@ export default function useSheet() {
     const pageSize = ref(10);
     const recordId = ref();
     const _totalPages = ref(1);
-    const ok = ref()
-    const warning = ref()
-    const total = ref()
-    const amount = ref()
-    const status = ref()
-    const filter_amount = ref()
-    const startDate = ref()
-    const endDate = ref()
+    const details = ref({
+        ok: undefined,
+        warning: undefined,
+        total: undefined,
+        amount: undefined
+    })
+
+    const filter = ref({
+        startDate: undefined,
+        endDate: undefined,
+        amount: undefined,
+        status: undefined,
+    })
+
+    const clearFilter = () => {
+        filter.value = {
+            startDate: undefined,
+            endDate: undefined,
+            amount: undefined,
+            status: undefined,
+        };
+    }
+
+    watch(filter, async () => {
+        await fetchSheetData();
+    }, {deep: true});
+
 
     const fetchSheetData = async () => {
         sheet.value = undefined
-        let url;
         const params = {
             page: _currentPage.value,
             size: pageSize.value,
             fileId: recordId.value,
         };
 
-        if (startDate.value && endDate.value) {
-            url = 'excels/getByDate'
-            params.startDate = startDate.value
-            params.endDate = endDate.value
-        } else {
-            if (filter_amount.value) {
-                if (status.value) {
-                    url = 'excels/getByAmountAndStatus'
-                    params.amount = filter_amount.value
-                    params.status = status.value === 'ok' ? 1 : 0;
-                } else {
-                    url = 'excels/getByAmount'
-                    params.amount = filter_amount.value
-                }
-            } else {
-                if (status.value === 'ok') {
-                    url = 'excels/getOkExtractionsByFile';
-                } else if (status.value === 'warn') {
-                    url = 'excels/getWarningExtractionsByFile';
-                } else {
-                    url = 'excels/getExtractionsByFile'
-                }
-            }
-        }
+        Object.entries(filter.value)
+            .filter(([_, value]) => value)
+            .reduce((_, [key, value]) => {
+                params[key] = value;
+            }, {});
 
         try {
-            const response = await axios.get(url, {params: params});
-            sheet.value = response.data.data.content;
-            _totalPages.value = response.data.data.page.totalPages;
-            ok.value = response.data.ok;
-            warning.value = response.data.warn;
-            total.value = response.data.countAll;
-            amount.value = response.data.grandTotal;
+            const response = await axios.get('excels/filter', {params: params});
+            sheet.value = response.data.excPage.content;
+            _totalPages.value = response.data.excPage.page.totalPages;
+            details.value.ok = response.data.ok;
+            details.value.warning = response.data.warn;
+            details.value.total = response.data.excPage.page.totalElements;
+            details.value.amount = response.data.totalAmountSum;
         } catch (error) {
             console.error("Error fetching sheet data:", error);
         }
     };
-
 
     return {
         sheet,
         _currentPage,
         recordId,
         _totalPages,
-        ok,
-        warning,
-        total,
-        amount,
-        status,
-        filter_amount,
-        startDate,
-        endDate,
-        fetchSheetData
+        details,
+        fetchSheetData,
+        filter,
+        clearFilter
     };
 }
