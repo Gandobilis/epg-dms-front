@@ -17,7 +17,7 @@ const handleLogin = async () => {
     await authStore.login(email.value, password.value);
     await router.push('/');
   } catch (error) {
-    authError.value = 'მონაცემები არასწორია'
+    authError.value = error.response.data.error;
   }
 };
 </script>
