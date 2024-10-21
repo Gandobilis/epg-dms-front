@@ -1,34 +1,38 @@
 <script setup>
 import {useRouter} from "vue-router";
-import {useAuthStore} from "../../stores/auth.js";
+import {useAuthStore} from "/src/stores/auth.js";
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const checkCurrentRoute = (path) => router.currentRoute.value.path === path;
-
-// Get the authentication store
-const authStore = useAuthStore();
 </script>
 
 <template>
-  <div class="flex gap-x-5 items-center">
+  <div class="flex items-center gap-x-5">
     <router-link class="btn" :class="{'btn-neutral': checkCurrentRoute('/')}" to="/" v-text="'ატვირთულები'"/>
+
     <router-link class="btn" :class="{'btn-neutral': checkCurrentRoute('/saved')}" to="/saved" v-text="'შენახულები'"/>
   </div>
 
-  <div class="flex gap-x-5 items-center">
-    <a href="https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download" target="_blank"
-       class="btn btn-success text-white" v-text="'ექსპორტი'"/>
+  <div class="flex items-center gap-x-5">
+    <a v-if="checkCurrentRoute('/saved')"
+       href="https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download" target="_blank"
+       class="text-white btn btn-success" v-text="'ექსპორტი'"/>
+
+    <router-link v-if="authStore.user?.role === 'ROLE_ADMIN'" class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/users')}"
+                 to="/users" v-text="'მომხმარებლები'"/>
+
     <router-link v-if="!authStore.isAuthenticated" class="btn" :class="{'btn-neutral': checkCurrentRoute('/login')}"
                  to="/login"
                  v-text="'შესვლა'"/>
-    <div class="avatar placeholder cursor-pointer items-center gap-x-2.5" v-else>
-      <div class="bg-neutral text-neutral-content w-12 rounded-full" @click="router.push('/users')">
-        <span class="font-semibold text-sm">{{ `${authStore.user?.firstName[0]}.${authStore.user?.lastName[0]}`}}</span>
-      </div>
-      <button class="btn btn-error text-white btn-sm"
-              @click="authStore.logout">გასვლა
-      </button>
+
+    <div class="cursor-pointer items-center avatar placeholder gap-x-2.5" v-else>
+      <button class="cursor-auto uppercase btn no-animation hover:bg-base-200 hover:border-base-200"
+              v-text="`${authStore.user?.firstName[0]}. ${authStore.user?.lastName}`"/>
+
+      <button class="text-white btn btn-error" @click="authStore.logout" v-text="'გასვლა'"/>
     </div>
   </div>
 </template>
