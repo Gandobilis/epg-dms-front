@@ -156,9 +156,9 @@ export default function useUploads() {
             lastResponse.value = await axios.get(`connection-fees/filter`, {
                 params
             });
-            records.value = lastResponse.value.data.data.content;
+            records.value = lastResponse.value.data.content;
             addShowProperty();
-            totalPages.value = lastResponse.value.data.data.page.totalPages;
+            totalPages.value = lastResponse.value.data.page.totalPages;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }

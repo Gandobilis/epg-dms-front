@@ -13,7 +13,8 @@ const selectedUser = ref({
   firstName: '',
   lastName: '',
   email: '',
-  role: ''
+  password: '',
+  role: 'აირჩიეთ როლი'
 });
 const isEditing = ref(false);
 
@@ -22,6 +23,7 @@ function openCreateModal() {
     firstName: '',
     lastName: '',
     email: '',
+    password: '',
     role: ''
   };
   isEditing.value = false;
@@ -36,7 +38,14 @@ function editUser(user) {
 
 async function saveUser() {
   if (isEditing.value) {
-    await axios.put(`user/${selectedUser.value.id}`, selectedUser.value, {recuiresAuth: true})
+    const user = {
+      firstName: selectedUser.value.firstName,
+      lastName: selectedUser.value.lastName,
+      email: selectedUser.value.email,
+      password: selectedUser.value.password,
+      role: selectedUser.value.role,
+    }
+    await axios.put(`user/${selectedUser.value.id}`, user, {recuiresAuth: true})
   } else {
     await axios.post('auth/signup', selectedUser.value, {recuiresAuth: true})
   }
@@ -48,6 +57,21 @@ async function deleteUser(userId) {
   await axios.delete(`user/${userId}`, {recuiresAuth: true})
   await getUsers()
 }
+
+const roles = [
+  {
+    key: 'ROLE_ADMIN',
+    text: 'ადმინი',
+  },
+  {
+    key: 'ROLE_OPERATOR',
+    text: 'ოპერატორი',
+  },
+  {
+    key: 'ROLE_MANAGER',
+    text: 'მენეჯერი',
+  }
+]
 
 onMounted(async () => {
   await getUsers()
@@ -115,8 +139,16 @@ onMounted(async () => {
           <input v-model="selectedUser.email" type="email" class="w-full border px-3 py-2 rounded-lg"/>
         </div>
         <div class="mb-4">
+          <label class="block mb-1">პაროლი</label>
+          <input v-model="selectedUser.password" type="text" class="w-full border px-3 py-2 rounded-lg"/>
+        </div>
+        <div class="mb-4">
           <label class="block mb-1">როლი</label>
-          <input v-model="selectedUser.role" type="text" class="w-full border px-3 py-2 rounded-lg"/>
+          <select class="w-full border px-3 py-2 rounded-lg"
+                  v-model="selectedUser.role">
+            <option disabled selected>აირჩიეთ როლი</option>
+            <option :value="role.key" v-for="(role, index) in roles" v-text="role.text" :key="index"/>
+          </select>
         </div>
         <div class="flex justify-end gap-x-5">
           <button @click="saveUser" class="btn btn-success text-white">

@@ -41,9 +41,9 @@ const handleSaveClick = async () => {
   }
 }
 
-const hec = async () => {
+const hec = async (extraction) => {
   _error.value = false;
-  await handleEditClick()
+  await handleEditClick(extraction)
 }
 
 const handleDeleteClick = async () => {
@@ -472,15 +472,15 @@ const validateAmount = () => {
             <div>
               <p v-text="extractionFee.changeDate?.split('.')[0].replace('T', ' ')"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
-                 v-text="`${extractionFee.changePearson.firstName} ${extractionFee.changePearson.lastName}`"/>
+                 v-text="`${extractionFee.changePerson.firstName} ${extractionFee.changePerson.lastName}`"/>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
             <div>
               <p v-text="extractionFee.transferDate?.split('.')[0].replace('T', ' ')"/>
-              <p v-if="extractionFee.transferPearson" class="text-neutral underline font-bold"
-                 v-text="`${extractionFee.transferPearson.firstName} ${extractionFee.transferPearson.lastName}`"/>
+              <p v-if="extractionFee.transferPerson" class="text-neutral underline font-bold"
+                 v-text="`${extractionFee.transferPerson.firstName} ${extractionFee.transferPerson.lastName}`"/>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">

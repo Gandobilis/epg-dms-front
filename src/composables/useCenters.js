@@ -8,6 +8,7 @@ export default function useCenters() {
     const serviceCenters = ref();
     const _serviceCenters = ref()
     const extractionFee = ref({
+            id: '',
             orderN: '',
             region: '',
             serviceCenter: '',
@@ -61,8 +62,8 @@ export default function useCenters() {
 
     const updateRecord = async () => {
         try {
-            delete extractionFee.value.changePearson // გასასწორებელია
-            delete extractionFee.value.transferPearson // გასასწორებელია
+            delete extractionFee.value.changePerson
+            delete extractionFee.value.transferPerson
             await axios.put(`connection-fees/${extractionFee.value.id}`, extractionFee.value, {requiresAuth: true})
             extractionFee.value = undefined;
         } catch (error) {

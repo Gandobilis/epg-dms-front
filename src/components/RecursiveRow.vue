@@ -36,12 +36,12 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
       <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
       <td>
         <p v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')" />
-        <p class="text-neutral underline font-bold" v-if="extraction.changeDate" v-text="`${extraction.changePearson.firstName} ${extraction.changePearson.lastName}`"/>
+        <p class="text-neutral underline font-bold" v-if="extraction.changeDate" v-text="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
       </td>
       <td v-text="extraction.note"/>
       <td>
         <p v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')" />
-        <p class="text-neutral underline font-bold" v-text="`${extraction.transferPearson.firstName} ${extraction.transferPearson.lastName}`"/>
+        <p class="text-neutral underline font-bold" v-text="`${extraction.transferPerson.firstName} ${extraction.transferPerson.lastName}`"/>
       </td>
       <td v-text="extraction.extractionDate"/>
       <td v-text="extraction.totalAmount"/>
@@ -49,7 +49,7 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
       <td title="შეცვლა">
-        <button @click="emit('handleEditClick', extraction)" :class="{'cursor-not-allowed': extraction.children.length > 0}" :disabled="extraction.children.length > 0">
+        <button @click="emit('handleEditClick', extraction);" :class="{'cursor-not-allowed': extraction.children.length > 0}" :disabled="extraction.children.length > 0">
         <img src="/src/assets/edit.svg" alt="edit icon" class="max-w-8"/></button>
       </td>
       <td title="გაყოფა">
