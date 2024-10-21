@@ -417,7 +417,7 @@ const authStore = useAuthStore();
 
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
-      <div class="flex justify-between">
+      <div class="flex gap-x-20">
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
