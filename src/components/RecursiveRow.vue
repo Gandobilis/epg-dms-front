@@ -1,5 +1,7 @@
 <script setup>
 
+import {useAuthStore} from "../stores/auth.js";
+
 defineProps({
   records: {
     type: Array,
@@ -12,6 +14,8 @@ defineProps({
 });
 
 const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -48,11 +52,11 @@ const emit = defineEmits(['handleEditClick', 'handleDivideClick'])
       <td v-text="extraction.tax"/>
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
-      <td title="შეცვლა">
+      <td title="შეცვლა" v-if="authStore.user">
         <button @click="emit('handleEditClick', extraction);" :class="{'cursor-not-allowed': extraction.children.length > 0}" :disabled="extraction.children.length > 0">
         <img src="/src/assets/edit.svg" alt="edit icon" class="max-w-8"/></button>
       </td>
-      <td title="გაყოფა">
+      <td title="გაყოფა" v-if="authStore.user">
         <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])" :class="{'cursor-not-allowed': extraction.children.length > 0}" :disabled="extraction.children.length > 0">
         <img src="/src/assets/divide.svg" alt="divide icon" class="max-w-8"/></button>
       </td>

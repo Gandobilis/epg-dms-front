@@ -3,6 +3,7 @@ import {onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
 import RecursiveRow from "../components/RecursiveRow.vue";
+import {useAuthStore} from "../stores/auth.js";
 
 const {
   records,
@@ -93,6 +94,8 @@ const validateAmount = () => {
   const numbers = mapToArray();
   return regex.test(cleanAmount()) && numbers.every(n => n > 0) && (sumArray() <= remainder.value);
 };
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -366,8 +369,8 @@ const validateAmount = () => {
         <th>გადამხდელი</th>
         <th>მიზანი</th>
         <th>აღწერა</th>
-        <th/>
-        <th/>
+        <th v-if="authStore.user"/>
+        <th v-if="authStore.user"/>
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">

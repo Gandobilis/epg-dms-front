@@ -3,6 +3,7 @@ import useUploads from "/src/composables/useUploads";
 import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 import FileInput from "../components/uploads/FileInput.vue"
+import {useAuthStore} from "../stores/auth.js";
 
 const {
   sheets,
@@ -54,10 +55,12 @@ watch(startDate, async () => {
 watch(endDate, async () => {
   await fetchSheetData();
 })
+
+const authStore = useAuthStore();
 </script>
 
 <template>
-  <file-input v-model="selectedSheet" @createSheet="createSheet"/>
+  <file-input v-if="authStore.user" v-model="selectedSheet" @createSheet="createSheet"/>
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">
@@ -95,8 +98,8 @@ watch(endDate, async () => {
         <th>ატვირთვის თარიღი</th>
         <th>ფაილის სტატუსი</th>
         <th>ფაილის ნახვა</th>
-        <th>ფაილის წაშლა</th>
-        <th>ბაზაში გადატანა</th>
+        <th v-if="authStore.user">ფაილის წაშლა</th>
+        <th v-if="authStore.user">ბაზაში გადატანა</th>
       </tr>
       </thead>
 
@@ -119,11 +122,11 @@ watch(endDate, async () => {
           <img src="/src/assets/visibility.svg" alt="view icon" class="cursor-pointer"
                @click="recordId = sheet.id; fetchSheetData()" onclick="my_modal_1.showModal(); "/>
         </td>
-        <td>
+        <td v-if="authStore.user">
           <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id"
                onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
-        <td>
+        <td v-if="authStore.user">
           <button onclick="my_modal_4.showModal()"
                   :class="{'cursor-not-allowed': sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'}"
                   :disabled="sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'">
