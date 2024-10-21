@@ -1,24 +1,23 @@
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '/src/stores/auth';
+import {ref} from 'vue';
+import {useAuthStore} from '/src/stores/auth';
 import {useRouter} from "vue-router";
+
 const router = useRouter()
 
 const email = ref('');
 const password = ref('');
-const authError = ref(false);
+const authError = ref('');
 
-// Using the Pinia store
 const authStore = useAuthStore();
 
-// Function to handle login
 const handleLogin = async () => {
   try {
+    authError.value = ''
     await authStore.login(email.value, password.value);
-    authError.value = false;
     await router.push('/');
   } catch (error) {
-    authError.value = true;
+    authError.value = 'მონაცემები არასწორია'
   }
 };
 </script>
@@ -40,7 +39,11 @@ const handleLogin = async () => {
                    class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-success">
           </div>
         </div>
+
+        <p v-if="authError" class="text-sm text-error mt-4" v-text="authError"></p>
+
         <button type="submit"
+                :class="{'!mt-4': authError}"
                 class="mt-7 w-full py-2 px-4 text-white font-semibold rounded-md hover:bg-success glass bg-neutral">
           შესვლა
         </button>
