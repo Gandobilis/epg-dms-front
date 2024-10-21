@@ -1,81 +1,17 @@
 <script setup>
-import axios from "../interceptors/axios/index.js";
-import {onMounted, ref} from "vue";
+import { useUsers } from '../composables/useUsers';
 
-const users = ref()
-const getUsers = async () => {
-  const {data} = await axios.get('user', {requiresAuth: true})
-  users.value = data;
-}
-
-const showModal = ref(false);
-const selectedUser = ref({
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  role: 'აირჩიეთ როლი'
-});
-const isEditing = ref(false);
-
-function openCreateModal() {
-  selectedUser.value = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    role: ''
-  };
-  isEditing.value = false;
-  showModal.value = true;
-}
-
-function editUser(user) {
-  selectedUser.value = {...user};
-  isEditing.value = true;
-  showModal.value = true;
-}
-
-async function saveUser() {
-  if (isEditing.value) {
-    const user = {
-      firstName: selectedUser.value.firstName,
-      lastName: selectedUser.value.lastName,
-      email: selectedUser.value.email,
-      password: selectedUser.value.password,
-      role: selectedUser.value.role,
-    }
-    await axios.put(`user/${selectedUser.value.id}`, user, {recuiresAuth: true})
-  } else {
-    await axios.post('auth/signup', selectedUser.value, {recuiresAuth: true})
-  }
-  showModal.value = false;
-  await getUsers()
-}
-
-async function deleteUser(userId) {
-  await axios.delete(`user/${userId}`, {recuiresAuth: true})
-  await getUsers()
-}
-
-const roles = [
-  {
-    key: 'ROLE_ADMIN',
-    text: 'ადმინი',
-  },
-  {
-    key: 'ROLE_OPERATOR',
-    text: 'ოპერატორი',
-  },
-  {
-    key: 'ROLE_MANAGER',
-    text: 'მენეჯერი',
-  }
-]
-
-onMounted(async () => {
-  await getUsers()
-})
+const {
+  users,
+  showModal,
+  selectedUser,
+  isEditing,
+  roles,
+  openCreateModal,
+  editUser,
+  saveUser,
+  deleteUser
+} = useUsers();
 </script>
 
 <template>
