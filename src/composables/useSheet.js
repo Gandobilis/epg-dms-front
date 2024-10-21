@@ -17,7 +17,8 @@ export default function useSheet() {
     const filter = ref({
         startDate: undefined,
         endDate: undefined,
-        amount: undefined,
+        totalAmountStart: undefined,
+        totalAmountEnd: undefined,
         status: undefined,
     })
 
@@ -25,7 +26,8 @@ export default function useSheet() {
         filter.value = {
             startDate: undefined,
             endDate: undefined,
-            amount: undefined,
+            totalAmountStart: undefined,
+            totalAmountEnd: undefined,
             status: undefined,
         };
     }

@@ -225,11 +225,17 @@ const authStore = useAuthStore();
             <div class="flex flex-col gap-y-2">
               <p>თანხა</p>
 
-              <input
-                  type="text"
-                  v-model="filter.amount"
-                  placeholder="შეიყვანეთ თანხა"
-                  class="input input-bordered input-xs w-full max-w-xs focus:outline-none"/>
+              <div class="flex flex-col gap-y-5">
+                <input type="text" class="input input-bordered input-sm focus:outline-0"
+                       placeholder="მინ"
+                       v-model="filter.totalAmountStart"
+                />
+
+                <input type="text" class="input input-bordered input-sm focus:outline-0"
+                       placeholder="მაქს"
+                       v-model="filter.totalAmountEnd"
+                />
+              </div>
             </div>
 
             <div class="flex flex-col gap-y-2">
