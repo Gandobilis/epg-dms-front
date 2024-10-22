@@ -13,6 +13,9 @@ const routes = [
     },
     {
         path: "/users",
+        // meta: {
+        //     role: 'ROLE_ADMIN',
+        // },
         component: () => import("../views/Users.vue"),
     },
 ];
