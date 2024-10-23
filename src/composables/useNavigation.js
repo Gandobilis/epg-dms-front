@@ -11,14 +11,21 @@ export default function useNavigation() {
         const baseUrl = 'https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download';
         const accessToken = authStore.token;
         return `${baseUrl}?access_token=${accessToken}`;
-    }
+    };
 
-    const getUserName = () => `${authStore.user?.firstName[0]}. ${authStore.user?.lastName}`;
+    const getUserName = () => {
+        return authStore.user?.firstName ? `${authStore.user.firstName[0]}. ${authStore.user.lastName}` : '';
+    };
 
     const logout = async () => {
         authStore.logout();
         await router.push('/');
-    }
+    };
 
-    return {checkCurrentRoute, generateDownloadLink, getUserName, logout};
+    return {
+        checkCurrentRoute,
+        generateDownloadLink,
+        getUserName,
+        logout,
+    };
 }
