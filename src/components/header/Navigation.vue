@@ -1,38 +1,54 @@
 <script setup>
-import {useRouter} from "vue-router";
 import {useAuthStore} from "/src/stores/auth.js";
+import useNavigation from "/src/composables/useNavigation.js";
 
-const router = useRouter();
 const authStore = useAuthStore();
 
-const checkCurrentRoute = (path) => router.currentRoute.value.path === path;
+const {checkCurrentRoute, generateDownloadLink, getUserName, logout} = useNavigation();
 </script>
 
 <template>
   <div class="flex items-center gap-x-5">
-    <router-link class="btn" :class="{'btn-neutral': checkCurrentRoute('/')}" to="/" v-text="'ატვირთულები'"/>
+    <router-link class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/')}"
+                 to="/">
+      ატვირთულები
+    </router-link>
 
-    <router-link class="btn" :class="{'btn-neutral': checkCurrentRoute('/saved')}" to="/saved" v-text="'შენახულები'"/>
+    <router-link class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/saved')}"
+                 to="/saved">
+      შენახულები
+    </router-link>
   </div>
 
   <div class="flex items-center gap-x-5">
     <a v-if="checkCurrentRoute('/saved')"
-       href="https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download" target="_blank"
-       class="text-white btn btn-success" v-text="'ექსპორტი'"/>
+       class="text-white btn btn-success"
+       :href="generateDownloadLink"
+       target="_blank">
+      ექსპორტი
+    </a>
 
-    <router-link v-if="authStore.user?.role === 'ROLE_ADMIN'" class="btn"
+    <router-link v-if="authStore.user?.role === 'ROLE_ADMIN'"
+                 class="btn"
                  :class="{'btn-neutral': checkCurrentRoute('/users')}"
-                 to="/users" v-text="'მომხმარებლები'"/>
+                 to="/users">
+      მომხმარებლები
+    </router-link>
 
-    <router-link v-if="!authStore.isAuthenticated" class="btn" :class="{'btn-neutral': checkCurrentRoute('/login')}"
-                 to="/login"
-                 v-text="'შესვლა'"/>
+    <router-link v-if="!authStore.isAuthenticated"
+                 class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/login')}"
+                 to="/login">
+      შესვლა
+    </router-link>
 
-    <div class="cursor-pointer items-center avatar placeholder gap-x-2.5" v-else>
+    <div v-else class="cursor-pointer items-center avatar placeholder gap-x-2.5">
       <button class="cursor-auto uppercase btn no-animation hover:bg-base-200 hover:border-base-200"
-              v-text="`${authStore.user?.firstName[0]}. ${authStore.user?.lastName}`"/>
+              v-text="getUserName()"/>
 
-      <button class="text-white btn btn-error" @click="authStore.logout(); router.push('/');" v-text="'გასვლა'"/>
+      <button class="text-white btn btn-error" @click="logout" v-text="'გასვლა'"/>
     </div>
   </div>
 </template>

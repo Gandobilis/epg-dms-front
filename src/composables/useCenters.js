@@ -1,6 +1,5 @@
 import {ref} from "vue";
 import axios from "/src/interceptors/axios";
-import cookies from "vue-cookies";
 
 export default function useCenters() {
     const regions = ref();
