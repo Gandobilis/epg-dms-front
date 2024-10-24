@@ -228,7 +228,7 @@ export default function useUploads() {
     ];
 
 
-    const sortByDir = ref(sortOptions[1]);
+    const sortByDir = ref(sortOptions[16]);
 
     const pageOptions = [
         10, 25, 50, 100, 250, 500, 1000
