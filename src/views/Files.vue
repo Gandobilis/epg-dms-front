@@ -106,9 +106,8 @@ const authStore = useAuthStore();
                onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
         <td v-if="authStore.user">
-          <button onclick="my_modal_4.showModal()"
-                  :class="{'cursor-not-allowed': sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'}"
-                  :disabled="sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'">
+          <button v-if="sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'"
+                  onclick="my_modal_4.showModal()">
             <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"/>
           </button>
         </td>

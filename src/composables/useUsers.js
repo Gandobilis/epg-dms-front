@@ -16,7 +16,8 @@ export function useUsers() {
     const roles = [
         {key: 'ROLE_ADMIN', text: 'ადმინი'},
         {key: 'ROLE_OPERATOR', text: 'ოპერატორი'},
-        {key: 'ROLE_MANAGER', text: 'მენეჯერი'}
+        {key: 'ROLE_MANAGER', text: 'მენეჯერი'},
+        {key: 'ROLE_GUEST', text: 'სტუმარი'}
     ];
 
     const getUsers = async () => {
