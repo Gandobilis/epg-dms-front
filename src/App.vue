@@ -6,8 +6,8 @@ import {onMounted} from "vue";
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  await authStore.restoreSession()
-})
+  await authStore.restoreSession();
+});
 </script>
 
 <template>

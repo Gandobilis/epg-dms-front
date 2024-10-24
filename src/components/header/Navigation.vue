@@ -3,44 +3,43 @@ import {useAuthStore} from "/src/stores/auth.js";
 import useNavigation from "/src/composables/useNavigation.js";
 
 const authStore = useAuthStore();
-
-const {checkCurrentRoute, generateDownloadLink, getUserName, logout} = useNavigation();
+const {
+  showFiles,
+  showTransactions,
+  showUsers,
+  showFileExport,
+  checkCurrentRoute,
+  generateDownloadLink,
+  getUserName,
+  logout
+} = useNavigation();
 </script>
 
 <template>
   <div class="flex items-center gap-x-5">
-    <router-link class="btn"
-                 :class="{'btn-neutral': checkCurrentRoute('/')}"
-                 to="/">
-      ატვირთულები
+    <router-link v-if="showFiles()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/')}" to="/">
+      ფაილები
     </router-link>
 
-    <router-link class="btn"
-                 :class="{'btn-neutral': checkCurrentRoute('/saved')}"
-                 to="/saved">
-      შენახულები
+    <router-link v-if="showTransactions()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/transactions')}"
+                 to="/transactions">
+      ჩარიცხვები
     </router-link>
   </div>
 
   <div class="flex items-center gap-x-5">
-    <a v-if="checkCurrentRoute('/saved')"
-       class="text-white btn btn-success"
-       :href="generateDownloadLink"
+    <a v-if="showFileExport()" class="text-white btn btn-success" :href="generateDownloadLink()"
        target="_blank">
       ექსპორტი
     </a>
 
-    <router-link v-if="authStore.user?.role === 'ROLE_ADMIN'"
-                 class="btn"
-                 :class="{'btn-neutral': checkCurrentRoute('/users')}"
-                 to="/users">
+    <router-link v-if="showUsers()" class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/users')}" to="/users">
       მომხმარებლები
     </router-link>
 
-    <router-link v-if="!authStore.isAuthenticated"
-                 class="btn"
-                 :class="{'btn-neutral': checkCurrentRoute('/login')}"
-                 to="/login">
+    <router-link v-if="!authStore.isAuthenticated" class="btn"
+                 :class="{'btn-neutral': checkCurrentRoute('/login')}" to="/login">
       შესვლა
     </router-link>
 

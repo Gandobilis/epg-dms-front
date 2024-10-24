@@ -32,6 +32,7 @@ const authStore = useAuthStore();
           <div v-else-if="level !== 0" class="w-1 aspect-square rounded-full bg-black"/>
           <p v-text="extraction.id"/></div>
       </td>
+      <td v-text="extraction.queueNumber"/>
       <td v-text="extraction.orderN"/>
       <td v-text="extraction.region"/>
       <td v-text="extraction.serviceCenter"/>

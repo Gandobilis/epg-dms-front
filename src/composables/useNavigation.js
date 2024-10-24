@@ -5,12 +5,17 @@ export default function useNavigation() {
     const router = useRouter();
     const authStore = useAuthStore();
 
+    const showFiles = () => authStore.isAuthenticated && authStore.filesRoles.includes(authStore.user?.role)
+    const showTransactions = () => authStore.isAuthenticated && authStore.transactionsRoles.includes(authStore.user?.role)
+    const showUsers = () => authStore.isAuthenticated && authStore.usersRoles.includes(authStore.user?.role)
+    const showFileExport = () => authStore.isAuthenticated && authStore.fileExportRoles.includes(authStore.user?.role) && checkCurrentRoute('/transactions')
+
     const checkCurrentRoute = (path) => router.currentRoute.value.path === path;
 
     const generateDownloadLink = () => {
         const baseUrl = 'https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download';
         const accessToken = authStore.token;
-        return `${baseUrl}?access_token=${accessToken}`;
+        return `${baseUrl}?accessToken=${accessToken}`;
     };
 
     const getUserName = () => {
@@ -18,11 +23,15 @@ export default function useNavigation() {
     };
 
     const logout = async () => {
-        authStore.logout();
-        await router.push('/');
+        await authStore.logout();
+        await router.push('/login');
     };
 
     return {
+        showFiles,
+        showTransactions,
+        showUsers,
+        showFileExport,
         checkCurrentRoute,
         generateDownloadLink,
         getUserName,

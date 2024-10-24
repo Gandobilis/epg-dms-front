@@ -355,6 +355,7 @@ const authStore = useAuthStore();
       <thead>
       <tr>
         <th>N</th>
+        <th>რიგი</th>
         <th>ორდერის N</th>
         <th>რეგიონი</th>
         <th>ს/ც</th>
