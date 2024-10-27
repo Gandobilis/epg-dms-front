@@ -106,7 +106,7 @@ const authStore = useAuthStore();
                onclick="my_modal_3.showModal()" class="cursor-pointer"/>
         </td>
         <td v-if="authStore.user">
-          <button v-if="sheet.status === 'TRANSFERRED_GOOD' || sheet.status === 'TRANSFERRED_WARNING'"
+          <button v-if="sheet.status === 'GOOD' || sheet.status === 'WARNING'"
                   onclick="my_modal_4.showModal()">
             <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"/>
           </button>
