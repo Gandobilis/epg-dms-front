@@ -480,8 +480,8 @@ function closeDropdown() {
         <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
         <ul class="absolute flex flex-col bottom-10 bg-white shadow" v-if="showDp">
           <li v-for="(o, i) in options" :key="i" @click="showDp = false; pageSize = o; currentPage = 1;"
-              class="flex items-center gap-x-5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2.5 px-5">
-            {{ o }} გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
+              class="flex items-center gap-x-2.5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2 px-3.5 text-sm">
+            {{ o }} ერთ გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
           </li>
         </ul>
       </div>
