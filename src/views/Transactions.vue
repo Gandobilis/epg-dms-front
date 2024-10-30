@@ -21,15 +21,14 @@ const {
 
 const {
   getRegionsByParentId,
-  regions,
   _regions,
-  serviceCenters,
   _serviceCenters,
   updateRecord,
   extractionFee,
-  deleteRecord,
   handleEditClick,
-  divide
+  divide,
+  sc,
+  getServiceCenters,
 } = useCenters()
 
 const showDp = ref(false);
@@ -48,11 +47,6 @@ const handleSaveClick = async () => {
 const hec = async (extraction) => {
   _error.value = false;
   await handleEditClick(extraction)
-}
-
-const handleDeleteClick = async () => {
-  await deleteRecord();
-  await getFees();
 }
 
 const id = ref()
@@ -89,6 +83,7 @@ const options = ref([])
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
+  await getServiceCenters()
   if (totalElements.value > 10) {
     options.value.push(10);
   }
@@ -171,6 +166,26 @@ function validatePage(event) {
       currentPage.value = page;
     }
   }
+}
+
+const searchTerm = ref("");
+const isDropdownOpen = ref(false);
+
+const filteredServiceCenters = computed(() =>
+    sc.value.filter(center =>
+        center.name.toLowerCase().includes(searchTerm.value.trim())
+    )
+);
+
+function selectCenter(centerName, parentName) {
+  extractionFee.value.serviceCenter = centerName;
+  searchTerm.value = centerName;
+  extractionFee.value.region = parentName;
+  isDropdownOpen.value = false;
+}
+
+function closeDropdown() {
+  setTimeout(() => isDropdownOpen.value = false, 200);
 }
 </script>
 
@@ -284,6 +299,7 @@ function validatePage(event) {
             <option :value="undefined" selected>ორივე</option>
             <option value="TRANSFER_COMPLETE">შევსებული</option>
             <option value="TRANSFERRED">შესავსები</option>
+            <option value="CANCELD">გაუქმებული</option>
           </select>
         </div>
       </div>
@@ -515,21 +531,34 @@ function validatePage(event) {
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">რეგიონი</label>
-            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                    v-model="extractionFee.region"
-                    @change="(event) => getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')))">
-              <option disabled selected>აირჩიეთ რეგიონი</option>
-              <option :value="region.name" v-for="(region, index) in regions" v-text="region.name" :key="index"
-                      :data-id="region.id"/>
-            </select>
+            <input :value="extractionFee.region" class="input input-bordered max-w-xs input-sm mb-2 focus:outline-0"
+                   disabled>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">სერვისცენტრი</label>
-            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                    v-model="extractionFee.serviceCenter">
-              <option disabled selected>აირჩიეთ სერვისცენტრი</option>
-              <option :value="center.name" v-for="(center, index) in serviceCenters" v-text="center.name" :key="index"/>
-            </select>
+            <div class="relative max-w-xs">
+              <input
+                  type="text"
+                  v-model="searchTerm"
+                  placeholder="აირჩიეთ სერვისცენტრი"
+                  @focus="isDropdownOpen = true"
+                  @blur="closeDropdown"
+                  class="input input-bordered input-sm mb-2 focus:outline-0 w-full"
+              />
+
+              <!-- Dropdown options -->
+              <div
+                  v-if="isDropdownOpen && filteredServiceCenters.length"
+                  class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg mt-1">
+                <div
+                    v-for="(center, index) in filteredServiceCenters"
+                    :key="index"
+                    @mousedown="selectCenter(center.name, center.parent.name)"
+                    class="p-2 hover:bg-gray-100 cursor-pointer">
+                  {{ center.name }}
+                </div>
+              </div>
+            </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">პროექტის Id</label>

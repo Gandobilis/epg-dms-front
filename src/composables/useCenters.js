@@ -23,9 +23,13 @@ export default function useCenters() {
             description: ''
         }
     )
+    const sc = ref([])
 
     const handleEditClick = async (extraction) => {
         extractionFee.value = {...extraction};
+        if (extractionFee.value.status === 'CANCELD') {
+            return
+        }
         document.getElementById('my_modal_1').showModal();
         if (!extractionFee.value.region) {
             extractionFee.value.region = 'აირჩიეთ რეგიონი';
@@ -58,6 +62,16 @@ export default function useCenters() {
             }
         }
     ;
+
+    const getServiceCenters = async () => {
+        try {
+            const {data} = await axios.get('business-units/unit-key/62');
+            sc.value = data;
+        } catch
+            (error) {
+            console.error("Error service centers data:", error);
+        }
+    }
 
     const updateRecord = async () => {
         try {
@@ -99,6 +113,8 @@ export default function useCenters() {
         extractionFee,
         handleEditClick,
         deleteRecord,
-        divide
+        divide,
+        sc,
+        getServiceCenters
     };
 }
