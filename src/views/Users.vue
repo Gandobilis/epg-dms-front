@@ -1,6 +1,8 @@
 <script setup>
-import { useUsers } from '../composables/useUsers';
+import {useUsers} from '../composables/useUsers';
 import Pagination from "../Pagination.vue";
+import Confirm from "../components/modals/Confirm.vue";
+import {ref} from "vue";
 
 const {
   users,
@@ -13,6 +15,8 @@ const {
   saveUser,
   deleteUser
 } = useUsers();
+
+const deleteId = ref()
 </script>
 
 <template>
@@ -51,13 +55,17 @@ const {
           <button @click="editUser(user)" class="btn btn-sm btn-info text-white">
             შეცვლა
           </button>
-          <button @click="deleteUser(user.id)"
-                  class="btn btn-error text-white btn-sm ml-2.5">წაშლა
+          <button
+              onclick="cnfrm_0.showModal()"
+              @click="deleteId = user.id"
+              class="btn btn-error text-white btn-sm ml-2.5">წაშლა
           </button>
         </td>
       </tr>
       </tbody>
     </table>
+
+    <confirm id="cnfrm_0" @accept="deleteUser(deleteId)"/>
 
     <!-- Edit/Create Modal -->
     <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
