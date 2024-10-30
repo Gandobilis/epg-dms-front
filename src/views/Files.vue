@@ -1,6 +1,6 @@
 <script setup>
 import useUploads from "/src/composables/useUploads";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 import FileInput from "../components/uploads/FileInput.vue"
 import {useAuthStore} from "../stores/auth.js";
@@ -9,6 +9,8 @@ const {
   sheets,
   currentPage,
   totalPages,
+  totalElements,
+  pageSize,
   fetchSheets,
   formatDate,
   deleteSheet,
@@ -28,14 +30,78 @@ const {
   clearFilter
 } = useSheet()
 
+const options = ref([])
+
 onMounted(async () => {
   await fetchSheets();
+  options.value = [10, 20, 50];
+  if (totalElements.value > 100) {
+    options.value.push(100);
+  }
+  if (totalElements.value > 500) {
+    options.value.push(250, 500);
+  }
 });
 
 const deleteId = ref();
 const saveId = ref();
 
 const authStore = useAuthStore();
+
+const startIndex = computed(() => (currentPage.value - 1) * pageSize.value + 1);
+
+const endIndex = computed(() => {
+  const ei = (startIndex.value + pageSize.value - 1)
+  if (ei > totalElements.value) {
+    return totalElements.value;
+  } else {
+    return ei
+  }
+});
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+}
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+}
+
+watch(currentPage, async (value) => {
+  if (value > totalPages) {
+    currentPage.value = totalPages.value;
+  }
+  if (value) {
+    await fetchSheets()
+  }
+})
+
+function onEnter(event) {
+  const page = parseInt(event.target.value);
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  } else {
+    currentPage.value = 1;
+  }
+}
+
+function validatePage(event) {
+  if (event.target.value) {
+    const page = parseInt(event.target.value);
+    if (page < 1) {
+      currentPage.value = 1;
+    } else if (page > totalPages.value) {
+      currentPage.value = totalPages.value;
+    } else {
+      currentPage.value = page;
+    }
+  }
+}
+
+const showDp = ref(false)
 </script>
 
 <template>
@@ -132,25 +198,48 @@ const authStore = useAuthStore();
     </table>
   </div>
 
-  <div v-if="sheets && sheets.length > 0" class="join justify-center w-full mt-5">
-    <button class="join-item btn" @click="
-            currentPage = currentPage - 1;
-          fetchSheets();
-          " :disabled="currentPage === 1">
-      «
-    </button>
+  <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
+    <div class="flex items-center gap-x-4 relative">
+      <span><strong>{{ startIndex }} - {{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
+      <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
+      <ul class="absolute flex flex-col bottom-10 bg-white shadow" v-if="showDp">
+        <li v-for="(o, i) in options" :key="i" @click="showDp = false; pageSize = o; currentPage = 1;"
+            class="flex items-center gap-x-5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2.5 px-5">
+          {{ o }} გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
+        </li>
+      </ul>
+    </div>
 
-    <button class="join-item btn focus:outline-0">
-      {{ currentPage }}
-    </button>
+    <div class="flex items-center gap-x-7">
+      <i class="fas fa-angle-double-left cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === 1
+        }" @click="currentPage = 1"/>
+      <i class="fas fa-angle-left cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === 1
+        }" @click="previousPage"></i>
 
-    <button class="join-item btn" @click="
-            currentPage = currentPage + 1;
-          fetchSheets();
-          " :disabled="currentPage === totalPages">
-      »
-    </button>
+      <div class="flex items-center gap-x-1">
+        <input
+            @input="validatePage"
+            class="w-8 text-center border no-spinner"
+            type="number"
+            min="1"
+            :max="totalPages"
+            :value="currentPage"
+            @keyup.enter="onEnter"
+        />
+        <span>of {{ totalPages }}</span>
+      </div>
+
+      <i class="fas fa-angle-right cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === totalPages
+        }" @click="nextPage"></i>
+      <i class="fas fa-angle-double-right cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === totalPages
+        }" @click="currentPage = totalPages"></i>
+    </div>
   </div>
+
 
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box max-w-7xl pt-8">

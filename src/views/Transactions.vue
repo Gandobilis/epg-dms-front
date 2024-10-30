@@ -16,7 +16,6 @@ const {
   pageSize,
   withdrawTypes,
   sortOptions,
-  pageOptions,
   sortByDir,
 } = useUploads()
 
