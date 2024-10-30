@@ -45,11 +45,6 @@ const authStore = useAuthStore();
            v-text="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
       </td>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.note"/>
-      <td @click="emit('handleEditClick', extraction)">
-        <p v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
-        <p class="text-neutral underline font-bold"
-           v-text="`${extraction.transferPerson.firstName} ${extraction.transferPerson.lastName}`"/>
-      </td>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.extractionDate"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.totalAmount"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.tax"/>

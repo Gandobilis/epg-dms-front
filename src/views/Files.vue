@@ -266,7 +266,7 @@ const showDp = ref(false)
             <thead>
             <tr>
               <th>N</th>
-              <th>თარიღი</th>
+              <th>ჩარიცხვის თარიღი</th>
               <th>სრული თანხა</th>
               <th>გადამხდელი</th>
               <th>დანიშნულება</th>
@@ -308,7 +308,7 @@ const showDp = ref(false)
 
           <div class="flex flex-col gap-y-10 font-medium">
             <div class="flex flex-col gap-y-2.5">
-              <p>თარიღი</p>
+              <p>ჩარიცხვის თარიღი</p>
 
               <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-x-2">
@@ -322,7 +322,7 @@ const showDp = ref(false)
             </div>
 
             <div class="flex flex-col gap-y-2">
-              <p>თანხა</p>
+              <p>სრული თანხა</p>
 
               <div class="flex flex-col gap-y-5">
                 <input type="text" class="input input-bordered input-sm focus:outline-0"
@@ -344,7 +344,7 @@ const showDp = ref(false)
                 <div class="flex items-center gap-x-2">
                   <input type="radio" name="radio" value="" class="radio radio-xs focus:outline-none"
                          checked="checked" v-model="filter.status"/>
-                  <span class="text-xs">ერთად</span>
+                  <span class="text-xs">ყველა</span>
                 </div>
 
                 <div class="flex items-center gap-x-2">

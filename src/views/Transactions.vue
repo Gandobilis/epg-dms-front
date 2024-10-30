@@ -35,7 +35,7 @@ const showDp = ref(false);
 
 const _error = ref(false)
 const handleSaveClick = async () => {
-  if (!extractionFee.value.orderN || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
+  if (!extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
     _error.value = true;
   } else {
     await updateRecord();
@@ -217,7 +217,7 @@ function closeDropdown() {
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">პროექტის Id</label>
+        <label class="font-semibold text-gray-600">პროექტის ნომერი</label>
         <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                v-model="filter.projectID"
         />
@@ -292,11 +292,11 @@ function closeDropdown() {
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">სტატუსი</label>
+        <label class="font-semibold text-gray-600">ჩანაწერის სტატუსი</label>
         <div class="flex items-center gap-x-1">
           <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
                   v-model="filter.status">
-            <option :value="undefined" selected>ორივე</option>
+            <option :value="undefined" selected>ყველა</option>
             <option value="TRANSFER_COMPLETE">შევსებული</option>
             <option value="TRANSFERRED">შესავსები</option>
             <option value="CANCELD">გაუქმებული</option>
@@ -335,7 +335,7 @@ function closeDropdown() {
 
     <div class="flex flex-col gap-y-10 font-medium">
       <div class="flex flex-col gap-y-2.5">
-        <p>ბოლო ცვლილება</p>
+        <p>ბოლო ცვლილების თარიღი</p>
 
         <div class="flex items-center gap-x-1">
           <div class="flex flex-col gap-y-2">
@@ -437,17 +437,16 @@ function closeDropdown() {
       <thead>
       <tr>
         <th>N</th>
-        <th>ორდერის N</th>
+        <th>ორდერის ნომერი</th>
         <th>რეგიონი</th>
-        <th>ს/ც</th>
-        <th>პროექტის N</th>
-        <th>ტიპი</th>
-        <th>გარკვევა</th>
-        <th>ცვლილება</th>
+        <th>სერვისცენტრი</th>
+        <th>პროექტის ნომერი</th>
+        <th>ჩარიცხვის ტიპი</th>
+        <th>გარკვევის თარიღი</th>
+        <th>ბოლო ცვლილების თარიღი</th>
         <th>შენიშვნა</th>
-        <th>გადმოტანა</th>
-        <th>ჩარიცხვა</th>
-        <th>თანხა</th>
+        <th>ჩარიცხვის თარიღი</th>
+        <th>სრული თანხა</th>
         <th>გადამხდელი</th>
         <th>დანიშნულება</th>
         <th>აღწერა</th>
@@ -561,7 +560,7 @@ function closeDropdown() {
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">პროექტის Id</label>
+            <label class="font-semibold text-gray-600">პროექტის ნომერი</label>
             <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                    v-model="extractionFee.projectID"/>
           </div>
@@ -588,7 +587,7 @@ function closeDropdown() {
             <div v-text="extractionFee.clarificationDate"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">ბოლო ცვლილება</label>
+            <label class="font-semibold text-gray-600">ბოლო ცვლილების თარიღი</label>
             <div>
               <p v-text="extractionFee.changeDate?.split('.')[0].replace('T', ' ')"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
@@ -604,7 +603,7 @@ function closeDropdown() {
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">ატვირთვის თარიღი</label>
+            <label class="font-semibold text-gray-600">ჩარიცხვის თარიღი</label>
             <div v-text="extractionFee.extractionDate"/>
           </div>
           <div class="flex flex-col gap-y-2">

@@ -14,18 +14,15 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = ref(false);
 
     const login = async (email, password) => {
-        try {
-            const {data} = await axios.post('auth/signin', {email, password});
-            token.value = data.jwtAuthenticationResponse.token;
-            user.value = data.user;
-            isAuthenticated.value = true;
 
-            cookies.set('auth_token', token.value);
+        const {data} = await axios.post('auth/signin', {email, password});
+        token.value = data.jwtAuthenticationResponse.token;
+        user.value = data.user;
+        isAuthenticated.value = true;
 
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
-        } catch (error) {
-            console.error('Login failed:', error);
-        }
+        cookies.set('auth_token', token.value);
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
     };
 
     const logout = async () => {
