@@ -388,3 +388,14 @@ const showDp = ref(false)
     </div>
   </dialog>
 </template>
+
+<style scoped>
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+.no-spinner {
+  appearance: textfield;
+}
+</style>

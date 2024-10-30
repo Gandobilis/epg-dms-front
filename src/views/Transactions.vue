@@ -252,7 +252,7 @@ function validatePage(event) {
       </div>
 
       <div class="flex flex-col gap-y-2 text-sm">
-        <label class="font-semibold text-gray-600">მიზანი</label>
+        <label class="font-semibold text-gray-600">დანიშნულება</label>
         <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                v-model="filter.purpose"
         />
@@ -422,7 +422,7 @@ function validatePage(event) {
         <th>ჩარიცხვა</th>
         <th>თანხა</th>
         <th>გადამხდელი</th>
-        <th>მიზანი</th>
+        <th>დანიშნულება</th>
         <th>აღწერა</th>
         <th v-if="authStore.user"/>
       </tr>
@@ -572,7 +572,7 @@ function validatePage(event) {
             <div v-text="extractionFee.totalAmount"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">მიზანი</label>
+            <label class="font-semibold text-gray-600">დანიშნულება</label>
             <div v-text="extractionFee.purpose"/>
           </div>
           <div class="flex flex-col gap-y-2">
@@ -593,12 +593,6 @@ function validatePage(event) {
               <button class="btn">გაუქმება</button>
             </form>
           </div>
-        </div>
-
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn btn-error text-white" @click="handleDeleteClick">წაშლა</button>
-          </form>
         </div>
       </div>
     </div>
