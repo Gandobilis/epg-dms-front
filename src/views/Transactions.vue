@@ -33,6 +33,8 @@ const {
   divide
 } = useCenters()
 
+const showDp = ref(false);
+
 const _error = ref(false)
 const handleSaveClick = async () => {
   if (!extractionFee.value.orderN || !extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
@@ -83,9 +85,18 @@ const handleDivision = async () => {
   error.value = false;
 }
 
+const options = ref([])
+
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
+  options.value = [10, 20, 50];
+  if (totalElements.value > 100) {
+    options.value.push(100);
+  }
+  if (totalElements.value > 500) {
+    options.value.push(250, 500);
+  }
 })
 
 const regex = /^(\d+(\s\d+)*)$/;
@@ -100,7 +111,16 @@ const validateAmount = () => {
 const authStore = useAuthStore();
 
 const startIndex = computed(() => (currentPage.value - 1) * pageSize.value + 1);
-const endIndex = computed(() => (startIndex.value + pageSize.value - 1));
+
+const endIndex = computed(() => {
+  const ei = (startIndex.value + pageSize.value - 1)
+  if (ei > totalElements.value) {
+    return totalElements.value;
+  } else {
+    return ei
+  }
+});
+
 const previousPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
@@ -120,6 +140,28 @@ watch(currentPage, async (value) => {
     await getFees();
   }
 })
+
+function onEnter(event) {
+  const page = parseInt(event.target.value);
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  } else {
+    currentPage.value = 1;
+  }
+}
+
+function validatePage(event) {
+  if (event.target.value) {
+    const page = parseInt(event.target.value);
+    if (page < 1) {
+      currentPage.value = 1;
+    } else if (page > totalPages.value) {
+      currentPage.value = totalPages.value;
+    } else {
+      currentPage.value = page;
+    }
+  }
+}
 </script>
 
 <template>
@@ -323,23 +365,13 @@ watch(currentPage, async (value) => {
     </div>
 
     <div class="grid grid-cols-2 items-center gap-x-2.5">
-      <div class="grid grid-rows-2 gap-y-2.5">
+      <div class="grid gap-y-2.5">
         <div class="flex flex-col gap-y-2 text-sm">
           <div class="flex items-center gap-x-1">
             <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
                     v-model="sortByDir">
               <option disabled>დალაგება</option>
               <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-y-2 text-sm">
-          <div class="flex items-center gap-x-1">
-            <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-                    v-model="pageSize">
-              <option disabled>ერთ გვერდზე</option>
-              <option :value="option" v-for="(option, index) in pageOptions" v-text="option" :key="index"/>
             </select>
           </div>
         </div>
@@ -418,9 +450,15 @@ watch(currentPage, async (value) => {
     </table>
 
     <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
-      <div class="flex items-center gap-x-4">
+      <div class="flex items-center gap-x-4 relative">
         <span><strong>{{ startIndex }} - {{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
-        <i class="fas fa-caret-down"></i>
+        <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
+        <ul class="absolute flex flex-col bottom-10 bg-white shadow" v-if="showDp">
+          <li v-for="(o, i) in options" :key="i" @click="showDp = false; pageSize = o; currentPage = 1;"
+              class="flex items-center gap-x-5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2.5 px-5">
+            {{ o }} გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
+          </li>
+        </ul>
       </div>
 
       <div class="flex items-center gap-x-7">
@@ -433,11 +471,13 @@ watch(currentPage, async (value) => {
 
         <div class="flex items-center gap-x-1">
           <input
+              @input="validatePage"
               class="w-8 text-center border no-spinner"
               type="number"
-              :min="1"
+              min="1"
               :max="totalPages"
               :value="currentPage"
+              @keyup.enter="onEnter"
           />
           <span>of {{ totalPages }}</span>
         </div>

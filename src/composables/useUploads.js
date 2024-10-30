@@ -4,7 +4,7 @@ import axios from "../interceptors/axios";
 export default function useUploads() {
     const sheets = ref();
     const currentPage = ref(1);
-    const pageSize = ref(16);
+    const pageSize = ref(20);
     const selectedSheet = ref();
     const lastResponse = ref();
     const totalPages = ref();
@@ -254,7 +254,6 @@ export default function useUploads() {
         pageSize,
         totalPages,
         totalElements,
-
         selectedSheet,
         lastResponse,
         fetchSheets,
