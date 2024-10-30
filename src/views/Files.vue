@@ -34,12 +34,23 @@ const options = ref([])
 
 onMounted(async () => {
   await fetchSheets();
-  options.value = [10, 20, 50];
+  if (totalElements.value > 10) {
+    options.value.push(10);
+  }
+  if (totalElements.value > 20) {
+    options.value.push(20);
+  }
+  if (totalElements.value > 50) {
+    options.value.push(50);
+  }
   if (totalElements.value > 100) {
     options.value.push(100);
   }
+  if (totalElements.value > 250) {
+    options.value.push(250);
+  }
   if (totalElements.value > 500) {
-    options.value.push(250, 500);
+    options.value.push(500);
   }
 });
 

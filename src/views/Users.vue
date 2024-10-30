@@ -98,5 +98,5 @@ const {
       </div>
     </div>
   </div>
-  <pagination />
+
 </template>

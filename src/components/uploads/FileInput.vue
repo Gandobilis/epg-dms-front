@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import Message from "../modals/Message.vue";
 
 const fileInput = ref(null);
@@ -13,9 +13,12 @@ const triggerFileInput = () => {
 
 const emit = defineEmits(['createSheet']);
 
+const model = defineModel()
+
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
+    model.value = file;
     selectedFileName.value = file.name;
     showUploadButton.value = true;
   }

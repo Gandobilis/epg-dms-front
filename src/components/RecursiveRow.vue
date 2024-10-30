@@ -20,7 +20,7 @@ const authStore = useAuthStore();
 
 <template>
   <template v-for="extraction in records" :key="extraction.id">
-    <tr @click="emit('handleEditClick')" class="cursor-pointer"
+    <tr class="cursor-pointer"
         :class="{'bg-gray-300': extraction.children.length > 0, 'hover:bg-gray-100': extraction.children.length <= 0}">
       <td>
         <div :style="{ marginLeft: `${level * 10 + (level !== 0 && extraction.children.length === 0 ? 20 : 0)}px` }"
@@ -33,34 +33,28 @@ const authStore = useAuthStore();
           <div v-else-if="level !== 0" class="w-1 aspect-square rounded-full bg-black"/>
           <p class="whitespace-nowrap" v-text="extraction.queueNumber ?? extraction.id"/></div>
       </td>
-      <td v-text="extraction.orderN"/>
-      <td v-text="extraction.region"/>
-      <td v-text="extraction.serviceCenter"/>
-      <td v-text="extraction.projectID"/>
-      <td v-text="extraction.withdrawType"/>
-      <td v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
-      <td>
+      <td @click="emit('handleEditClick')" v-text="extraction.orderN"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.region"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.serviceCenter"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.projectID"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.withdrawType"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
+      <td @click="emit('handleEditClick')">
         <p v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
         <p class="text-neutral underline font-bold" v-if="extraction.changeDate"
            v-text="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
       </td>
-      <td v-text="extraction.note"/>
-      <td>
+      <td @click="emit('handleEditClick')" v-text="extraction.note"/>
+      <td @click="emit('handleEditClick')">
         <p v-text="extraction.transferDate?.split('.')[0].replace('T', ' ')"/>
         <p class="text-neutral underline font-bold"
            v-text="`${extraction.transferPerson.firstName} ${extraction.transferPerson.lastName}`"/>
       </td>
-      <td v-text="extraction.extractionDate"/>
-      <td v-text="extraction.totalAmount"/>
-      <td v-text="extraction.tax"/>
-      <td v-text="extraction.purpose"/>
-      <td v-text="extraction.description"/>
-<!--      <td title="შეცვლა" v-if="authStore.user">-->
-<!--        <button @click="emit('handleEditClick', extraction);"-->
-<!--                :class="{'cursor-not-allowed': extraction.children.length > 0}"-->
-<!--                :disabled="extraction.children.length > 0">-->
-<!--          <img src="/src/assets/edit.svg" alt="edit icon" class="max-w-8"/></button>-->
-<!--      </td>-->
+      <td @click="emit('handleEditClick')" v-text="extraction.extractionDate"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.totalAmount"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.tax"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.purpose"/>
+      <td @click="emit('handleEditClick')" v-text="extraction.description"/>
       <td title="გაყოფა" v-if="authStore.user">
         <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
                 :class="{'cursor-not-allowed': extraction.children.length > 0}"

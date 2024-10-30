@@ -1,37 +1,52 @@
-<script setup>
-import {ref} from 'vue';
+<template>
+  <teleport to="body">
+    <transition name="fade">
+      <div v-if="show" class="message fixed bottom-4 right-10 bg-white p-4 rounded-lg shadow-md max-w-sm">
+        {{ message }}
+      </div>
+    </transition>
+  </teleport>
+</template>
 
-defineProps({
+<script setup>
+import {ref, watch} from 'vue';
+
+const props = defineProps({
   message: {
     type: String,
     required: true
   }
 });
 
-const show = ref(true);
+const show = ref(false);
 
 function hideRequest() {
   show.value = false;
 }
+
+watch(
+    () => props.message,
+    () => {
+      show.value = true;
+      setTimeout(hideRequest, 3000);
+    },
+    {immediate: true}
+);
 </script>
 
-<template>
-  <Teleport to="body">
-    <Transition name="fade" mode="out-in">
-      <div v-if="show" class="fixed bottom-4 right-10 bg-gray-100 p-4 rounded-lg shadow-md max-w-sm">
-        <p>{{ message }}</p>
-        <button @click="hideRequest" class="mt-2 text-blue-500 hover:underline">დახურვა</button>
-      </div>
-    </Transition>
-  </Teleport>
-</template>
-
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
+.message {
+  padding: 1rem;
+  border-radius: 0.5rem;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */
+{
   opacity: 0;
 }
 </style>
+
