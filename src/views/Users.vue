@@ -1,8 +1,8 @@
 <script setup>
 import {useUsers} from '../composables/useUsers';
-import Pagination from "../Pagination.vue";
 import Confirm from "../components/modals/Confirm.vue";
 import {ref} from "vue";
+import useUploads from "../composables/useUploads.js";
 
 const {
   users,
@@ -17,6 +17,10 @@ const {
 } = useUsers();
 
 const deleteId = ref()
+
+const {
+  formatDate,
+} = useUploads();
 </script>
 
 <template>
@@ -49,8 +53,8 @@ const deleteId = ref()
         <td class="border px-4 py-2">{{ user.lastName }}</td>
         <td class="border px-4 py-2">{{ user.email }}</td>
         <td class="border px-4 py-2">{{ user.role }}</td>
-        <td class="border px-4 py-2">{{ new Date(user.createdAt).toLocaleString() }}</td>
-        <td class="border px-4 py-2">{{ new Date(user.updatedAt).toLocaleString() }}</td>
+        <td class="border px-4 py-2">{{ formatDate(user.createdAt) }}</td>
+        <td class="border px-4 py-2">{{ formatDate(user.updatedAt).toLocaleString() }}</td>
         <td class="border px-4 py-2">
           <button @click="editUser(user)" class="btn btn-sm btn-info text-white">
             შეცვლა

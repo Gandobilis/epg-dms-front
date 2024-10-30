@@ -1,6 +1,8 @@
 <script setup>
 
 import {useAuthStore} from "../stores/auth.js";
+import useUploads from "../composables/useUploads.js";
+const {formatDate} = useUploads()
 
 defineProps({
   records: {
@@ -38,14 +40,14 @@ const authStore = useAuthStore();
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.serviceCenter"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.projectID"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.withdrawType"/>
-      <td @click="emit('handleEditClick', extraction)" v-text="extraction.clarificationDate?.split('.')[0].replace('T', ' ')"/>
+      <td @click="emit('handleEditClick', extraction)" v-text="extraction.clarificationDate ? formatDate(extraction.clarificationDate) : ''"/>
       <td @click="emit('handleEditClick', extraction)">
-        <p v-text="extraction.changeDate?.split('.')[0].replace('T', ' ')"/>
+        <p v-text="extraction.changeDate ? formatDate(extraction.changeDate) : ''"/>
         <p class="text-neutral underline font-bold" v-if="extraction.changeDate"
            v-text="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
       </td>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.note"/>
-      <td @click="emit('handleEditClick', extraction)" v-text="extraction.extractionDate"/>
+      <td @click="emit('handleEditClick', extraction)" v-text="extraction.extractionDate ? formatDate(extraction.extractionDate) : ''"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.totalAmount"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.tax"/>
       <td @click="emit('handleEditClick', extraction)" v-text="extraction.purpose"/>

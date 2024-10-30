@@ -20,7 +20,8 @@ export default function useCenters() {
             extractionDate: '',
             totalAmount: '',
             purpose: '',
-            description: ''
+            description: '',
+            orderStatus: '',
         }
     )
     const sc = ref([])

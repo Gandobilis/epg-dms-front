@@ -54,6 +54,7 @@ export default function useUploads() {
             });
             sheets.value = lastResponse.value.data.data.content;
             totalPages.value = lastResponse.value.data.data.page.totalPages;
+            totalElements.value = lastResponse.value.data.data.page.totalElements;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }

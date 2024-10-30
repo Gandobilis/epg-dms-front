@@ -112,7 +112,8 @@ function validatePage(event) {
   }
 }
 
-const showDp = ref(false)
+
+const showDp = ref(false);
 </script>
 
 <template>
@@ -215,8 +216,8 @@ const showDp = ref(false)
       <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
       <ul class="absolute flex flex-col bottom-10 bg-white shadow" v-if="showDp">
         <li v-for="(o, i) in options" :key="i" @click="showDp = false; pageSize = o; currentPage = 1;"
-            class="flex items-center gap-x-5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2.5 px-5">
-          {{ o }} გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
+            class="flex items-center gap-x-2.5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2 px-3.5 text-sm">
+          {{ o }} ერთ გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
         </li>
       </ul>
     </div>
@@ -251,7 +252,6 @@ const showDp = ref(false)
     </div>
   </div>
 
-
   <dialog id="my_modal_1" class="modal">
     <div class="modal-box max-w-7xl pt-8">
       <div class="overflow-x-auto space-y-4">
@@ -277,7 +277,7 @@ const showDp = ref(false)
             <tbody v-if="sheet && sheet.length > 0">
             <tr v-for="(extraction, index) in sheet" :key="index">
               <td v-text="extraction.id"/>
-              <td v-text="extraction.date"/>
+              <td v-text="formatDate(extraction.date)"/>
               <td v-text="extraction.totalAmount"/>
               <td v-text="extraction.tax"/>
               <td v-text="extraction.purpose"/>

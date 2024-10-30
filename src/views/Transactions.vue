@@ -11,12 +11,12 @@ const {
   currentPage,
   totalPages,
   totalElements,
-
   filter,
   pageSize,
   withdrawTypes,
   sortOptions,
   sortByDir,
+  formatDate,
 } = useUploads()
 
 const {
@@ -525,8 +525,13 @@ function closeDropdown() {
         <div class="flex flex-col w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ორდერის ნომერი</label>
-            <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                   v-model="extractionFee.orderN"/>
+            <div class="grid grid-cols-2 gap-x-2 max-w-xs">
+              <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
+                     v-model="extractionFee.orderN"/>
+              <input :value="extractionFee.orderStatus === 'ORDER_COMPLETE' ? 'დასრულებული' : 'დაუსრულებელი'"
+                     class="input input-bordered max-w-xs input-sm mb-2 focus:outline-0"
+                     disabled>
+            </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">რეგიონი</label>
@@ -584,12 +589,12 @@ function closeDropdown() {
         <div class="flex flex-col justify-between w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გარკვევის თარიღი</label>
-            <div v-text="extractionFee.clarificationDate"/>
+            <div v-text="extractionFee.clarificationDate ? formatDate(extractionFee.clarificationDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ბოლო ცვლილების თარიღი</label>
             <div>
-              <p v-text="extractionFee.changeDate?.split('.')[0].replace('T', ' ')"/>
+              <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate) : ''"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
                  v-text="`${extractionFee.changePerson.firstName} ${extractionFee.changePerson.lastName}`"/>
             </div>
@@ -597,14 +602,14 @@ function closeDropdown() {
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
             <div>
-              <p v-text="extractionFee.transferDate?.split('.')[0].replace('T', ' ')"/>
+              <p v-text="extractionFee.transferDate ? formatDate(extractionFee.transferDate) : ''"/>
               <p v-if="extractionFee.transferPerson" class="text-neutral underline font-bold"
                  v-text="`${extractionFee.transferPerson.firstName} ${extractionFee.transferPerson.lastName}`"/>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ჩარიცხვის თარიღი</label>
-            <div v-text="extractionFee.extractionDate"/>
+            <div v-text="extractionFee.extractionDate ? formatDate(extractionFee.extractionDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">სრული თანხა</label>
