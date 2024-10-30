@@ -1,4 +1,4 @@
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import axios from "../interceptors/axios";
 
 export default function useUploads() {
@@ -7,7 +7,8 @@ export default function useUploads() {
     const pageSize = ref(16);
     const selectedSheet = ref();
     const lastResponse = ref();
-    const totalPages = ref(1);
+    const totalPages = ref();
+    const totalElements = ref();
     const records = ref()
     const sortBy = ref()
     const sortDir = ref()
@@ -159,6 +160,7 @@ export default function useUploads() {
             records.value = lastResponse.value.data.content;
             addShowProperty();
             totalPages.value = lastResponse.value.data.page.totalPages;
+            totalElements.value = lastResponse.value.data.page.totalElements;
         } catch (error) {
             console.error("Error fetching sheets:", error);
         }
@@ -251,6 +253,8 @@ export default function useUploads() {
         currentPage,
         pageSize,
         totalPages,
+        totalElements,
+
         selectedSheet,
         lastResponse,
         fetchSheets,

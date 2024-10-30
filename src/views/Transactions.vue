@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import useCenters from "../composables/useCenters.js"
 import useUploads from "../composables/useUploads.js"
 import RecursiveRow from "../components/RecursiveRow.vue";
@@ -10,6 +10,8 @@ const {
   getFees,
   currentPage,
   totalPages,
+  totalElements,
+
   filter,
   pageSize,
   withdrawTypes,
@@ -96,6 +98,28 @@ const validateAmount = () => {
 };
 
 const authStore = useAuthStore();
+
+const startIndex = computed(() => (currentPage.value - 1) * pageSize.value + 1);
+const endIndex = computed(() => (startIndex.value + pageSize.value - 1));
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+}
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+}
+
+watch(currentPage, async (value) => {
+  if (value > totalPages) {
+    currentPage.value = totalPages.value;
+  }
+  if (value) {
+    await getFees();
+  }
+})
 </script>
 
 <template>
@@ -370,7 +394,6 @@ const authStore = useAuthStore();
         <th>მიზანი</th>
         <th>აღწერა</th>
         <th v-if="authStore.user"/>
-        <th v-if="authStore.user"/>
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
@@ -394,25 +417,40 @@ const authStore = useAuthStore();
       </tbody>
     </table>
 
-    <div class="join justify-center w-full" v-if="records && records.length > 0">
-      <button class="join-item btn" @click="
-            currentPage = currentPage - 1;
-          getFees();
-          " :disabled="currentPage === 1">
-        «
-      </button>
+    <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
+      <div class="flex items-center gap-x-4">
+        <span><strong>{{ startIndex }} - {{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
+        <i class="fas fa-caret-down"></i>
+      </div>
 
-      <button class="join-item btn focus:outline-0">
-        {{ currentPage }}
-      </button>
+      <div class="flex items-center gap-x-7">
+        <i class="fas fa-angle-double-left cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === 1
+        }" @click="currentPage = 1"/>
+        <i class="fas fa-angle-left cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === 1
+        }" @click="previousPage"></i>
 
-      <button class="join-item btn" @click="
-            currentPage = currentPage + 1;
-          getFees();
-          " :disabled="currentPage === totalPages">
-        »
-      </button>
+        <div class="flex items-center gap-x-1">
+          <input
+              class="w-8 text-center border no-spinner"
+              type="number"
+              :min="1"
+              :max="totalPages"
+              :value="currentPage"
+          />
+          <span>of {{ totalPages }}</span>
+        </div>
+
+        <i class="fas fa-angle-right cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === totalPages
+        }" @click="nextPage"></i>
+        <i class="fas fa-angle-double-right cursor-pointer" :class="{
+          'text-gray-300 cursor-default': currentPage === totalPages
+        }" @click="currentPage = totalPages"></i>
+      </div>
     </div>
+
   </div>
 
   <dialog id="my_modal_1" class="modal">
@@ -546,3 +584,14 @@ const authStore = useAuthStore();
     </div>
   </dialog>
 </template>
+
+<style scoped>
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+.no-spinner {
+  appearance: textfield;
+}
+</style>

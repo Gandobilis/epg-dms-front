@@ -1,26 +1,41 @@
 <script setup>
 import {ref} from "vue";
+import Message from "../modals/Message.vue";
 
 const fileInput = ref(null);
+const selectedFileName = ref('ფაილი არჩეული არ არის'); // Default message
+const showUploadButton = ref(false);
+const message = ref()
 
 const triggerFileInput = () => {
   fileInput.value.click();
 };
 
-const emit = defineEmits(['createSheet'])
+const emit = defineEmits(['createSheet']);
 
-const model = defineModel()
-
-const handleFileChange = async (event) => {
-  model.value = event.target.files[0]
-  emit('createSheet')
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    selectedFileName.value = file.name;
+    showUploadButton.value = true;
+  }
   event.target.value = '';
-  model.value = ''
 };
+
+const upload = () => {
+  try {
+    emit('createSheet');
+    selectedFileName.value = '';
+    showUploadButton.value = false;
+    message.value = 'ფაილი აიტვირთა წარმატებით';
+  } catch (e) {
+    message.value = 'შეცდომა ფაილის დამუშავებისას'
+  }
+}
 </script>
 
 <template>
-  <div class="flex items-center justify-between mb-3.5">
+  <div class="flex items-center gap-x-5 mb-3.5">
     <div class="flex items-center gap-x-2.5">
       <input
           ref="fileInput"
@@ -34,7 +49,15 @@ const handleFileChange = async (event) => {
       >
         აირჩიეთ ფაილი
       </button>
-      <p class="text-sm">{{ 'ფაილი არჩეული არ არის' }}</p>
+      <p class="text-sm">{{ selectedFileName }}</p>
     </div>
+    <button
+        v-if="showUploadButton"
+        class="btn btn-sm"
+        @click="upload"
+    >
+      ატვირთვა
+    </button>
   </div>
+  <message v-if="message" :message="message"/>
 </template>

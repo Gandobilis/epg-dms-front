@@ -55,12 +55,12 @@ const authStore = useAuthStore();
       <td v-text="extraction.tax"/>
       <td v-text="extraction.purpose"/>
       <td v-text="extraction.description"/>
-      <td title="შეცვლა" v-if="authStore.user">
-        <button @click="emit('handleEditClick', extraction);"
-                :class="{'cursor-not-allowed': extraction.children.length > 0}"
-                :disabled="extraction.children.length > 0">
-          <img src="/src/assets/edit.svg" alt="edit icon" class="max-w-8"/></button>
-      </td>
+<!--      <td title="შეცვლა" v-if="authStore.user">-->
+<!--        <button @click="emit('handleEditClick', extraction);"-->
+<!--                :class="{'cursor-not-allowed': extraction.children.length > 0}"-->
+<!--                :disabled="extraction.children.length > 0">-->
+<!--          <img src="/src/assets/edit.svg" alt="edit icon" class="max-w-8"/></button>-->
+<!--      </td>-->
       <td title="გაყოფა" v-if="authStore.user">
         <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
                 :class="{'cursor-not-allowed': extraction.children.length > 0}"

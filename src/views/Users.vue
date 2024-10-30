@@ -1,5 +1,6 @@
 <script setup>
 import { useUsers } from '../composables/useUsers';
+import Pagination from "../Pagination.vue";
 
 const {
   users,
@@ -97,4 +98,5 @@ const {
       </div>
     </div>
   </div>
+  <pagination />
 </template>
