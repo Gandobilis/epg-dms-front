@@ -1,9 +1,9 @@
 <script setup>
 import {computed, onMounted, ref, watch} from "vue";
-import useCenters from "../composables/useCenters.js"
-import useUploads from "../composables/useUploads.js"
-import RecursiveRow from "../components/RecursiveRow.vue";
-import {useAuthStore} from "../stores/auth.js";
+import useCenters from "/src/composables/useCenters.js";
+import useUploads from "/src/composables/useUploads.js";
+import RecursiveRow from "/src/components/RecursiveRow.vue";
+import {useAuthStore} from "/src/stores/auth.js";
 
 const {
   records,
@@ -110,7 +110,7 @@ const mapToArray = () => cleanAmount().split(' ').map(Number);
 const sumArray = () => mapToArray().reduce((a, b) => a + b, 0);
 const validateAmount = () => {
   const numbers = mapToArray();
-  return regex.test(cleanAmount()) && numbers.every(n => n > 0) && (sumArray() === remainder.value);
+  return regex.test(cleanAmount()) && numbers.every(n => n > 0) && (sumArray() <= remainder.value);
 };
 
 const authStore = useAuthStore();
@@ -144,7 +144,9 @@ watch(currentPage, async (value) => {
   if (value) {
     await getFees();
   }
-})
+}
+
+)
 
 function onEnter(event) {
   const page = parseInt(event.target.value);
@@ -172,9 +174,7 @@ const searchTerm = ref("");
 const isDropdownOpen = ref(false);
 
 const filteredServiceCenters = computed(() =>
-    sc.value.filter(center =>
-        center.name.toLowerCase().includes(searchTerm.value.trim())
-    )
+    sc.value.filter(center => center.name.toLowerCase().includes(searchTerm.value.trim()))
 );
 
 function selectCenter(centerName, parentName) {
