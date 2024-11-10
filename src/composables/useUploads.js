@@ -14,28 +14,32 @@ export default function useUploads() {
     const sortDir = ref()
 
     const filter = ref({
-        status: undefined,
-        orderN: undefined,
-        region: "აირჩიეთ რეგიონი",
-        serviceCenter: "აირჩიეთ სერვისცენტრი",
-        projectID: undefined,
-        withdrawType: "აირჩიეთ გადარიცხვის ტიპი",
-        clarificationDateStart: undefined,
-        clarificationDateEnd: undefined,
-        changeDateStart: undefined,
-        changeDateEnd: undefined,
-        transferDateStart: undefined,
-        transferDateEnd: undefined,
-        extractionDateStart: undefined,
-        extractionDateEnd: undefined,
-        totalAmount: undefined,
-        purpose: undefined,
-        note: undefined,
-        description: undefined,
-        file: undefined,
+        region: 'აირჩიეთ რეგიონი',
+        serviceCenter: 'აირჩიეთ მ/ც',
+        withdrawType: 'აირჩიეთ ტიპი',
+        status: 'აირჩიეთ სტატუსი',
         totalAmountStart: undefined,
         totalAmountEnd: undefined,
-        tax: undefined
+
+        orderN: undefined,
+        projectID: undefined,
+        purpose: undefined,
+        tax: undefined,
+        description: undefined,
+
+        clarificationDateStart: undefined,
+        clarificationDateEnd: undefined,
+
+        changeDateStart: undefined,
+        changeDateEnd: undefined,
+
+        transferDateStart: undefined,
+        transferDateEnd: undefined,
+
+        extractionDateStart: undefined,
+        extractionDateEnd: undefined,
+
+        note: undefined,
     })
 
     watch(filter, async () => {
@@ -138,8 +142,9 @@ export default function useUploads() {
         ]
         const undefinedValues = [
             "აირჩიეთ რეგიონი",
-            "აირჩიეთ სერვისცენტრი",
-            "აირჩიეთ გადარიცხვის ტიპი"
+            "აირჩიეთ მ/ც",
+            "აირჩიეთ ტიპი",
+            "აირჩიეთ სტატუსი"
         ]
         Object.entries(filter.value)
             .filter(([_, value]) => value && !undefinedValues.includes(value))
@@ -170,19 +175,11 @@ export default function useUploads() {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
 
-        const months = [
-            "იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი",
-            "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"
-        ];
-
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
-        const month = months[date.getMonth()];
-        const day = date.getDate();
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
 
-        return `${year} წლის ${day} ${month}, ${hours}:${minutes}:${seconds}`;
+        return `${day}.${month}.${year}`;
     }
 
     const withdrawTypes = [
