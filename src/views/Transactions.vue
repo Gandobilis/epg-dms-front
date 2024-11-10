@@ -494,7 +494,7 @@ async function getSelectedParentId(event) {
 
                 <option value="ORDER_COMPLETE">შევსებული</option>
 
-                <option value="ORDER_CANCELED">გაუქმებული</option>
+                <option value="CANCELED">გაუქმებული</option>
               </select>
             </div>
           </div>
