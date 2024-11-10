@@ -1,85 +1,34 @@
 <script setup>
 import useUploads from "/src/composables/useUploads";
-import {computed, onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import useSheet from "../composables/useSheet.js";
 import FileInput from "../components/uploads/FileInput.vue"
 import {useAuthStore} from "../stores/auth.js";
-
-const {
-  sheets,
-  currentPage,
-  totalPages,
-  totalElements,
-  pageSize,
-  fetchSheets,
-  formatDate,
-  deleteSheet,
-  saveSheet,
-  createSheet,
-  selectedSheet
-} = useUploads();
-
-const {
-  sheet,
-  _currentPage,
-  _totalPages,
-  recordId,
-  details,
-  fetchSheetData,
-  filter,
-  clearFilter
-} = useSheet()
-
-const options = ref([])
-
-onMounted(async () => {
-  await fetchSheets();
-  if (totalElements.value > 10) {
-    options.value.push(10);
-  }
-  if (totalElements.value > 20) {
-    options.value.push(20);
-  }
-  if (totalElements.value > 50) {
-    options.value.push(50);
-  }
-  if (totalElements.value > 100) {
-    options.value.push(100);
-  }
-  if (totalElements.value > 250) {
-    options.value.push(250);
-  }
-  if (totalElements.value > 500) {
-    options.value.push(500);
-  }
-});
-
-const deleteId = ref();
-const saveId = ref();
+import Pagination from "../components/Pagination.vue";
+import useFiles from "../composables/useFiles.js";
 
 const authStore = useAuthStore();
 
-const startIndex = computed(() => (currentPage.value - 1) * pageSize.value + 1);
+const {formatDate,} = useUploads();
 
-const endIndex = computed(() => {
-  const ei = (startIndex.value + pageSize.value - 1)
-  if (ei > totalElements.value) {
-    return totalElements.value;
-  } else {
-    return ei
-  }
-});
+const {
+  files,
+  currentPage,
+  pageSize,
+  totalPages,
+  totalElements,
+  selectedSheet,
+  fetchSheets,
+  createSheet,
+  deleteSheet,
+  saveSheet,
+  transactions
+} = useFiles();
 
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-}
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-}
+const {sheet, _currentPage, _totalPages, recordId, details, fetchSheetData, filter, clearFilter} = useSheet()
+
+const deleteId = ref();
+const saveId = ref();
 
 watch(currentPage, async (value) => {
   if (value > totalPages) {
@@ -90,30 +39,9 @@ watch(currentPage, async (value) => {
   }
 })
 
-function onEnter(event) {
-  const page = parseInt(event.target.value);
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-  } else {
-    currentPage.value = 1;
-  }
-}
-
-function validatePage(event) {
-  if (event.target.value) {
-    const page = parseInt(event.target.value);
-    if (page < 1) {
-      currentPage.value = 1;
-    } else if (page > totalPages.value) {
-      currentPage.value = totalPages.value;
-    } else {
-      currentPage.value = page;
-    }
-  }
-}
-
-
-const showDp = ref(false);
+onMounted(async () => {
+  await fetchSheets();
+});
 </script>
 
 <template>
@@ -147,7 +75,7 @@ const showDp = ref(false);
     </div>
   </dialog>
 
-  <div class="overflow-x-auto h-[75vh]">
+  <div class="flex flex-col gap-y-5">
     <table class="table table-xs">
       <thead>
       <tr>
@@ -160,8 +88,8 @@ const showDp = ref(false);
       </tr>
       </thead>
 
-      <tbody v-if="sheets && sheets.length > 0">
-      <tr v-for="(sheet, index) in sheets" :key="index">
+      <tbody v-if="files && files.length> 0">
+      <tr v-for="(sheet, index) in files" :key="index">
         <td>
           <div class="flex items-center gap-x-2.5">
             <img src="/src/assets/excel.svg.png" alt="excel icon" class="w-8"/>
@@ -192,7 +120,7 @@ const showDp = ref(false);
       </tr>
       </tbody>
 
-      <tbody v-else-if="sheets && sheets.length === 0">
+      <tbody v-else-if="files && files.length === 0">
       <tr>
         <td>
           გთხოვთ ატვირთოთ ფაილები!
@@ -208,48 +136,9 @@ const showDp = ref(false);
       </tr>
       </tbody>
     </table>
-  </div>
 
-  <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
-    <div class="flex items-center gap-x-4 relative">
-      <span><strong>{{ startIndex }} - {{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
-      <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
-      <ul class="absolute flex flex-col bottom-10 bg-white shadow" v-if="showDp">
-        <li v-for="(o, i) in options" :key="i" @click="showDp = false; pageSize = o; currentPage = 1;"
-            class="flex items-center gap-x-2.5 whitespace-nowrap cursor-pointer hover:bg-gray-300 py-2 px-3.5 text-sm">
-          {{ o }} ერთ გვერდზე <i v-if="pageSize === o" class="fa-solid fa-check text-blue-500"></i>
-        </li>
-      </ul>
-    </div>
-
-    <div class="flex items-center gap-x-7">
-      <i class="fas fa-angle-double-left cursor-pointer" :class="{
-          'text-gray-300 cursor-default': currentPage === 1
-        }" @click="currentPage = 1"/>
-      <i class="fas fa-angle-left cursor-pointer" :class="{
-          'text-gray-300 cursor-default': currentPage === 1
-        }" @click="previousPage"></i>
-
-      <div class="flex items-center gap-x-1">
-        <input
-            @input="validatePage"
-            class="w-8 text-center border no-spinner"
-            type="number"
-            min="1"
-            :max="totalPages"
-            :value="currentPage"
-            @keyup.enter="onEnter"
-        />
-        <span>of {{ totalPages }}</span>
-      </div>
-
-      <i class="fas fa-angle-right cursor-pointer" :class="{
-          'text-gray-300 cursor-default': currentPage === totalPages
-        }" @click="nextPage"></i>
-      <i class="fas fa-angle-double-right cursor-pointer" :class="{
-          'text-gray-300 cursor-default': currentPage === totalPages
-        }" @click="currentPage = totalPages"></i>
-    </div>
+    <pagination v-model:current-page="currentPage" v-model:page-size="pageSize" v-model:total-pages="totalPages"
+                v-model:total-elements="totalElements"/>
   </div>
 
   <dialog id="my_modal_1" class="modal">
