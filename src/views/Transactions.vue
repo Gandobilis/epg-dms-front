@@ -5,6 +5,7 @@ import useUploads from "/src/composables/useUploads.js";
 import RecursiveRow from "/src/components/RecursiveRow.vue";
 import {useAuthStore} from "/src/stores/auth.js";
 import DateFilter from "../components/FilterDate.vue";
+import Pagination from "../components/Pagination.vue";
 
 const {
   records,
@@ -389,24 +390,25 @@ async function getSelectedParentId(event) {
   </div>
   <!--ფილტრი-->
 
+  <!--ცხრილი-->
   <div class="flex flex-col gap-y-5 mt-5">
     <table class="table table-xs">
       <thead>
       <tr>
         <th>N</th>
-        <th>ორდერის ნომერი</th>
+        <th>ორდერის N</th>
         <th>რეგიონი</th>
-        <th>სერვისცენტრი</th>
-        <th>პროექტის ნომერი</th>
-        <th>ჩარიცხვის ტიპი</th>
+        <th>მ/ც</th>
+        <th>პროექტის N</th>
+        <th>ტიპი</th>
         <th>გარკვევის თარიღი</th>
-        <th>ბოლო ცვლილების თარიღი</th>
+        <th>ცვლილების თარიღი</th>
         <th>შენიშვნა</th>
         <th>ჩარიცხვის თარიღი</th>
-        <th>სრული თანხა</th>
-        <th>გადამხდელი</th>
+        <th>ბრუნვა</th>
+        <th>ID</th>
         <th>დანიშნულება</th>
-        <th>აღწერა</th>
+        <th>დამატებითი ინფორმაცია</th>
         <th v-if="authStore.user"/>
       </tr>
       </thead>
@@ -430,8 +432,11 @@ async function getSelectedParentId(event) {
       </tr>
       </tbody>
     </table>
+    <!--ცხრილი-->
 
-    <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
+
+    <div v-if="records && records.length > 0"
+         class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
       <div class="flex items-center gap-x-4 relative">
         <span><strong>{{ startIndex }} - {{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
         <i class="fas fa-caret-down cursor-pointer" @click="showDp = !showDp"/>
@@ -472,7 +477,6 @@ async function getSelectedParentId(event) {
         }" @click="currentPage = totalPages"></i>
       </div>
     </div>
-
   </div>
 
   <dialog id="my_modal_1" class="modal">
@@ -481,13 +485,17 @@ async function getSelectedParentId(event) {
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">ორდერის ნომერი</label>
+            <label class="font-semibold text-gray-600">ორდერის N</label>
             <div class="grid grid-cols-2 gap-x-2 max-w-xs">
               <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                      v-model="extractionFee.orderN"/>
-              <input :value="extractionFee.orderStatus === 'ORDER_COMPLETE' ? 'დასრულებული' : 'დაუსრულებელი'"
-                     class="input input-bordered max-w-xs input-sm mb-2 focus:outline-0"
-                     disabled>
+              <select class="filter-select" v-model="extractionFee.orderStatus">
+                <option value="ORDER_INCOMPLETE">შესავსები</option>
+
+                <option value="ORDER_COMPLETE">შევსებული</option>
+
+                <option value="ORDER_CANCELED">გაუქმებული</option>
+              </select>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
@@ -496,12 +504,12 @@ async function getSelectedParentId(event) {
                    disabled>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">სერვისცენტრი</label>
+            <label class="font-semibold text-gray-600">მ/ც</label>
             <div class="relative max-w-xs">
               <input
                   type="text"
                   v-model="searchTerm"
-                  placeholder="აირჩიეთ სერვისცენტრი"
+                  placeholder="აირჩიეთ მ/ც"
                   @focus="isDropdownOpen = true"
                   @blur="closeDropdown"
                   class="input input-bordered input-sm mb-2 focus:outline-0 w-full"
@@ -522,15 +530,15 @@ async function getSelectedParentId(event) {
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">პროექტის ნომერი</label>
+            <label class="font-semibold text-gray-600">პროექტის N</label>
             <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
                    v-model="extractionFee.projectID"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">გადარიცხვის ტიპი</label>
+            <label class="font-semibold text-gray-600">ტიპი</label>
             <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
                     v-model="extractionFee.withdrawType">
-              <option disabled selected>აირჩიეთ გადარიცხვის ტიპი</option>
+              <option disabled selected>აირჩიეთ ტიპი</option>
               <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
             </select>
           </div>
@@ -549,7 +557,7 @@ async function getSelectedParentId(event) {
             <div v-text="extractionFee.clarificationDate ? formatDate(extractionFee.clarificationDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">ბოლო ცვლილების თარიღი</label>
+            <label class="font-semibold text-gray-600">ცვლილების თარიღი</label>
             <div>
               <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate) : ''"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
@@ -569,7 +577,7 @@ async function getSelectedParentId(event) {
             <div v-text="extractionFee.extractionDate ? formatDate(extractionFee.extractionDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">სრული თანხა</label>
+            <label class="font-semibold text-gray-600">ბრუნვა</label>
             <div v-text="extractionFee.totalAmount"/>
           </div>
           <div class="flex flex-col gap-y-2">
@@ -577,7 +585,7 @@ async function getSelectedParentId(event) {
             <div v-text="extractionFee.purpose"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">აღწერა</label>
+            <label class="font-semibold text-gray-600">დამატებიტი ინფორმაცია</label>
             <div v-text="extractionFee.description"/>
           </div>
         </div>

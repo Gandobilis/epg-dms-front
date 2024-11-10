@@ -39,11 +39,11 @@ export default function useCenters() {
         }
 
         if (!extractionFee.value.serviceCenter) {
-            extractionFee.value.serviceCenter = 'აირჩიეთ სერვისცენტრი';
+            extractionFee.value.serviceCenter = 'აირჩიეთ ს/ც';
         }
 
         if (!extractionFee.value.withdrawType) {
-            extractionFee.value.withdrawType = 'აირჩიეთ გადარიცხვის ტიპი';
+            extractionFee.value.withdrawType = 'აირჩიეთ ტიპი';
         }
     }
 
