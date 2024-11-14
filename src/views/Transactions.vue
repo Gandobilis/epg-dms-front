@@ -214,135 +214,149 @@ const clearFilter = () => {
 async function getSelectedParentId(event) {
   await getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')));
 }
+
+const isVisible = ref(true);
 </script>
 
 <template>
-  <!--ფილტრი-->
-  <div class="flex flex-col gap-y-5">
-    <!--პირველი ხაზი-->
-    <div class="filter-row">
-      <!--რეგიონი-->
-      <div class="select-container">
-        <select class="filter-select" v-model="filter.region" @change="getSelectedParentId">
-          <option disabled selected>აირჩიეთ რეგიონი</option>
+  <!-- Toggle using an icon (Chevron) -->
+  <div @click="isVisible = !isVisible" class="cursor-pointer flex items-center mb-2.5">
+  <span class="mr-2">
+    <i :class="isVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+  </span>
+    <span class="font-bold text-sm">ფილტრები</span> <!-- Optional label if you want to have text as well -->
+  </div>
 
-          <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :data-id="region.id"
-                  :key="index"/>
-        </select>
+  <transition>
+    <!--ფილტრი-->
+    <div v-if="isVisible" class="flex flex-col gap-y-5">
+      <!--პირველი ხაზი-->
+      <div class="filter-row">
+        <!--რეგიონი-->
+        <div class="select-container">
+          <select class="filter-select" v-model="filter.region" @change="getSelectedParentId">
+            <option disabled selected>აირჩიეთ რეგიონი</option>
 
-        <button class="filter-clear-btn" @click="clearRegion">✕</button>
-      </div>
-      <!--რეგიონი-->
-
-      <!--მ/ც-->
-      <div class="select-container">
-        <select class="filter-select" v-model="filter.serviceCenter">
-          <option disabled selected>აირჩიეთ მ/ც</option>
-
-          <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
-        </select>
-
-        <button class="filter-clear-btn" @click="clearSC">✕</button>
-      </div>
-      <!--მ/ც-->
-
-      <!--ტიპი-->
-      <div class="select-container">
-        <select class="filter-select" v-model="filter.withdrawType">
-          <option disabled selected>აირჩიეთ ტიპი</option>
-
-          <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
-        </select>
-
-        <button class="filter-clear-btn" @click="clearType">✕</button>
-      </div>
-      <!--ტიპი-->
-
-      <!--სტატუსი-->
-      <div class="select-container">
-        <select class="filter-select" v-model="filter.status">
-          <option disabled selected>აირჩიეთ სტატუსი</option>
-
-          <option value="TRANSFER_COMPLETE">შევსებული</option>
-
-          <option value="TRANSFERRED">შესავსები</option>
-
-          <option value="CANCELED">გაუქმებული</option>
-        </select>
-
-        <button class="filter-clear-btn" @click="clearStatus">✕</button>
-      </div>
-      <!--სტატუსი-->
-
-      <!--ბრუნვა-->
-      <div class="grid grid-cols-3 items-center gap-x-8">
-        <p class="filter-label">ბრუნვა (კრედ)</p>
-
-        <input type="text" class="filter-input" placeholder="მინ" v-model="filter.totalAmountStart"/>
-
-        <input type="text" class="filter-input" placeholder="მაქს" v-model="filter.totalAmountEnd"/>
-      </div>
-      <!--ბრუნვა-->
-    </div>
-    <!--პირველი ხაზი-->
-
-    <!--მეორე ხაზი-->
-    <div class="filter-row">
-      <!--ორდერის N-->
-      <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N"/>
-      <!--ორდერის N-->
-
-      <!--პროექტის N-->
-      <input type="text" class="filter-input" v-model="filter.projectID" placeholder="პროექტის N"/>
-      <!--პროექტის N-->
-
-      <!--დანიშნულება-->
-      <input type="text" class="filter-input" v-model="filter.purpose" placeholder="დანიშნულება"/>
-      <!--დანიშნულება-->
-
-      <!--ID-->
-      <input type="text" class="filter-input" v-model="filter.tax" placeholder="ID"/>
-      <!--ID-->
-
-      <!--დამატებითი ინფორმაცია-->
-      <input type="text" class="input input-bordered input-sm w-full focus:outline-0" v-model="filter.description"
-             placeholder="დამატებითი ინფორმაცია"/>
-      <!--დამატებითი ინფორმაცია-->
-    </div>
-    <!--მეორე ხაზი-->
-
-    <!--მესამე ხაზი-->
-    <div class="filter-row">
-      <date-filter v-model:start-date="filter.clarificationDateStart" v-model:end-date="filter.clarificationDateEnd"
-                   label="გარკვევის თარიღი" @clear="clearClarification"/>
-
-      <date-filter v-model:start-date="filter.changeDateStart" v-model:end-date="filter.changeDateEnd"
-                   label="ცვლილების თარიღი" @clear="clearChange"/>
-
-      <date-filter v-model:start-date="filter.transferDateStart" v-model:end-date="filter.transferDateEnd"
-                   label="გადმოტანის თარიღი" @clear="clearTransfer"/>
-
-      <date-filter v-model:start-date="filter.extractionDateStart" v-model:end-date="filter.extractionDateEnd"
-                   label="ჩარიცხვის თარიღი" @clear="clearExtraction"/>
-
-      <div class="flex flex-col gap-y-2.5">
-        <input type="text" class="input input-bordered w-full input-sm focus:outline-0"
-               v-model="filter.note" placeholder="შენიშვნა"/>
-
-        <div class="grid grid-cols-2 items-center gap-x-5">
-          <select class="select select-bordered select-sm w-full focus:outline-0"
-                  v-model="sortByDir">
-            <option disabled>დალაგება</option>
-            <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
+            <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :data-id="region.id"
+                    :key="index"/>
           </select>
 
-          <button class="btn btn-neutral btn-sm" @click="clearFilter">გასუფთავება</button>
+          <button class="filter-clear-btn" @click="clearRegion">✕</button>
+        </div>
+        <!--რეგიონი-->
+
+        <!--მ/ც-->
+        <div class="select-container">
+          <select class="filter-select" v-model="filter.serviceCenter">
+            <option disabled selected>აირჩიეთ მ/ც</option>
+
+            <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
+          </select>
+
+          <button class="filter-clear-btn" @click="clearSC">✕</button>
+        </div>
+        <!--მ/ც-->
+
+        <!--ტიპი-->
+        <div class="select-container">
+          <select class="filter-select" v-model="filter.withdrawType">
+            <option disabled selected>აირჩიეთ ტიპი</option>
+
+            <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
+          </select>
+
+          <button class="filter-clear-btn" @click="clearType">✕</button>
+        </div>
+        <!--ტიპი-->
+
+        <!--სტატუსი-->
+        <div class="select-container">
+          <select class="filter-select" v-model="filter.status">
+            <option disabled selected>აირჩიეთ სტატუსი</option>
+
+            <option value="TRANSFER_COMPLETE">შევსებული</option>
+
+            <option value="TRANSFERRED">შესავსები</option>
+
+            <option value="CANCELED">გაუქმებული</option>
+
+            <option value="SOFT_DELETED">წაშლილები</option>
+          </select>
+
+          <button class="filter-clear-btn" @click="clearStatus">✕</button>
+        </div>
+        <!--სტატუსი-->
+
+        <!--ბრუნვა-->
+        <div class="grid grid-cols-3 items-center gap-x-8">
+          <p class="filter-label">ბრუნვა (კრედ)</p>
+
+          <input type="text" class="filter-input" placeholder="მინ" v-model="filter.totalAmountStart"/>
+
+          <input type="text" class="filter-input" placeholder="მაქს" v-model="filter.totalAmountEnd"/>
+        </div>
+        <!--ბრუნვა-->
+      </div>
+      <!--პირველი ხაზი-->
+
+      <!--მეორე ხაზი-->
+      <div class="filter-row">
+        <!--ორდერის N-->
+        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N"/>
+        <!--ორდერის N-->
+
+        <!--პროექტის N-->
+        <input type="text" class="filter-input" v-model="filter.projectID" placeholder="პროექტის N"/>
+        <!--პროექტის N-->
+
+        <!--დანიშნულება-->
+        <input type="text" class="filter-input" v-model="filter.purpose" placeholder="დანიშნულება"/>
+        <!--დანიშნულება-->
+
+        <!--ID-->
+        <input type="text" class="filter-input" v-model="filter.tax" placeholder="ID"/>
+        <!--ID-->
+
+        <!--დამატებითი ინფორმაცია-->
+        <input type="text" class="input input-bordered input-sm w-full focus:outline-0" v-model="filter.description"
+               placeholder="დამატებითი ინფორმაცია"/>
+        <!--დამატებითი ინფორმაცია-->
+      </div>
+      <!--მეორე ხაზი-->
+
+      <!--მესამე ხაზი-->
+      <div class="filter-row">
+        <date-filter v-model:start-date="filter.clarificationDateStart" v-model:end-date="filter.clarificationDateEnd"
+                     label="გარკვევის თარიღი" @clear="clearClarification"/>
+
+        <date-filter v-model:start-date="filter.changeDateStart" v-model:end-date="filter.changeDateEnd"
+                     label="ცვლილების თარიღი" @clear="clearChange"/>
+
+        <date-filter v-model:start-date="filter.transferDateStart" v-model:end-date="filter.transferDateEnd"
+                     label="გადმოტანის თარიღი" @clear="clearTransfer"/>
+
+        <date-filter v-model:start-date="filter.extractionDateStart" v-model:end-date="filter.extractionDateEnd"
+                     label="ჩარიცხვის თარიღი" @clear="clearExtraction"/>
+
+        <div class="flex flex-col gap-y-2.5">
+          <input type="text" class="input input-bordered w-full input-sm focus:outline-0"
+                 v-model="filter.note" placeholder="შენიშვნა"/>
+
+          <div class="grid grid-cols-2 items-center gap-x-5">
+            <select class="select select-bordered select-sm w-full focus:outline-0"
+                    v-model="sortByDir">
+              <option disabled>დალაგება</option>
+              <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
+            </select>
+
+            <button class="btn btn-neutral btn-sm" @click="clearFilter">გასუფთავება</button>
+          </div>
         </div>
       </div>
+      <!--მესამე ხაზი-->
     </div>
-    <!--მესამე ხაზი-->
-  </div>
-  <!--ფილტრი-->
+    <!--ფილტრი-->
+  </transition>
 
   <!--ცხრილი-->
   <div class="flex flex-col gap-y-5 mt-5">
@@ -540,3 +554,16 @@ async function getSelectedParentId(event) {
     </div>
   </dialog>
 </template>
+
+<style scoped>
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
