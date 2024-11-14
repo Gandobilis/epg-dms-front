@@ -1,12 +1,16 @@
 <script setup>
-import MainLayout from "./layouts/MainLayout.vue";
 import {useAuthStore} from '/src/stores/auth';
 import {onMounted} from "vue";
+import MainLayout from "./layouts/MainLayout.vue";
 
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  await authStore.restoreSession();
+  try {
+    await authStore.restoreSession();
+  } catch (error) {
+    console.error("Error restoring session:", error);
+  }
 });
 </script>
 

@@ -1,5 +1,4 @@
-import {createRouter} from "vue-router";
-import {createWebHistory} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import routes from "./routes";
 import {useAuthStore} from "/src/stores/auth.js";
 
@@ -14,11 +13,10 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
         next({name: 'Login'});
     } else if (to.meta.requiresRoles && !to.meta.requiresRoles.includes(authStore.user?.role)) {
-        next({name: 'Unauthorized'})
+        next({name: 'Unauthorized'});
     } else {
         next();
     }
 });
-
 
 export default router;

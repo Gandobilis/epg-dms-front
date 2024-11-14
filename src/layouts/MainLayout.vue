@@ -1,10 +1,10 @@
 <script setup>
-import HeaderComponent from "../components/HeaderComponent.vue";
+import HeaderComponent from "/src/components/HeaderComponent.vue";
 </script>
 
 <template>
-  <header-component/>
-  <main class="px-5 py-2.5">
+  <HeaderComponent/>
+  <main class="px-5 pt-2.5 pb-14">
     <slot/>
   </main>
 </template>
