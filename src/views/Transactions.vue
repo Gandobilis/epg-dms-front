@@ -395,8 +395,8 @@ const isVisible = ref(false);
         v-model:total-elements="totalElements"/>
   </div>
 
-  <dialog id="my_modal_1" class="modal" v-if="extractionFee">
-    <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm">
+  <dialog id="my_modal_1" class="modal">
+    <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
       <div class="flex gap-x-20">
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
