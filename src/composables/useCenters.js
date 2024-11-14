@@ -28,9 +28,6 @@ export default function useCenters() {
 
     const handleEditClick = async (extraction) => {
         extractionFee.value = {...extraction};
-        if (extractionFee.value.status === 'CANCELD') {
-            return
-        }
         document.getElementById('my_modal_1').showModal();
         if (!extractionFee.value.region) {
             extractionFee.value.region = 'აირჩიეთ რეგიონი';

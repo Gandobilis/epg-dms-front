@@ -109,11 +109,14 @@ export default function useUploads() {
         while (stack.length > 0) {
             const record = stack.pop();
             record.show = ref(false);
+            const remainderChild = record.children.filter(child => child.status === 'REMINDER');
 
             if (record.children && record.children.length > 0) {
-                const childrenTotal = record.children.reduce((sum, child) => sum + child.totalAmount, 0);
-                record.remainder = record.totalAmount - childrenTotal;
-
+                if (remainderChild.length > 0) {
+                    record.remainder = remainderChild[0].totalAmount;
+                } else {
+                    record.remainder = 0;
+                }
                 stack.push(...record.children);
             } else {
                 record.remainder = record.totalAmount;

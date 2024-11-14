@@ -6,6 +6,7 @@ import RecursiveRow from "/src/components/RecursiveRow.vue";
 import {useAuthStore} from "/src/stores/auth.js";
 import DateFilter from "../components/FilterDate.vue";
 import Pagination from "../components/Pagination.vue";
+import Confirm from "../components/modals/Confirm.vue";
 
 const {
   records,
@@ -31,6 +32,7 @@ const {
   divide,
   sc,
   getServiceCenters,
+  deleteRecord
 } = useCenters()
 
 const _error = ref(false)
@@ -44,6 +46,11 @@ const handleSaveClick = async () => {
   }
 }
 
+const hdc = async () => {
+  await deleteRecord();
+  await getFees();
+  document.getElementById('my_modal_1').close()
+}
 const hec = async (extraction) => {
   _error.value = false;
   await handleEditClick(extraction)
@@ -78,30 +85,11 @@ const handleDivision = async () => {
   error.value = false;
 }
 
-const options = ref([])
 
 onMounted(async () => {
   await getRegionsByParentId();
   await getFees();
   await getServiceCenters()
-  if (totalElements.value > 10) {
-    options.value.push(10);
-  }
-  if (totalElements.value > 20) {
-    options.value.push(20);
-  }
-  if (totalElements.value > 50) {
-    options.value.push(50);
-  }
-  if (totalElements.value > 100) {
-    options.value.push(100);
-  }
-  if (totalElements.value > 250) {
-    options.value.push(250);
-  }
-  if (totalElements.value > 500) {
-    options.value.push(500);
-  }
 })
 
 const regex = /^(\d+(\s\d+)*)$/;
@@ -215,7 +203,7 @@ async function getSelectedParentId(event) {
   await getRegionsByParentId(Number(event.target.selectedOptions[0].getAttribute('data-id')));
 }
 
-const isVisible = ref(true);
+const isVisible = ref(false);
 </script>
 
 <template>
@@ -407,8 +395,8 @@ const isVisible = ref(true);
         v-model:total-elements="totalElements"/>
   </div>
 
-  <dialog id="my_modal_1" class="modal">
-    <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm" v-if="extractionFee">
+  <dialog id="my_modal_1" class="modal" v-if="extractionFee">
+    <div class="modal-box max-w-[45vw] flex flex-col gap-y-3 text-sm">
       <div class="flex gap-x-20">
         <!-- Left Column -->
         <div class="flex flex-col w-1/2 gap-y-2">
@@ -516,6 +504,18 @@ const isVisible = ref(true);
             <label class="font-semibold text-gray-600">დამატებიტი ინფორმაცია</label>
             <div v-text="extractionFee.description"/>
           </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">თანხის დაბრუნებაზე ხაზინაში მოთხოვნის გაგზავნის თარიღი</label>
+            <div v-text="extractionFee.paymentOrderSentDate ? formatDate(extractionFee.paymentOrderSentDate) : ''"/>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">საგადახდო დავალების გაგზავნის თარიღი</label>
+            <div v-text="extractionFee.treasuryRefundDate ? formatDate(extractionFee.treasuryRefundDate) : ''"/>
+          </div>
+          <div class="flex flex-col gap-y-2">
+            <label class="font-semibold text-gray-600">გაუქმებული ორდერები</label>
+            <p v-text="extractionFee.canceledOrders?.join(', ')"/>
+          </div>
         </div>
       </div>
 
@@ -531,9 +531,15 @@ const isVisible = ref(true);
             </form>
           </div>
         </div>
+
+        <button class="btn btn-error text-white"
+                onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
+        </button>
       </div>
     </div>
   </dialog>
+
+  <confirm id="delete_transaction_modal" @accept="hdc"/>
 
   <dialog id="my_modal_7" class="modal">
     <div class="modal-box">
