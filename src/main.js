@@ -21,4 +21,4 @@ const initializeApp = async () => {
     app.mount('#app');
 };
 
-await initializeApp();
+initializeApp();
