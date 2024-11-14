@@ -37,7 +37,7 @@ const {
 
 const _error = ref(false)
 const handleSaveClick = async () => {
-  if (!extractionFee.value.region || !extractionFee.value.serviceCenter || !extractionFee.value.projectID || !extractionFee.value.withdrawType) {
+  if (extractionFee.value.region === 'აირჩიეთ რეგიონი' || extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' || !extractionFee.value.projectID || extractionFee.value.withdrawType === 'აირჩიეთ ტიპი') {
     _error.value = true;
   } else {
     await updateRecord();
