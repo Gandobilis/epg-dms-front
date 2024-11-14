@@ -11,7 +11,7 @@ const triggerFileInput = () => {
   fileInput.value.click();
 };
 
-const emit = defineEmits(['createSheet']);
+const emit = defineEmits(['createFile']);
 
 const model = defineModel()
 
@@ -27,7 +27,7 @@ const handleFileChange = (event) => {
 
 const upload = () => {
   try {
-    emit('createSheet');
+    emit('createFile');
     selectedFileName.value = '';
     showUploadButton.value = false;
     message.value = 'ფაილი აიტვირთა წარმატებით';
