@@ -1,79 +1,56 @@
 <script setup>
 import useUploads from "/src/composables/useUploads";
 import {onMounted, ref, watch} from "vue";
-import useSheet from "../composables/useSheet.js";
-import FileInput from "../components/uploads/FileInput.vue"
-import {useAuthStore} from "../stores/auth.js";
-import Pagination from "../components/Pagination.vue";
-import useFiles from "../composables/useFiles.js";
+import useSheet from "/src/composables/useSheet.js";
+import FileInput from "/src/components/uploads/FileInput.vue"
+import {useAuthStore} from "/src/stores/auth.js";
+import Pagination from "/src/components/Pagination.vue";
+import useFiles from "/src/composables/useFiles.js";
+import Confirm from "../components/modals/Confirm.vue";
 
 const authStore = useAuthStore();
 
-const {formatDate,} = useUploads();
+const {formatDate} = useUploads();
 
 const {
   files,
+  selectedFile,
   currentPage,
   pageSize,
   totalPages,
   totalElements,
-  selectedSheet,
-  fetchSheets,
-  createSheet,
-  deleteSheet,
-  saveSheet,
-  transactions
+  getFiles,
+  createFile,
+  deleteFile,
+  transferFile,
 } = useFiles();
 
 const {sheet, _currentPage, _totalPages, recordId, details, fetchSheetData, filter, clearFilter} = useSheet()
 
 const deleteId = ref();
-const saveId = ref();
+const transferId = ref();
 
 watch(currentPage, async (value) => {
   if (value > totalPages) {
     currentPage.value = totalPages.value;
   }
   if (value) {
-    await fetchSheets()
+    await getFiles()
   }
 })
 
 onMounted(async () => {
-  await fetchSheets();
+  await getFiles();
 });
 </script>
 
 <template>
-  <file-input v-if="authStore.user" v-model="selectedSheet" @createSheet="createSheet"/>
+  <file-input v-if="authStore.user" v-model="selectedFile" @createFile="createFile"/>
 
-  <dialog id="my_modal_3" class="modal">
-    <div class="modal-box">
-      <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-      </form>
-      <h3 class="font-bold">ნამდვილად გსურთ ფაილის წაშლა?</h3>
-      <div class="flex items-center justify-center gap-x-10 pt-5">
-        <button class="btn" onclick="setTimeout(() => my_modal_3.close(), 1000);" @click="deleteSheet(deleteId)">დიახ
-        </button>
-        <button class="btn btn-neutral" onclick="my_modal_3.close();">არა</button>
-      </div>
-    </div>
-  </dialog>
+  <confirm id="delete_file_modal" question="ნამდვილად გსურთ ფაილის წაშლა?" @accept="deleteFile(deleteId)"/>
 
-  <dialog id="my_modal_4" class="modal">
-    <div class="modal-box">
-      <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-      </form>
-      <h3 class="font-bold">ნამდვილად გსურთ ყველა ჩანაწერის გადატანა?</h3>
-      <div class="flex items-center justify-center gap-x-10 pt-5">
-        <button class="btn" onclick="setTimeout(() => my_modal_4.close(), 1000);" @click="saveSheet(saveId)">დიახ
-        </button>
-        <button class="btn btn-neutral" onclick="my_modal_4.close();">არა</button>
-      </div>
-    </div>
-  </dialog>
+  <confirm id="transfer_file_modal" question="ნამდვილად გსურთ ყველა ჩანაწერის გადატანა?"
+           @accept="transferFile(transferId)"/>
 
   <div class="flex flex-col gap-y-5">
     <table class="table table-xs">
@@ -109,12 +86,12 @@ onMounted(async () => {
         </td>
         <td v-if="authStore.user">
           <img src="/src/assets/delete.svg" alt="delete icon" @click="deleteId = sheet.id"
-               onclick="my_modal_3.showModal()" class="cursor-pointer"/>
+               onclick="delete_file_modal.showModal()" class="cursor-pointer"/>
         </td>
         <td v-if="authStore.user">
           <button v-if="sheet.status === 'GOOD' || sheet.status === 'WARNING'"
-                  onclick="my_modal_4.showModal()">
-            <img src="/src/assets/save.svg" alt="save icon" @click="saveId = sheet.id"/>
+                  onclick="transfer_file_modal.showModal()">
+            <img src="/src/assets/save.svg" alt="save icon" @click="transferId = sheet.id"/>
           </button>
         </td>
       </tr>
@@ -288,14 +265,3 @@ onMounted(async () => {
     </div>
   </dialog>
 </template>
-
-<style scoped>
-.no-spinner::-webkit-outer-spin-button,
-.no-spinner::-webkit-inner-spin-button {
-  appearance: none;
-}
-
-.no-spinner {
-  appearance: textfield;
-}
-</style>

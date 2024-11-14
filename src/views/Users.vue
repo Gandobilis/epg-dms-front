@@ -1,8 +1,8 @@
 <script setup>
-import {useUsers} from '../composables/useUsers';
-import Confirm from "../components/modals/Confirm.vue";
-import {ref} from "vue";
-import useUploads from "../composables/useUploads.js";
+import {useUsers} from '/src/composables/useUsers';
+import Confirm from "/src/components/modals/Confirm.vue";
+import {computed, ref} from "vue";
+import useUploads from "/src/composables/useUploads.js";
 
 const {
   users,
@@ -21,6 +21,12 @@ const deleteId = ref()
 const {
   formatDate,
 } = useUploads();
+
+const showPassword = ref(false);
+const passwordFieldType = computed(() => (showPassword.value ? 'text' : 'password'));
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 </script>
 
 <template>
@@ -89,7 +95,13 @@ const {
         </div>
         <div class="mb-4">
           <label class="block mb-1">პაროლი</label>
-          <input v-model="selectedUser.password" type="text" class="w-full border px-3 py-2 rounded-lg"/>
+          <div class="relative">
+            <input v-model="selectedUser.password" :type="passwordFieldType"
+                   class="w-full border px-3 py-2 rounded-lg"/>
+            <!--TODO - Items must be downloaded-->
+            <i @click="togglePasswordVisibility"
+               :class="['absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer', showPassword ? 'fa fa-eye-slash' : 'fa fa-eye']"></i>
+          </div>
         </div>
         <div class="mb-4">
           <label class="block mb-1">როლი</label>

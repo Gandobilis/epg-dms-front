@@ -6,10 +6,16 @@ defineProps({
     type: String,
     required: true,
   }
-})
+});
 
-const startDate = defineModel('startDate');
-const endDate = defineModel('endDate');
+const startDate = defineModel('startDate', {
+  default: null,
+  required: true,
+});
+const endDate = defineModel('endDate', {
+  default: null,
+  required: true,
+});
 
 const emit = defineEmits(['clear']);
 
@@ -23,7 +29,7 @@ const showClear = computed(() => startDate.value || endDate.value);
 <template>
   <div class="flex flex-col gap-y-2.5">
     <div class="flex items-center gap-x-1.5 h-7">
-      <p class="filter-label pb-1" v-text="label"/>
+      <p class="filter-label pb-1" v-text="label"></p>
 
       <button class="btn btn-sm btn-circle btn-ghost" v-if="showClear" @click="handleClick">✕</button>
     </div>

@@ -2,50 +2,52 @@ import {ref, watch} from "vue";
 import axios from "/src/interceptors/axios";
 
 export default function useFiles() {
-    const files = ref();
-    const selectedSheet = ref();
+    const files = ref([]);
+    const selectedFile = ref(null);
     const currentPage = ref(1);
-    const pageSize = ref(10);
-    const totalPages = ref();
-    const totalElements = ref();
-    const transactions = ref();
+    const pageSize = ref(20);
+    const totalPages = ref(1);
+    const totalElements = ref(20);
 
+    // Watcher for currentPage
     watch(currentPage, async (value) => {
-            if (value > totalPages) {
-                currentPage.value = totalPages.value;
-            }
-            if (value) {
-                await fetchSheets();
-            }
+        if (value > totalPages.value) {
+            currentPage.value = totalPages.value;
         }
-    )
+        if (value) {
+            await getFiles();
+        }
+    });
 
+    // Watcher for pageSize
     watch(pageSize, async () => {
         currentPage.value = 1;
-        await fetchSheets();
-    })
+        await getFiles();
+    });
 
-    const fetchSheets = async () => {
+    // Fetch sheets from the server
+    const getFiles = async () => {
         try {
             files.value = undefined;
-            const lastResponse = await axios.get(`extraction-task/all-upls`, {
+            const {data} = await axios.get('extraction-task/all-upls', {
                 params: {
                     page: currentPage.value,
                     size: pageSize.value,
                 }
             });
-            files.value = lastResponse.data.data.content;
-            totalPages.value = lastResponse.data.data.page.totalPages;
-            totalElements.value = lastResponse.data.data.page.totalElements;
+            files.value = data.data.content;
+            totalPages.value = data.data.page.totalPages;
+            totalElements.value = data.data.page.totalElements;
         } catch (error) {
             console.error("Error fetching files:", error);
         }
     };
 
-    const createSheet = async () => {
+    // Create a new sheet
+    const createFile = async () => {
         try {
             const formData = new FormData();
-            formData.append("file", selectedSheet.value);
+            formData.append("file", selectedFile.value);
 
             await axios.post("excels/upload", formData, {
                 requiresAuth: true,
@@ -53,31 +55,35 @@ export default function useFiles() {
                     "Content-Type": "multipart/form-data",
                 }
             });
-            await fetchSheets();
+            await getFiles();
         } catch (error) {
             console.error("Error creating sheet:", error);
         }
     };
 
-    const deleteSheet = async (sheetId) => {
+    // Delete a sheet by ID
+    const deleteFile = async (fileId) => {
         try {
-            await axios.delete(`connection-fees/delete-by-task/${sheetId}`, {
+            await axios.delete(`connection-fees/delete-by-task/${fileId}`, {
                 requiresAuth: true
             });
-            await fetchSheets();
+            document.getElementById('delete_file_modal').close();
+            await getFiles();
         } catch (error) {
-            console.error("Error deleting files:", error);
+            console.error("Error deleting sheet:", error);
         }
     };
 
-    const saveSheet = async (sheetId) => {
+    // Transfer a sheet by ID
+    const transferFile = async (fileId) => {
         try {
-            await axios.post(`connection-fees/${sheetId}`, {}, {
+            await axios.post(`connection-fees/${fileId}`, {}, {
                 requiresAuth: true
             });
-            await fetchSheets();
+            document.getElementById('transfer_file_modal').close();
+            await getFiles();
         } catch (error) {
-            console.error("Error deleting files:", error);
+            console.error("Error saving sheet:", error);
         }
     };
 
@@ -87,11 +93,10 @@ export default function useFiles() {
         pageSize,
         totalPages,
         totalElements,
-        selectedSheet,
-        fetchSheets,
-        createSheet,
-        deleteSheet,
-        saveSheet,
-        transactions,
+        selectedFile,
+        getFiles,
+        createFile,
+        deleteFile,
+        transferFile,
     };
 }

@@ -1,10 +1,26 @@
 <script setup>
 import usePagination from "/src/composables/usePagination.js";
 
-const currentPage = defineModel('current-page');
-const pageSize = defineModel('page-size');
-const totalPages = defineModel('total-pages');
-const totalElements = defineModel('total-elements');
+const currentPage = defineModel('current-page', {
+  type: Number,
+  default: 1,
+  required: true
+});
+const pageSize = defineModel('page-size', {
+  type: Number,
+  default: 20,
+  required: true,
+});
+const totalPages = defineModel('total-pages', {
+  type: Number,
+  default: 1,
+  required: true,
+});
+const totalElements = defineModel('total-elements', {
+  type: Number,
+  default: 20,
+  required: true,
+});
 
 const {
   showOptions,
@@ -19,7 +35,7 @@ const {
 </script>
 
 <template>
-  <div class="fixed bottom-0 w-screen bg-white p-4 shadow-md flex justify-center items-center gap-x-10">
+  <div class="fixed bottom-0 w-screen bg-white p-4 flex justify-center items-center gap-x-10">
     <div class="flex items-center gap-x-4 relative">
       <span><strong>{{ startIndex }}</strong> - <strong>{{ endIndex }}</strong> of <strong>{{ totalElements }}</strong></span>
       <i class="fas fa-caret-down cursor-pointer" @click="showOptions = !showOptions"/>
