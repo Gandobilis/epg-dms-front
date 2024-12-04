@@ -458,6 +458,11 @@ const isVisible = ref(false);
               <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
             </select>
           </div>
+          <div v-if="extractionFee.withdrawType === '6 (თანხის დაბრუნება)'" class="flex items-center gap-x-2.5">
+            <input type="date" class="text-sm" v-model="extractionFee.paymentOrderSentDate"/>
+
+            <input type="date" class="text-sm" v-model="extractionFee.treasuryRefundDate"/>
+          </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">შენიშვნა</label>
             <textarea v-if="extractionFee"
@@ -475,7 +480,7 @@ const isVisible = ref(false);
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ცვლილების თარიღი</label>
             <div>
-              <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate) : ''"/>
+              <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate, true) : ''"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
                  v-text="`${extractionFee.changePerson.firstName} ${extractionFee.changePerson.lastName}`"/>
             </div>
@@ -483,7 +488,7 @@ const isVisible = ref(false);
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
             <div>
-              <p v-text="extractionFee.transferDate ? formatDate(extractionFee.transferDate) : ''"/>
+              <p v-text="extractionFee.transferDate ? formatDate(extractionFee.transferDate, true) : ''"/>
               <p v-if="extractionFee.transferPerson" class="text-neutral underline font-bold"
                  v-text="`${extractionFee.transferPerson.firstName} ${extractionFee.transferPerson.lastName}`"/>
             </div>
@@ -513,7 +518,7 @@ const isVisible = ref(false);
             <div v-text="extractionFee.treasuryRefundDate ? formatDate(extractionFee.treasuryRefundDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
-            <label class="font-semibold text-gray-600">გაუქმებული ორდერები</label>
+            <label class="font-semibold text-gray-600">გაუქმებული პროექტები</label>
             <p v-text="extractionFee.canceledOrders?.join(', ')"/>
           </div>
         </div>

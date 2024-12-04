@@ -42,25 +42,23 @@ const authStore = useAuthStore();
           <div v-else-if="level !== 0" class="w-1 aspect-square rounded-full bg-black"/>
           <p class="whitespace-nowrap" v-text="extraction.queueNumber ?? extraction.id"/></div>
       </td>
-      <td @click="handleEditClick(extraction)" v-text="extraction.orderN"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.region"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.serviceCenter"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.projectID"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.withdrawType"/>
-      <td @click="handleEditClick(extraction)"
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.orderN"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.region"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.serviceCenter"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.projectID"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.withdrawType"/>
+      <td @dblclick="handleEditClick(extraction)"
           v-text="extraction.clarificationDate ? formatDate(extraction.clarificationDate) : ''"/>
-      <td @click="handleEditClick(extraction)">
-        <p v-text="extraction.changeDate ? formatDate(extraction.changeDate) : ''"/>
-        <p class="text-neutral underline font-bold" v-if="extraction.changeDate"
-           v-text="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
-      </td>
-      <td @click="handleEditClick(extraction)" v-text="extraction.note"/>
-      <td @click="handleEditClick(extraction)"
+      <td @dblclick="handleEditClick(extraction)"
+          v-text="extraction.changeDate ? formatDate(extraction.changeDate, true) : ''"
+          :title="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.note"/>
+      <td @dblclick="handleEditClick(extraction)"
           v-text="extraction.extractionDate ? formatDate(extraction.extractionDate) : ''"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.totalAmount"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.tax"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.purpose"/>
-      <td @click="handleEditClick(extraction)" v-text="extraction.description"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.totalAmount"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.tax"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.purpose"/>
+      <td @dblclick="handleEditClick(extraction)" v-text="extraction.description"/>
       <td title="გაყოფა" v-if="authStore.user">
         <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
                 :class="{'cursor-not-allowed': !extraction.remainder || extraction.status === 'REMINDER'}"
