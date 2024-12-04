@@ -519,7 +519,7 @@ const isVisible = ref(false);
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გაუქმებული პროექტები</label>
-            <p v-text="extractionFee.canceledOrders?.join(', ')"/>
+            <p v-text="extractionFee.canceledProject?.join(', ')"/>
           </div>
         </div>
       </div>
