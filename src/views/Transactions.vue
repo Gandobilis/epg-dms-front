@@ -7,6 +7,9 @@ import {useAuthStore} from "/src/stores/auth.js";
 import DateFilter from "../components/FilterDate.vue";
 import Pagination from "../components/Pagination.vue";
 import Confirm from "../components/modals/Confirm.vue";
+import {useFilterStore} from "/src/stores/filter.js";
+
+const {filter} = useFilterStore();
 
 const {
   records,
@@ -14,7 +17,6 @@ const {
   currentPage,
   totalPages,
   totalElements,
-  filter,
   pageSize,
   withdrawTypes,
   sortOptions,
@@ -132,44 +134,44 @@ function closeDropdown() {
 }
 
 const clearRegion = () => {
-  filter.value.region = 'აირჩიეთ რეგიონი';
+  filter.region = 'აირჩიეთ რეგიონი';
   clearSC();
 }
 
 const clearSC = () => {
-  filter.value.serviceCenter = 'აირჩიეთ მ/ც';
+  filter.serviceCenter = 'აირჩიეთ მ/ც';
 }
 
 const clearType = () => {
-  filter.value.withdrawType = 'აირჩიეთ ტიპი';
+  filter.withdrawType = 'აირჩიეთ ტიპი';
 }
 
 const clearStatus = () => {
-  filter.value.status = 'აირჩიეთ სტატუსი';
+  filter.status = 'აირჩიეთ სტატუსი';
 }
 
 const clearClarification = () => {
-  filter.value.clarificationDateStart = undefined;
-  filter.value.clarificationDateEnd = undefined;
+  filter.clarificationDateStart = undefined;
+  filter.clarificationDateEnd = undefined;
 }
 
 const clearChange = () => {
-  filter.value.changeDateStart = undefined;
-  filter.value.changeDateEnd = undefined;
+  filter.changeDateStart = undefined;
+  filter.changeDateEnd = undefined;
 }
 
 const clearTransfer = () => {
-  filter.value.transferDateStart = undefined;
-  filter.value.transferDateEnd = undefined;
+  filter.transferDateStart = undefined;
+  filter.transferDateEnd = undefined;
 }
 
 const clearExtraction = () => {
-  filter.value.extractionDateStart = undefined;
-  filter.value.extractionDateEnd = undefined;
+  filter.extractionDateStart = undefined;
+  filter.extractionDateEnd = undefined;
 }
 
 const clearFilter = () => {
-  filter.value = {
+  filter = {
     region: 'აირჩიეთ რეგიონი',
     serviceCenter: 'აირჩიეთ მ/ც',
     withdrawType: 'აირჩიეთ ტიპი',

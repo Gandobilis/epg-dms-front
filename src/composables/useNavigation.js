@@ -1,9 +1,11 @@
 import {useRouter} from "vue-router";
 import {useAuthStore} from "/src/stores/auth.js";
+import {useFilterStore} from "/src/stores/filter.js";
 
 export default function useNavigation() {
     const router = useRouter();
     const authStore = useAuthStore();
+    const {filter} = useFilterStore();
 
     /**
      * Check if the user can view files.
@@ -41,9 +43,42 @@ export default function useNavigation() {
      * @returns {string}
      */
     const generateDownloadLink = () => {
-        const baseUrl = 'https://capital-badly-imp.ngrok-free.app/api/v1/connection-fees/download';
+        const params = {};
+
+        const dates = [
+            'clarificationDateStart',
+            'clarificationDateEnd',
+            'changeDateStart',
+            'changeDateEnd',
+            'transferDateStart',
+            'transferDateEnd',
+            'extractionDateStart',
+            'extractionDateEnd'
+        ]
+        const undefinedValues = [
+            "აირჩიეთ რეგიონი",
+            "აირჩიეთ მ/ც",
+            "აირჩიეთ ტიპი",
+            "აირჩიეთ სტატუსი"
+        ]
+        Object.entries(filter)
+            .filter(([_, value]) => value && !undefinedValues.includes(value))
+            .reduce((_, [key, value]) => {
+                if (dates.includes(key)) {
+                    params[key] = value
+                    if (key.indexOf('extraction') === -1) {
+                        params[key] += ` ${key.indexOf('Start') !== -1 ? '00' : '24'}:00:00.000000`
+                    }
+                } else {
+                    params[key] = value;
+                }
+            }, {});
+
+        const urlSearchParams = new URLSearchParams(params);
+
+        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download`;
         const accessToken = authStore.token;
-        return `${baseUrl}?accessToken=${accessToken}`;
+        return `${baseUrl}?accessToken=${accessToken}&${urlSearchParams.toString()}`;
     };
 
     /**

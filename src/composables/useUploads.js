@@ -1,7 +1,9 @@
 import {ref, watch} from "vue";
 import axios from "../interceptors/axios";
+import {useFilterStore} from "/src/stores/filter.js";
 
 export default function useUploads() {
+    const {filter} = useFilterStore();
     const sheets = ref();
     const currentPage = ref(1);
     const pageSize = ref(20);
@@ -12,35 +14,6 @@ export default function useUploads() {
     const records = ref()
     const sortBy = ref()
     const sortDir = ref()
-
-    const filter = ref({
-        region: 'აირჩიეთ რეგიონი',
-        serviceCenter: 'აირჩიეთ მ/ც',
-        withdrawType: 'აირჩიეთ ტიპი',
-        status: 'აირჩიეთ სტატუსი',
-        totalAmountStart: undefined,
-        totalAmountEnd: undefined,
-
-        orderN: undefined,
-        projectID: undefined,
-        purpose: undefined,
-        tax: undefined,
-        description: undefined,
-
-        clarificationDateStart: undefined,
-        clarificationDateEnd: undefined,
-
-        changeDateStart: undefined,
-        changeDateEnd: undefined,
-
-        transferDateStart: undefined,
-        transferDateEnd: undefined,
-
-        extractionDateStart: undefined,
-        extractionDateEnd: undefined,
-
-        note: undefined,
-    })
 
     watch(filter, async () => {
         await getFees();
@@ -149,7 +122,7 @@ export default function useUploads() {
             "აირჩიეთ ტიპი",
             "აირჩიეთ სტატუსი"
         ]
-        Object.entries(filter.value)
+        Object.entries(filter)
             .filter(([_, value]) => value && !undefinedValues.includes(value))
             .reduce((_, [key, value]) => {
                 if (dates.includes(key)) {
