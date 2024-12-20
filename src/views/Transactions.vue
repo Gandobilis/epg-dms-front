@@ -44,6 +44,7 @@ const handleSaveClick = async () => {
   } else {
     await updateRecord();
     await getFees();
+    searchTerm.value = '';
     document.getElementById('my_modal_1').close()
   }
 }
@@ -550,7 +551,7 @@ const isVisible = ref(false);
             <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
 
             <form method="dialog">
-              <button class="btn">გაუქმება</button>
+              <button class="btn" @click="searchTerm=''">გაუქმება</button>
             </form>
           </div>
         </div>
