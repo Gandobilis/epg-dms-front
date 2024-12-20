@@ -4,15 +4,33 @@ import axios from "/src/interceptors/axios";
 export default function useSheet() {
     const sheet = ref();
     const _currentPage = ref(1);
-    const pageSize = ref(10);
-    const recordId = ref();
+    const _pageSize = ref(20);
     const _totalPages = ref(1);
+    const _totalElements = ref(20);
+    const recordId = ref();
     const details = ref({
         ok: undefined,
         warning: undefined,
         total: undefined,
         amount: undefined
     })
+
+     // Watcher for currentPage
+     watch(_currentPage, async (value) => {
+        if (value > _totalPages.value) {
+            _currentPage.value = _totalPages.value;
+        }
+        if (value) {
+            await fetchSheetData();
+        }
+    });
+
+    // Watcher for pageSize
+    watch(_pageSize, async () => {
+        _currentPage.value = 1;
+        await fetchSheetData();
+    });
+
 
     const filter = ref({
         startDate: undefined,
@@ -41,7 +59,7 @@ export default function useSheet() {
         sheet.value = undefined
         const params = {
             page: _currentPage.value,
-            size: pageSize.value,
+            size: _pageSize.value,
             fileId: recordId.value,
         };
 
@@ -55,6 +73,7 @@ export default function useSheet() {
             const response = await axios.get('excels/filter', {params: params});
             sheet.value = response.data.excPage.content;
             _totalPages.value = response.data.excPage.page.totalPages;
+            _totalElements.value = response.data.excPage.page.totalElements;
             details.value.ok = response.data.ok;
             details.value.warning = response.data.warn;
             details.value.total = response.data.excPage.page.totalElements;
@@ -67,8 +86,10 @@ export default function useSheet() {
     return {
         sheet,
         _currentPage,
-        recordId,
         _totalPages,
+        _totalElements,
+        _pageSize,
+        recordId,
         details,
         fetchSheetData,
         filter,
