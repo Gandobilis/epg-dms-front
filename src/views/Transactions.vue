@@ -353,21 +353,35 @@ const isVisible = ref(false);
     <table class="table table-xs">
       <thead>
       <tr>
-        <th>N</th>
-        <th>ორდერის N</th>
-        <th>რეგიონი</th>
-        <th>მ/ც</th>
-        <th>პროექტის N</th>
-        <th>ტიპი</th>
-        <th>გარკვევის თარიღი</th>
-        <th>ცვლილების თარიღი</th>
-        <th>შენიშვნა</th>
-        <th>ჩარიცხვის თარიღი</th>
-        <th>ბრუნვა</th>
-        <th>ID</th>
-        <th>დანიშნულება</th>
-        <th>დამატებითი ინფორმაცია</th>
         <th v-if="authStore.user"/>
+
+        <th>N</th>
+
+        <th>ორდერის N</th>
+
+        <th>რეგიონი</th>
+
+        <th>მ/ც</th>
+
+        <th>პროექტის N</th>
+
+        <th>ტიპი</th>
+
+        <th>თარიღი</th>
+
+        <th>ბრუნვა (კრედ)</th>
+
+        <th>დანიშნულება</th>
+
+        <th>დამატებითი ინფორმაცია</th>
+
+        <th>ID</th>
+
+        <th>გადმოტანის თარიღი</th>
+
+        <th>გარკვევის თარიღი</th>
+
+        <th>ცვლილების თარიღი</th>
       </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
@@ -411,6 +425,8 @@ const isVisible = ref(false);
                 <option value="ORDER_INCOMPLETE">შესავსები</option>
 
                 <option value="ORDER_COMPLETE">შევსებული</option>
+
+                <option value="YELLOW_AMOUNT">ყვითელი თანხა</option>
 
                 <option value="CANCELED">გაუქმებული</option>
               </select>
