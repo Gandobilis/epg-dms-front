@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
     headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "ng                           rok-skip-browser-warning": true
+        "ngrok-skip-browser-warning": true
     }
 });
 
