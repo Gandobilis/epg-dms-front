@@ -375,8 +375,6 @@ const isVisible = ref(false);
 
         <th>ტიპი</th>
 
-        <th>თარიღი</th>
-
         <th>ბრუნვა (კრედ)</th>
 
         <th>დანიშნულება</th>

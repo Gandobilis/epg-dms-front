@@ -60,9 +60,6 @@ const authStore = useAuthStore();
       
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.withdrawType"/>
       
-      <td @dblclick="handleEditClick(extraction)" 
-          v-text="extraction.extractionDate ? formatDate(extraction.extractionDate) : ''" />
-      
       <td v-text="extraction.totalAmount" />
       
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.purpose"/>
