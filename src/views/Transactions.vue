@@ -63,6 +63,7 @@ const hdc = async () => {
 }
 const hec = async (extraction) => {
   _error.value = false;
+  searchTerm.value = extraction.serviceCenter;
   await handleEditClick(extraction)
 }
 
