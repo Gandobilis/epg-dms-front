@@ -10,7 +10,7 @@ import Confirm from "../components/modals/Confirm.vue";
 import {useFilterStore} from "/src/stores/filter.js";
 import {useRoute} from "vue-router";
 
-const {filter} = useFilterStore();
+let {filter} = useFilterStore();
 const route = useRoute();
 
 const {
