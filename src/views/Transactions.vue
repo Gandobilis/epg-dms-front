@@ -8,8 +8,10 @@ import DateFilter from "../components/FilterDate.vue";
 import Pagination from "../components/Pagination.vue";
 import Confirm from "../components/modals/Confirm.vue";
 import {useFilterStore} from "/src/stores/filter.js";
+import {useRoute} from "vue-router";
 
 const {filter} = useFilterStore();
+const route = useRoute();
 
 const {
   records,
@@ -39,7 +41,12 @@ const {
 
 const _error = ref(false)
 const handleSaveClick = async () => {
-  if (extractionFee.value.region === 'აირჩიეთ რეგიონი' || extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' || !extractionFee.value.projectID || extractionFee.value.withdrawType === 'აირჩიეთ ტიპი') {
+  if (
+      extractionFee.value.region === 'აირჩიეთ რეგიონი' ||
+      extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' ||
+      extractionFee.value.withdrawType === 'აირჩიეთ ტიპი' ||
+      (!route.meta.requiresRoles.includes('ROLE_ADMIN') && !extractionFee.value.projectID)
+  ) {
     _error.value = true;
   } else {
     await updateRecord();
