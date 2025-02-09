@@ -556,15 +556,13 @@ const isVisible = ref(false);
           <div class="modal-action">
             <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
 
-            <form method="dialog">
-              <button class="btn" @click="searchTerm=''">გაუქმება</button>
-            </form>
+            <button class="btn btn-error text-white"
+                    onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
+            </button>
           </div>
         </div>
 
-        <button class="btn btn-error text-white"
-                onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
-        </button>
+        <button class="btn" @click="searchTerm=''" onclick="my_modal_1.close()">გაუქმება</button>
       </div>
     </div>
   </dialog>
