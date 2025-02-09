@@ -10,11 +10,11 @@ export const useFilterStore = defineStore('filter', () => {
         totalAmountStart: undefined,
         totalAmountEnd: undefined,
 
-        orderN: undefined,
-        projectID: undefined,
-        purpose: undefined,
-        tax: undefined,
-        description: undefined,
+        orderN: '',
+        projectID: '',
+        purpose: '',
+        tax: '',
+        description: '',
 
         clarificationDateStart: undefined,
         clarificationDateEnd: undefined,
@@ -28,7 +28,7 @@ export const useFilterStore = defineStore('filter', () => {
         extractionDateStart: undefined,
         extractionDateEnd: undefined,
 
-        note: undefined,
+        note: '',
     });
 
     return {filter};
