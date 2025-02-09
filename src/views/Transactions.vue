@@ -8,8 +8,10 @@ import DateFilter from "../components/FilterDate.vue";
 import Pagination from "../components/Pagination.vue";
 import Confirm from "../components/modals/Confirm.vue";
 import {useFilterStore} from "/src/stores/filter.js";
+import {useRoute} from "vue-router";
 
-const {filter} = useFilterStore();
+let {filter} = useFilterStore();
+const route = useRoute();
 
 const {
   records,
@@ -39,7 +41,12 @@ const {
 
 const _error = ref(false)
 const handleSaveClick = async () => {
-  if (extractionFee.value.region === 'აირჩიეთ რეგიონი' || extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' || !extractionFee.value.projectID || extractionFee.value.withdrawType === 'აირჩიეთ ტიპი') {
+  if (
+      extractionFee.value.region === 'აირჩიეთ რეგიონი' ||
+      extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' ||
+      extractionFee.value.withdrawType === 'აირჩიეთ ტიპი' ||
+      (!route.meta.requiresRoles.includes('ROLE_ADMIN') && !extractionFee.value.projectID)
+  ) {
     _error.value = true;
   } else {
     await updateRecord();
@@ -56,6 +63,7 @@ const hdc = async () => {
 }
 const hec = async (extraction) => {
   _error.value = false;
+  searchTerm.value = extraction.serviceCenter;
   await handleEditClick(extraction)
 }
 
@@ -368,8 +376,6 @@ const isVisible = ref(false);
 
         <th>ტიპი</th>
 
-        <th>თარიღი</th>
-
         <th>ბრუნვა (კრედ)</th>
 
         <th>დანიშნულება</th>
@@ -550,15 +556,13 @@ const isVisible = ref(false);
           <div class="modal-action">
             <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
 
-            <form method="dialog">
-              <button class="btn" @click="searchTerm=''">გაუქმება</button>
-            </form>
+            <button class="btn btn-error text-white"
+                    onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
+            </button>
           </div>
         </div>
 
-        <button class="btn btn-error text-white"
-                onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
-        </button>
+        <button class="btn" @click="searchTerm=''" onclick="my_modal_1.close()">გაუქმება</button>
       </div>
     </div>
   </dialog>

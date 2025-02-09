@@ -6,6 +6,7 @@ const axiosInstance = axios.create({
     headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": true
     }
 });
 
@@ -15,6 +16,7 @@ axiosInstance.interceptors.request.use(config => {
     if (config.requiresAuth && authStore.token) {
         config.headers.Authorization = `Bearer ${authStore.token}`;
     }
+
 
     return config;
 }, error => {
