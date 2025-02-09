@@ -30,15 +30,15 @@ const authStore = useAuthStore();
 <template>
   <template v-for="extraction in records" :key="extraction.id">
     <tr class="cursor-pointer"
-        :class="{'bg-gray-300': extraction.children.length > 0, 'hover:bg-gray-100': extraction.children.length <= 0}">
-        <td title="გაყოფა" v-if="authStore.user">
+        :class="{'bg-yellow-100': extraction.orderN === 'ნაშთი', 'bg-gray-300': extraction.children.length > 0, 'hover:bg-gray-100': extraction.children.length <= 0, 'hover:bg-yellow-100': extraction.orderN === 'ნაშთი' }">
+      <td title="გაყოფა" v-if="authStore.user">
         <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
                 :class="{'cursor-not-allowed': !extraction.remainder || extraction.status === 'REMINDER'}"
                 :disabled="!extraction.remainder || extraction.status === 'REMINDER'">
           <img src="/src/assets/divide.svg" alt="divide icon" class="max-w-8"/></button>
       </td>
-      
-        <td>
+
+      <td>
         <div :style="{ marginLeft: `${level * 10 + (level !== 0 && extraction.children.length === 0 ? 20 : 0)}px` }"
              class="flex items-center gap-x-1.5"><img
             v-if="extraction.children && extraction.children.length > 0"
@@ -51,34 +51,34 @@ const authStore = useAuthStore();
       </td>
 
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.orderN"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.region"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.serviceCenter"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.projectID"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.withdrawType"/>
-      
-      <td v-text="extraction.totalAmount" />
-      
+
+      <td v-text="extraction.totalAmount"/>
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.purpose"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.description"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.tax"/>
-      
+
       <td @dblclick="handleEditClick(extraction)"
           v-text="extraction.transferDate ? formatDate(extraction.transferDate) : ''"
           :title="`${extraction.transferPerson.firstName} ${extraction.transferPerson.lastName}`"/>
 
       <td @dblclick="handleEditClick(extraction)"
           v-text="extraction.clarificationDate ? formatDate(extraction.clarificationDate) : ''"/>
-      
+
       <td @dblclick="handleEditClick(extraction)"
           v-text="extraction.changeDate ? formatDate(extraction.changeDate, true) : ''"
           :title="`${extraction.changePerson.firstName} ${extraction.changePerson.lastName}`"/>
-      
+
       <td @dblclick="handleEditClick(extraction)" v-text="extraction.note"/>
     </tr>
     <RecursiveRow @handleDivideClick="emit('handleDivideClick', $event)"
