@@ -24,17 +24,28 @@ axiosInstance.interceptors.request.use(config => {
     return Promise.reject(error);
 });
 
+const allowedEndpoints = [];
+
 axiosInstance.interceptors.response.use(
     (response) => {
         const notification = useNotificationStore();
-        notification.showSuccess('წარმატებული ოპერაცია!');
+
+        if (allowedEndpoints.includes(response.config.url)) {
+            notification.showSuccess('წარმატებული ოპერაცია!');
+        }
+
         return response;
     },
     (error) => {
         const notification = useNotificationStore();
-        notification.showError('დაფიქსირდა შეცდომა!');
+
+        if (allowedEndpoints.includes(error.config?.url)) {
+            notification.showError('დაფიქსირდა შეცდომა!');
+        }
+
         return Promise.reject(error);
     }
 );
+
 
 export default axiosInstance;
