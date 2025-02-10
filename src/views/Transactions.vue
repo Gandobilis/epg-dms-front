@@ -180,7 +180,7 @@ const clearExtraction = () => {
 }
 
 const clearFilter = () => {
-  filter = {
+  Object.assign(filter, {
     region: 'აირჩიეთ რეგიონი',
     serviceCenter: 'აირჩიეთ მ/ც',
     withdrawType: 'აირჩიეთ ტიპი',
@@ -207,7 +207,7 @@ const clearFilter = () => {
     extractionDateEnd: undefined,
 
     note: undefined,
-  };
+  });
 };
 
 async function getSelectedParentId(event) {
