@@ -29,7 +29,7 @@ export default function useNavigation() {
      * Check if the user can export files.
      * @returns {boolean}
      */
-    const showFileExport = () => authStore.isAuthenticated && authStore.fileExportRoles.includes(authStore.user?.role) && checkCurrentRoute('/transactions');
+    const showFileExport = () => authStore.isAuthenticated && authStore.fileExportRoles.includes(authStore.user?.role) && checkCurrentRoute('/');
 
     /**
      * Check if the current route matches the given path.
@@ -58,7 +58,6 @@ export default function useNavigation() {
         const undefinedValues = [
             "აირჩიეთ რეგიონი",
             "აირჩიეთ მ/ც",
-            "აირჩიეთ ტიპი",
             "აირჩიეთ სტატუსი"
         ]
         Object.entries(filter)
@@ -74,9 +73,13 @@ export default function useNavigation() {
                 }
             }, {});
 
+        if (params['withdrawType']?.length === 0) {
+            delete params['withdrawType'];
+        }
+
         const urlSearchParams = new URLSearchParams(params);
 
-        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download`;
+        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download-ext`;
         const accessToken = authStore.token;
         return `${baseUrl}?accessToken=${accessToken}&${urlSearchParams.toString()}`;
     };

@@ -120,7 +120,6 @@ export default function useUploads() {
         const undefinedValues = [
             "აირჩიეთ რეგიონი",
             "აირჩიეთ მ/ც",
-            "აირჩიეთ ტიპი",
             "აირჩიეთ სტატუსი"
         ]
         Object.entries(filter)
