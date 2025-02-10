@@ -1,6 +1,7 @@
 import {ref, watch} from "vue";
 import axios from "../interceptors/axios";
 import {useFilterStore} from "/src/stores/filter.js";
+import qs from "qs";
 
 export default function useUploads() {
     const {filter} = useFilterStore();
@@ -135,9 +136,12 @@ export default function useUploads() {
                 }
             }, {});
 
+
+
         try {
             lastResponse.value = await axios.get(`connection-fees/filter`, {
-                params
+                params,
+                paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "comma" })
             });
             records.value = lastResponse.value.data.content;
             addShowProperty();

@@ -1,16 +1,16 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import useCenters from "/src/composables/useCenters.js";
 import useUploads from "/src/composables/useUploads.js";
 import RecursiveRow from "/src/components/RecursiveRow.vue";
-import { useAuthStore } from "/src/stores/auth.js";
+import {useAuthStore} from "/src/stores/auth.js";
 import DateFilter from "../components/FilterDate.vue";
 import Pagination from "../components/Pagination.vue";
 import Confirm from "../components/modals/Confirm.vue";
-import { useFilterStore } from "/src/stores/filter.js";
-import { useRoute } from "vue-router";
+import {useFilterStore} from "/src/stores/filter.js";
+import {useRoute} from "vue-router";
 
-let { filter } = useFilterStore();
+let {filter} = useFilterStore();
 const route = useRoute();
 
 const {
@@ -42,10 +42,10 @@ const {
 const _error = ref(false)
 const handleSaveClick = async () => {
   if (
-    extractionFee.value.region === 'აირჩიეთ რეგიონი' ||
-    extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' ||
-    extractionFee.value.withdrawType === 'აირჩიეთ ტიპი' ||
-    (!route.meta.requiresRoles.includes('ROLE_ADMIN') && !extractionFee.value.projectID)
+      extractionFee.value.region === 'აირჩიეთ რეგიონი' ||
+      extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' ||
+      extractionFee.value.withdrawType === 'აირჩიეთ ტიპი' ||
+      (!route.meta.requiresRoles.includes('ROLE_ADMIN') && !extractionFee.value.projectID)
   ) {
     _error.value = true;
   } else {
@@ -115,20 +115,20 @@ const validateAmount = () => {
 const authStore = useAuthStore();
 
 watch(currentPage, async (value) => {
-  if (value > totalPages) {
-    currentPage.value = totalPages.value;
-  }
-  if (value) {
-    await getFees();
-  }
-}
+      if (value > totalPages) {
+        currentPage.value = totalPages.value;
+      }
+      if (value) {
+        await getFees();
+      }
+    }
 )
 
 const searchTerm = ref("");
 const isDropdownOpen = ref(false);
 
 const filteredServiceCenters = computed(() =>
-  sc.value.filter(center => center.name.toLowerCase().includes(searchTerm.value.trim()))
+    sc.value.filter(center => center.name.toLowerCase().includes(searchTerm.value.trim()))
 );
 
 function selectCenter(centerName, parentName) {
@@ -224,6 +224,11 @@ const toggleType = (type) => {
     filter.withdrawType.splice(index, 1);
   }
 };
+
+const isTypeDropdownOpen = ref(false);
+const closeTypeDropdown = () => {
+  isTypeDropdownOpen.value = false;
+}
 </script>
 
 <template>
@@ -246,7 +251,7 @@ const toggleType = (type) => {
             <option disabled selected>აირჩიეთ რეგიონი</option>
 
             <option :value="region.name" v-for="(region, index) in _regions" v-text="region.name" :data-id="region.id"
-              :key="index" />
+                    :key="index"/>
           </select>
 
           <button class="filter-clear-btn" @click="clearRegion">✕</button>
@@ -258,7 +263,7 @@ const toggleType = (type) => {
           <select class="filter-select" v-model="filter.serviceCenter">
             <option disabled selected>აირჩიეთ მ/ც</option>
 
-            <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index" />
+            <option :value="center.name" v-for="(center, index) in _serviceCenters" v-text="center.name" :key="index"/>
           </select>
 
           <button class="filter-clear-btn" @click="clearSC">✕</button>
@@ -268,16 +273,19 @@ const toggleType = (type) => {
         <!--ტიპი-->
         <div class="relative select-container">
           <input type="text"
-            placeholder="აირჩიეთ ტიპი"
-            @focus="isDropdownOpen = true" @blur="closeDropdown"
-            class="input input-bordered input-sm mb-2 focus:outline-0 w-full cursor-pointer" readonly />
+                 @click="isTypeDropdownOpen = !isTypeDropdownOpen"
+                 placeholder="აირჩიეთ ტიპი"
+                 class="input input-bordered input-sm focus:outline-0 filter-select cursor-pointer" readonly/>
 
-          <div v-if="isDropdownOpen" class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg w-full">
+          <button class="filter-clear-btn" @click="clearType(); isTypeDropdownOpen = false">✕</button>
+
+          <div v-if="isTypeDropdownOpen"
+               class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-w-xs top-9">
             <div v-for="(type, index) in withdrawTypes" :key="index"
-              class="p-2 hover:bg-gray-100 cursor-pointer text-sm">
+                 class="p-2 hover:bg-gray-100 cursor-pointer text-sm">
               <label class="flex items-center space-x-2">
                 <input type="checkbox" class="checkbox checkbox-xs" :value="type"
-                  :checked="filter.withdrawType.includes(type)" @change="toggleType(type)" />
+                       :checked="filter.withdrawType.includes(type)" @change="toggleType(type)"/>
                 <span>{{ type }}</span>
               </label>
             </div>
@@ -307,9 +315,9 @@ const toggleType = (type) => {
         <div class="grid grid-cols-3 items-center gap-x-8">
           <p class="filter-label">ბრუნვა (კრედ)</p>
 
-          <input type="text" class="filter-input" placeholder="მინ" v-model="filter.totalAmountStart" />
+          <input type="text" class="filter-input" placeholder="მინ" v-model="filter.totalAmountStart"/>
 
-          <input type="text" class="filter-input" placeholder="მაქს" v-model="filter.totalAmountEnd" />
+          <input type="text" class="filter-input" placeholder="მაქს" v-model="filter.totalAmountEnd"/>
         </div>
         <!--ბრუნვა-->
       </div>
@@ -318,24 +326,24 @@ const toggleType = (type) => {
       <!--მეორე ხაზი-->
       <div class="filter-row">
         <!--ორდერის N-->
-        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N" />
+        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N"/>
         <!--ორდერის N-->
 
         <!--პროექტის N-->
-        <input type="text" class="filter-input" v-model="filter.projectID" placeholder="პროექტის N" />
+        <input type="text" class="filter-input" v-model="filter.projectID" placeholder="პროექტის N"/>
         <!--პროექტის N-->
 
         <!--დანიშნულება-->
-        <input type="text" class="filter-input" v-model="filter.purpose" placeholder="დანიშნულება" />
+        <input type="text" class="filter-input" v-model="filter.purpose" placeholder="დანიშნულება"/>
         <!--დანიშნულება-->
 
         <!--ID-->
-        <input type="text" class="filter-input" v-model="filter.tax" placeholder="ID" />
+        <input type="text" class="filter-input" v-model="filter.tax" placeholder="ID"/>
         <!--ID-->
 
         <!--დამატებითი ინფორმაცია-->
         <input type="text" class="input input-bordered input-sm w-full focus:outline-0" v-model="filter.description"
-          placeholder="დამატებითი ინფორმაცია" />
+               placeholder="დამატებითი ინფორმაცია"/>
         <!--დამატებითი ინფორმაცია-->
       </div>
       <!--მეორე ხაზი-->
@@ -343,25 +351,25 @@ const toggleType = (type) => {
       <!--მესამე ხაზი-->
       <div class="filter-row">
         <date-filter v-model:start-date="filter.clarificationDateStart" v-model:end-date="filter.clarificationDateEnd"
-          label="გარკვევის თარიღი" @clear="clearClarification" />
+                     label="გარკვევის თარიღი" @clear="clearClarification"/>
 
         <date-filter v-model:start-date="filter.changeDateStart" v-model:end-date="filter.changeDateEnd"
-          label="ცვლილების თარიღი" @clear="clearChange" />
+                     label="ცვლილების თარიღი" @clear="clearChange"/>
 
         <date-filter v-model:start-date="filter.transferDateStart" v-model:end-date="filter.transferDateEnd"
-          label="გადმოტანის თარიღი" @clear="clearTransfer" />
+                     label="გადმოტანის თარიღი" @clear="clearTransfer"/>
 
         <date-filter v-model:start-date="filter.extractionDateStart" v-model:end-date="filter.extractionDateEnd"
-          label="ჩარიცხვის თარიღი" @clear="clearExtraction" />
+                     label="ჩარიცხვის თარიღი" @clear="clearExtraction"/>
 
         <div class="flex flex-col gap-y-2.5">
           <input type="text" class="input input-bordered w-full input-sm focus:outline-0" v-model="filter.note"
-            placeholder="შენიშვნა" />
+                 placeholder="შენიშვნა"/>
 
           <div class="grid grid-cols-2 items-center gap-x-5">
             <select class="select select-bordered select-sm w-full focus:outline-0" v-model="sortByDir">
               <option disabled>დალაგება</option>
-              <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index" />
+              <option :value="option" v-for="(option, index) in sortOptions" v-text="option.text" :key="index"/>
             </select>
 
             <button class="btn btn-neutral btn-sm" @click="clearFilter">გასუფთავება</button>
@@ -377,60 +385,60 @@ const toggleType = (type) => {
   <div class="flex flex-col gap-y-5 mt-5">
     <table class="table table-xs">
       <thead>
-        <tr>
-          <th v-if="authStore.user" />
+      <tr>
+        <th v-if="authStore.user"/>
 
-          <th>N</th>
+        <th>N</th>
 
-          <th>ორდერის N</th>
+        <th>ორდერის N</th>
 
-          <th>რეგიონი</th>
+        <th>რეგიონი</th>
 
-          <th>მ/ც</th>
+        <th>მ/ც</th>
 
-          <th>პროექტის N</th>
+        <th>პროექტის N</th>
 
-          <th>ტიპი</th>
+        <th>ტიპი</th>
 
-          <th>ბრუნვა (კრედ)</th>
+        <th>ბრუნვა (კრედ)</th>
 
-          <th>დანიშნულება</th>
+        <th>დანიშნულება</th>
 
-          <th>დამატებითი ინფორმაცია</th>
+        <th>დამატებითი ინფორმაცია</th>
 
-          <th>ID</th>
+        <th>ID</th>
 
-          <th>გადმოტანის თარიღი</th>
+        <th>გადმოტანის თარიღი</th>
 
-          <th>გარკვევის თარიღი</th>
+        <th>გარკვევის თარიღი</th>
 
-          <th>ცვლილების თარიღი</th>
-        </tr>
+        <th>ცვლილების თარიღი</th>
+      </tr>
       </thead>
       <tbody v-if="records && records.length > 0">
-        <RecursiveRow @handleDivideClick="handleDivideClick" @handleEditClick="hec" :records="records" />
+      <RecursiveRow @handleDivideClick="handleDivideClick" @handleEditClick="hec" :records="records"/>
       </tbody>
 
       <tbody v-else-if="records && records.length === 0">
-        <tr>
-          <td>
-            ჩანაწერები ვერ მოიძებნა!
-          </td>
-        </tr>
+      <tr>
+        <td>
+          ჩანაწერები ვერ მოიძებნა!
+        </td>
+      </tr>
       </tbody>
 
       <tbody v-else>
-        <tr>
-          <td class="flex items-center gap-x-2.5">
-            იტვირთება <span class="loading loading-spinner loading-md" />
-          </td>
-        </tr>
+      <tr>
+        <td class="flex items-center gap-x-2.5">
+          იტვირთება <span class="loading loading-spinner loading-md"/>
+        </td>
+      </tr>
       </tbody>
     </table>
     <!--ცხრილი-->
 
     <pagination v-model:current-page="currentPage" v-model:page-size="pageSize" v-model:total-pages="totalPages"
-      v-model:total-elements="totalElements" />
+                v-model:total-elements="totalElements"/>
   </div>
 
   <dialog id="my_modal_1" class="modal">
@@ -442,7 +450,7 @@ const toggleType = (type) => {
             <label class="font-semibold text-gray-600">ორდერის N</label>
             <div class="grid grid-cols-2 gap-x-2 max-w-xs">
               <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-                v-model="extractionFee.orderN" />
+                     v-model="extractionFee.orderN"/>
               <select class="filter-select" v-model="extractionFee.orderStatus">
                 <option value="ORDER_INCOMPLETE">შესავსები</option>
 
@@ -457,20 +465,20 @@ const toggleType = (type) => {
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">რეგიონი</label>
             <input :value="extractionFee.region" class="input input-bordered max-w-xs input-sm mb-2 focus:outline-0"
-              disabled>
+                   disabled>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">მ/ც</label>
             <div class="relative max-w-xs">
               <input type="text" v-model="searchTerm" placeholder="აირჩიეთ მ/ც" @focus="isDropdownOpen = true"
-                @blur="closeDropdown" class="input input-bordered input-sm mb-2 focus:outline-0 w-full" />
+                     @blur="closeDropdown" class="input input-bordered input-sm mb-2 focus:outline-0 w-full"/>
 
               <!-- Dropdown options -->
               <div v-if="isDropdownOpen && filteredServiceCenters.length"
-                class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg mt-1">
+                   class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg mt-1">
                 <div v-for="(center, index) in filteredServiceCenters" :key="index"
-                  @mousedown="selectCenter(center.name, center.parent.name)"
-                  class="p-2 hover:bg-gray-100 cursor-pointer">
+                     @mousedown="selectCenter(center.name, center.parent.name)"
+                     class="p-2 hover:bg-gray-100 cursor-pointer">
                   {{ center.name }}
                 </div>
               </div>
@@ -479,26 +487,26 @@ const toggleType = (type) => {
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">პროექტის N</label>
             <input type="text" class="input input-bordered w-full max-w-xs input-sm focus:outline-0"
-              v-model="extractionFee.projectID" />
+                   v-model="extractionFee.projectID"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ტიპი</label>
             <select class="select select-bordered select-sm w-full max-w-xs focus:outline-0"
-              v-model="extractionFee.withdrawType">
+                    v-model="extractionFee.withdrawType">
               <option disabled selected>აირჩიეთ ტიპი</option>
-              <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index" />
+              <option :value="type" v-for="(type, index) in withdrawTypes" v-text="type" :key="index"/>
             </select>
           </div>
           <div v-if="extractionFee.withdrawType === '6 (თანხის დაბრუნება)'" class="flex items-center gap-x-2.5">
-            <input type="date" class="text-sm" v-model="extractionFee.paymentOrderSentDate" />
+            <input type="date" class="text-sm" v-model="extractionFee.paymentOrderSentDate"/>
 
-            <input type="date" class="text-sm" v-model="extractionFee.treasuryRefundDate" />
+            <input type="date" class="text-sm" v-model="extractionFee.treasuryRefundDate"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">შენიშვნა</label>
             <textarea v-if="extractionFee"
-              class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
-              v-model="extractionFee.note"></textarea>
+                      class="textarea textarea-bordered textarea-xs w-full max-w-xs focus:outline-0 resize-none"
+                      v-model="extractionFee.note"></textarea>
           </div>
         </div>
 
@@ -506,51 +514,51 @@ const toggleType = (type) => {
         <div class="flex flex-col justify-between w-1/2 gap-y-2">
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გარკვევის თარიღი</label>
-            <div v-text="extractionFee.clarificationDate ? formatDate(extractionFee.clarificationDate) : ''" />
+            <div v-text="extractionFee.clarificationDate ? formatDate(extractionFee.clarificationDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ცვლილების თარიღი</label>
             <div>
-              <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate, true) : ''" />
+              <p v-text="extractionFee.changeDate ? formatDate(extractionFee.changeDate, true) : ''"/>
               <p class="text-neutral underline font-bold" v-if="extractionFee.changeDate"
-                v-text="`${extractionFee.changePerson.firstName} ${extractionFee.changePerson.lastName}`" />
+                 v-text="`${extractionFee.changePerson.firstName} ${extractionFee.changePerson.lastName}`"/>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გადმოტანის თარიღი</label>
             <div>
-              <p v-text="extractionFee.transferDate ? formatDate(extractionFee.transferDate, true) : ''" />
+              <p v-text="extractionFee.transferDate ? formatDate(extractionFee.transferDate, true) : ''"/>
               <p v-if="extractionFee.transferPerson" class="text-neutral underline font-bold"
-                v-text="`${extractionFee.transferPerson.firstName} ${extractionFee.transferPerson.lastName}`" />
+                 v-text="`${extractionFee.transferPerson.firstName} ${extractionFee.transferPerson.lastName}`"/>
             </div>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ჩარიცხვის თარიღი</label>
-            <div v-text="extractionFee.extractionDate ? formatDate(extractionFee.extractionDate) : ''" />
+            <div v-text="extractionFee.extractionDate ? formatDate(extractionFee.extractionDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">ბრუნვა</label>
-            <div v-text="extractionFee.totalAmount" />
+            <div v-text="extractionFee.totalAmount"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">დანიშნულება</label>
-            <div v-text="extractionFee.purpose" />
+            <div v-text="extractionFee.purpose"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">დამატებიტი ინფორმაცია</label>
-            <div v-text="extractionFee.description" />
+            <div v-text="extractionFee.description"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">თანხის დაბრუნებაზე ხაზინაში მოთხოვნის გაგზავნის თარიღი</label>
-            <div v-text="extractionFee.paymentOrderSentDate ? formatDate(extractionFee.paymentOrderSentDate) : ''" />
+            <div v-text="extractionFee.paymentOrderSentDate ? formatDate(extractionFee.paymentOrderSentDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">საგადახდო დავალების გაგზავნის თარიღი</label>
-            <div v-text="extractionFee.treasuryRefundDate ? formatDate(extractionFee.treasuryRefundDate) : ''" />
+            <div v-text="extractionFee.treasuryRefundDate ? formatDate(extractionFee.treasuryRefundDate) : ''"/>
           </div>
           <div class="flex flex-col gap-y-2">
             <label class="font-semibold text-gray-600">გაუქმებული პროექტები</label>
-            <p v-text="extractionFee.canceledProject?.join(', ')" />
+            <p v-text="extractionFee.canceledProject?.join(', ')"/>
           </div>
         </div>
       </div>
@@ -563,7 +571,7 @@ const toggleType = (type) => {
             <button class="btn btn-neutral" @click="handleSaveClick">შენახვა</button>
 
             <button class="btn btn-error text-white"
-              onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
+                    onclick="document.getElementById('delete_transaction_modal').showModal();">წაშლა
             </button>
           </div>
         </div>
@@ -573,21 +581,21 @@ const toggleType = (type) => {
     </div>
   </dialog>
 
-  <confirm id="delete_transaction_modal" @accept="hdc" />
+  <confirm id="delete_transaction_modal" @accept="hdc"/>
 
   <dialog id="my_modal_7" class="modal">
     <div class="modal-box">
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 focus:outline-none">✕</button>
       </form>
-      <h3 class="text-lg font-bold" v-text="`გთხოვთ შეიყვანოთ თანხა! ნაშთი ${remainder}`" />
+      <h3 class="text-lg font-bold" v-text="`გთხოვთ შეიყვანოთ თანხა! ნაშთი ${remainder}`"/>
       <div class="modal-action items-center">
         <input class="input input-bordered w-full max-w-xs input-sm focus:outline-0" type="text" v-model="amount"
-          placeholder="10 25 50" />
+               placeholder="10 25 50"/>
         <form method="dialog" class="flex items-center justify-end w-full gap-x-5">
           <button class="btn btn-neutral btn-sm" v-text="'გაყოფა'" :disabled="!validateAmount()"
-            @click="handleDivision" />
-          <button class="btn btn-sm" v-text="'გაუქმება'" />
+                  @click="handleDivision"/>
+          <button class="btn btn-sm" v-text="'გაუქმება'"/>
         </form>
       </div>
     </div>
