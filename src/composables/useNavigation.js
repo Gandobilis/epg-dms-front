@@ -84,6 +84,13 @@ export default function useNavigation() {
         return `${baseUrl}?accessToken=${accessToken}&${urlSearchParams.toString()}`;
     };
 
+    const generateFileDownloadLink = (fileName) => {
+        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download-ext`;
+        const accessToken = authStore.token;
+
+        return `${baseUrl}?accessToken=${accessToken}&fileName=${fileName}`;
+    };
+
     /**
      * Get the user's display name.
      * @returns {string}
@@ -111,6 +118,7 @@ export default function useNavigation() {
         showFileExport,
         checkCurrentRoute,
         generateDownloadLink,
+        generateFileDownloadLink,
         getUserName,
         logout,
     };
