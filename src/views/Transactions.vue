@@ -124,11 +124,11 @@ watch(currentPage, async (value) => {
     }
 )
 
-const searchTerm = ref("");
+const searchTerm = ref('');
 const isDropdownOpen = ref(false);
 
 const filteredServiceCenters = computed(() =>
-    sc.value.filter(center => center.name.toLowerCase().includes(searchTerm.value.trim()))
+    sc.value.filter(center => center.name.toLowerCase().includes(searchTerm.value))
 );
 
 function selectCenter(centerName, parentName) {
