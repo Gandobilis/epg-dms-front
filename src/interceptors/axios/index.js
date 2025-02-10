@@ -24,14 +24,53 @@ axiosInstance.interceptors.request.use(config => {
     return Promise.reject(error);
 });
 
-const allowedEndpoints = [];
+const allowedEndpoints = [
+    {
+        endpoint: "user",
+        method: "get",
+        messages: {
+            error: "მომხმარებლის მონაცემების ჩატვირთვა ვერ მოხერხდა.",
+        },
+    },
+    {
+        endpoint: "auth/signup",
+        method: "post",
+        messages: {
+            success: "მომხმარებლი შეიქმნა წარმატებით.",
+            error: "მომხმარებლის შექმნისას მოხდა შეცდომა.",
+        }
+    },
+    {
+        endpoint: "user",
+        method: "delete",
+        messages: {
+            success: "მომხმარებლი წაიშალა წარმატებით.",
+            error: "მომხმარებლის წაშლისას მოხდა შეცდომა.",
+        }
+    },
+    {
+        endpoint: "user",
+        method: "put",
+        messages: {
+            success: "მომხმარებლი განახლდა წარმატებით.",
+            error: "მომხმარებლის განახლებისას მოხდა შეცდომა.",
+        }
+    },
+];
 
 axiosInstance.interceptors.response.use(
     (response) => {
         const notification = useNotificationStore();
 
-        if (allowedEndpoints.includes(response.config.url)) {
-            notification.showSuccess('წარმატებული ოპერაცია!');
+
+        const matchedEndpoint = allowedEndpoints.find(
+            (endpoint) =>
+                endpoint.endpoint === extractBaseEndpoint(response.config.url) &&
+                endpoint.method === response.config.method
+        );
+
+        if (matchedEndpoint && matchedEndpoint.messages.success) {
+            notification.showSuccess(matchedEndpoint.messages.success);
         }
 
         return response;
@@ -39,8 +78,14 @@ axiosInstance.interceptors.response.use(
     (error) => {
         const notification = useNotificationStore();
 
-        if (allowedEndpoints.includes(error.config?.url)) {
-            notification.showError('დაფიქსირდა შეცდომა!');
+        const matchedEndpoint = allowedEndpoints.find(
+            (endpoint) =>
+                endpoint.endpoint === extractBaseEndpoint(error.config?.url) &&
+                endpoint.method === error.config?.method
+        );
+
+        if (matchedEndpoint && matchedEndpoint.messages.error) {
+            notification.showError(matchedEndpoint.messages.error);
         }
 
         return Promise.reject(error);

@@ -79,7 +79,7 @@ export default function useNavigation() {
 
         const urlSearchParams = new URLSearchParams(params);
 
-        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download-ext`;
+        const baseUrl = `${import.meta.env.VITE_BASE_URL}connection-fees/download`;
         const accessToken = authStore.token;
         return `${baseUrl}?accessToken=${accessToken}&${urlSearchParams.toString()}`;
     };
