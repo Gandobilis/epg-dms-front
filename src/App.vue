@@ -2,7 +2,6 @@
 import {useAuthStore} from '/src/stores/auth';
 import {onMounted} from "vue";
 import MainLayout from "./layouts/MainLayout.vue";
-import NotificationPopup from "./components/NotificationPopup.vue";
 
 const authStore = useAuthStore();
 
@@ -16,7 +15,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <NotificationPopup />
   <main-layout>
     <router-view/>
   </main-layout>
