@@ -5,7 +5,7 @@ export const useFilterStore = defineStore('filter', () => {
     let filter = ref({
         region: 'აირჩიეთ რეგიონი',
         serviceCenter: 'აირჩიეთ მ/ც',
-        withdrawType: 'აირჩიეთ ტიპი',
+        withdrawType: [],
         status: 'აირჩიეთ სტატუსი',
         totalAmountStart: undefined,
         totalAmountEnd: undefined,
