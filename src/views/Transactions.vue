@@ -45,7 +45,7 @@ const handleSaveClick = async () => {
       extractionFee.value.region === 'აირჩიეთ რეგიონი' ||
       extractionFee.value.serviceCenter === 'აირჩიეთ მ/ც' ||
       extractionFee.value.withdrawType === 'აირჩიეთ ტიპი' ||
-      (!route.meta.requiresRoles.includes('ROLE_ADMIN') && !extractionFee.value.projectID)
+      (authStore.user.role !== 'ROLE_ADMIN' && !extractionFee.value.projectID)
   ) {
     _error.value = true;
   } else {
@@ -326,7 +326,8 @@ const closeTypeDropdown = () => {
       <!--მეორე ხაზი-->
       <div class="filter-row">
         <!--ორდერის N-->
-        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N (მრავლობითი: 123 456 789)"/>
+        <input type="text" class="filter-input" v-model="filter.orderN"
+               placeholder="ორდერის N (მრავლობითი: 123 456 789)"/>
         <!--ორდერის N-->
 
         <!--პროექტის N-->

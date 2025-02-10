@@ -6,7 +6,7 @@
     <p class="text-lg text-gray-600 mb-8">ასეთი გვერდი არ არსებობს.</p>
     <!-- Link to Transactions Page -->
     <router-link
-        to="/transactions"
+        :to="{name: 'Transactions'}"
         class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
       მთავარ გვერდზე დაბრუნება
     </router-link>

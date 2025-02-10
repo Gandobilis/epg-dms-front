@@ -1,15 +1,15 @@
 const routes = [
     {
         path: "/",
-        name: "Files",
-        meta: {requiresAuth: true, requiresRoles: ["ROLE_MANAGER", "ROLE_ADMIN"]},
-        component: () => import("/src/views/Files.vue"),
-    },
-    {
-        path: "/transactions",
         name: "Transactions",
         meta: {requiresAuth: true, requiresRoles: ["ROLE_GUEST", "ROLE_OPERATOR", "ROLE_MANAGER", "ROLE_ADMIN"]},
         component: () => import("/src/views/Transactions.vue"),
+    },
+    {
+        path: "/files",
+        name: "Files",
+        meta: {requiresAuth: true, requiresRoles: ["ROLE_MANAGER", "ROLE_ADMIN"]},
+        component: () => import("/src/views/Files.vue"),
     },
     {
         path: "/login",

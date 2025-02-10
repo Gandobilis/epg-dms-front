@@ -10,6 +10,7 @@ const {
   selectedUser,
   isEditing,
   roles,
+  hasErrors,
   openCreateModal,
   editUser,
   saveUser,
@@ -112,7 +113,7 @@ const togglePasswordVisibility = () => {
           </select>
         </div>
         <div class="flex justify-end gap-x-5">
-          <button @click="saveUser" class="btn btn-success text-white">
+          <button @click="saveUser" class="btn btn-success text-white" :disabled="hasErrors">
             {{ isEditing ? 'შენახვა' : 'შექმნა' }}
           </button>
           <button @click="showModal = false"

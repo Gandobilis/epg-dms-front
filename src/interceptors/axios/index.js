@@ -1,5 +1,6 @@
 import axios from "axios";
 import {useAuthStore} from "/src/stores/auth";
+import {useNotificationStore} from '/src/stores/notification.js';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
@@ -22,5 +23,18 @@ axiosInstance.interceptors.request.use(config => {
 }, error => {
     return Promise.reject(error);
 });
+
+axiosInstance.interceptors.response.use(
+    (response) => {
+        const notification = useNotificationStore();
+        notification.showSuccess('წარმატებული ოპერაცია!');
+        return response;
+    },
+    (error) => {
+        const notification = useNotificationStore();
+        notification.showError('დაფიქსირდა შეცდომა!');
+        return Promise.reject(error);
+    }
+);
 
 export default axiosInstance;

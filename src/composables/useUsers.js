@@ -1,9 +1,11 @@
-import {ref, onMounted} from 'vue';
-import axios from '../interceptors/axios/index.js';
+import {ref, onMounted, computed} from 'vue';
+import axios from '/src/interceptors/axios/index.js';
 
 export function useUsers() {
     const users = ref([]);
+
     const showModal = ref(false);
+
     const selectedUser = ref({
         firstName: '',
         lastName: '',
@@ -11,6 +13,19 @@ export function useUsers() {
         password: '',
         role: 'აირჩიეთ როლი'
     });
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    const errors = computed(() => ({
+        firstName: !selectedUser.value.firstName,
+        lastName: !selectedUser.value.lastName,
+        email: !emailRegex.test(selectedUser.value.email),
+        password: !isEditing && !selectedUser.value.password,
+        role: selectedUser.value.role === 'აირჩიეთ როლი',
+    }));
+
+    const hasErrors = computed(() => Object.values(errors.value).some(error => error));
+
     const isEditing = ref(false);
 
     const roles = [
@@ -31,7 +46,7 @@ export function useUsers() {
             lastName: '',
             email: '',
             password: '',
-            role: ''
+            role: 'აირჩიეთ როლი'
         };
         isEditing.value = false;
         showModal.value = true;
@@ -44,30 +59,31 @@ export function useUsers() {
     };
 
     const saveUser = async () => {
-        if (isEditing.value) {
-            const user = {
-                firstName: selectedUser.value.firstName,
-                lastName: selectedUser.value.lastName,
-                email: selectedUser.value.email,
-                password: selectedUser.value.password,
-                role: selectedUser.value.role
-            };
-            await axios.put(`user/${selectedUser.value.id}`, user, {requiresAuth: true});
-        } else {
-            await axios.post('auth/signup', selectedUser.value, {requiresAuth: true});
+        if (hasErrors.value) return;
+
+        try {
+            if (isEditing.value) {
+                await axios.put(`user/${selectedUser.value.id}`, selectedUser.value, {requiresAuth: true});
+            } else {
+                await axios.post('auth/signup', selectedUser.value, {requiresAuth: true});
+            }
+            showModal.value = false;
+            await getUsers();
+        } catch (error) {
+            console.error('Error saving user:', error);
         }
-        showModal.value = false;
-        await getUsers();
     };
 
     const deleteUser = async (userId) => {
-        await axios.delete(`user/${userId}`, {requiresAuth: true});
-        await getUsers();
+        try {
+            await axios.delete(`user/${userId}`, {requiresAuth: true});
+            await getUsers();
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
     };
 
-    onMounted(async () => {
-        await getUsers();
-    });
+    onMounted(getUsers);
 
     return {
         users,
@@ -75,10 +91,11 @@ export function useUsers() {
         selectedUser,
         isEditing,
         roles,
+        hasErrors,
         getUsers,
         openCreateModal,
         editUser,
         saveUser,
-        deleteUser
+        deleteUser,
     };
 }

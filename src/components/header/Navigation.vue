@@ -19,13 +19,13 @@ const {
   <nav class="flex gap-x-5 items-center justify-between">
     <div class="flex items-center gap-x-5">
       <!-- Files Link -->
-      <router-link v-if="showFiles()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/')}" to="/">
+      <router-link v-if="showFiles()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/files')}" :to="{name: 'Files'}">
         ფაილები
       </router-link>
 
       <!-- Transactions Link -->
-      <router-link v-if="showTransactions()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/transactions')}"
-                   to="/transactions">
+      <router-link v-if="showTransactions()" class="btn" :class="{'btn-neutral': checkCurrentRoute('/')}"
+                   :to="{name: 'Transactions'}">
         ჩარიცხვები
       </router-link>
     </div>
