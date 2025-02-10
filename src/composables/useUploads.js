@@ -136,12 +136,17 @@ export default function useUploads() {
                 }
             }, {});
 
-
+        if (params.orderN) {
+            params.orderN = params.orderN
+                .split(' ')
+                .map(order => order.trim())
+                .filter(order => order !== '');
+        }
 
         try {
             lastResponse.value = await axios.get(`connection-fees/filter`, {
                 params,
-                paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "comma" })
+                paramsSerializer: (params) => qs.stringify(params, {arrayFormat: "comma"})
             });
             records.value = lastResponse.value.data.content;
             addShowProperty();

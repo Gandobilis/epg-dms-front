@@ -188,11 +188,11 @@ const clearFilter = () => {
     totalAmountStart: undefined,
     totalAmountEnd: undefined,
 
-    orderN: undefined,
-    projectID: undefined,
-    purpose: undefined,
-    tax: undefined,
-    description: undefined,
+    orderN: '',
+    projectID: '',
+    purpose: '',
+    tax: '',
+    description: '',
 
     clarificationDateStart: undefined,
     clarificationDateEnd: undefined,
@@ -326,7 +326,7 @@ const closeTypeDropdown = () => {
       <!--მეორე ხაზი-->
       <div class="filter-row">
         <!--ორდერის N-->
-        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N"/>
+        <input type="text" class="filter-input" v-model="filter.orderN" placeholder="ორდერის N (მრავლობითი: 123 456 789)"/>
         <!--ორდერის N-->
 
         <!--პროექტის N-->
