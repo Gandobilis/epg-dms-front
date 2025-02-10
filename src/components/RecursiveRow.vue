@@ -32,10 +32,8 @@ const authStore = useAuthStore();
     <tr class="cursor-pointer"
         :class="{'bg-yellow-100': extraction.orderN === 'ნაშთი', 'bg-gray-300': extraction.children.length > 0, 'hover:bg-gray-100': extraction.children.length <= 0, 'hover:bg-yellow-100': extraction.orderN === 'ნაშთი' }">
       <td title="გაყოფა" v-if="authStore.user">
-        <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])"
-                :class="{'cursor-not-allowed': !extraction.remainder || extraction.status === 'REMINDER'}"
-                :disabled="!extraction.remainder || extraction.status === 'REMINDER'">
-          <img src="/src/assets/divide.svg" alt="divide icon" class="max-w-8"/></button>
+        <button @click="emit('handleDivideClick', [extraction.id, extraction.remainder])">
+          <img src="/src/assets/divide.svg" v-if="!extraction.queueNumber && extraction.remainder" alt="divide icon" class="max-w-8"/></button>
       </td>
 
       <td>
