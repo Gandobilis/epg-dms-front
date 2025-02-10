@@ -14,10 +14,8 @@ const {email, password, error, login} = useLogin();
           <label for="email" class="block text-sm font-medium text-gray-700">ემაილი</label>
           <input
               v-model="email"
-              id="email"
-              type="email"
+              type="text"
               class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-success"
-              required
           />
         </div>
 
@@ -25,10 +23,8 @@ const {email, password, error, login} = useLogin();
           <label for="password" class="block text-sm font-medium text-gray-700">პაროლი</label>
           <input
               v-model="password"
-              id="password"
               type="password"
               class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-success"
-              required
           />
         </div>
 
